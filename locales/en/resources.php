@@ -11,7 +11,8 @@
 #
 # -- END LICENSE BLOCK ------------------------------------
 
-if (!defined('DC_RC_PATH')) { return; }
+if (!defined('DC_RC_PATH')) {
+    return;
+}
 
-$__resources['help']['enhancePostContent'] = dirname(__FILE__).'/help/help.html';
-?>
+$__resources['help']['enhancePostContent'] = dirname(__FILE__) . '/help/help.html';

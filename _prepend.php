@@ -12,11 +12,10 @@
 # -- END LICENSE BLOCK ------------------------------------
 
 if (!defined('DC_RC_PATH')) {
-
-	return null;
+    return null;
 }
 
-$d = dirname(__FILE__).'/inc/';
+$d = dirname(__FILE__) . '/inc/';
 
-$__autoload['libEPC']		= $d.'lib.epc.php';
-$__autoload['epcRecords']	= $d.'lib.epc.records.php';
+$__autoload['libEPC'] = $d . 'lib.epc.php';
+$__autoload['epcRecords'] = $d . 'lib.epc.records.php';

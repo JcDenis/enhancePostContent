@@ -12,24 +12,19 @@
 # -- END LICENSE BLOCK ------------------------------------
 
 if (!defined('DC_RC_PATH')) {
-
-	return null;
+    return null;
 }
- 
+
 $this->registerModule(
-	/* Name */
-	"Enhance post content",
-	/* Description*/
-	"Add features to words in post content",
-	/* Author */
-	"Jean-Christian Denis",
-	/* Version */
-	'2013.11.08',
-	array(
-		'permissions' => 'contentadmin',
-		'type' => 'plugin',
-		'dc_min' => '2.6',
-		'support' => 'http://jcd.lv/q=enhancePostContent',
-		'details' => 'http://plugins.dotaddict.org/dc2/details/enhancePostContent'
-	)
+    'Enhance post content',
+    'Add features to words in post content',
+    'Jean-Christian Denis and Contributors',
+    '2021.08.0',
+    [
+        'permissions' => 'contentadmin',
+        'type' => 'plugin',
+        'dc_min' => '2.18',
+        'support' => 'https://github.com/JcDenis/enhancePostContent',
+        'details' => 'https://plugins.dotaddict.org/dc2/details/enhancePostContent'
+    ]
 );
