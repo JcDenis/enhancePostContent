@@ -15,7 +15,7 @@ atgs, acronyms, abbreviations, definition, citation, link, etc...
 
   * admin permissions to set up plugin
   * content admin permissions to manage fitlers
-  * Dotclear 2.6
+  * Dotclear 2.19
 
 ## USAGE
 
@@ -28,3 +28,10 @@ go to ''configure plugin'', fill in form.
 Once it's done you can manage filters from menu 
 ''Enhance Post Content'' on sidebar or you can add dashboard icon,
 you should also add widgets.
+
+## MORE
+
+ * License : GNU GPL v2
+ * Source & contribution : [GitHub Page](https://github.com/JcDenis/enhancePostContent)
+ * Packages & details:  [Dotaddict Page](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
+ * Discuss and help : [Dotclear Forum](http://forum.dotclear.org/viewtopic.php?id=40876)
