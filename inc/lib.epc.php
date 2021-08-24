@@ -343,7 +343,7 @@ class libEPC
          && is_array($opt['tplValues']) 
          && in_array($tag, $opt['tplValues']) 
          && $args[0] != '' //content
-         && !$args[2] // remove html
+         && empty($args[2]) // remove html
         ;
     }
     
