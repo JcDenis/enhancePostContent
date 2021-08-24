@@ -7,6 +7,7 @@ enhancePostContent 2021.08.xx
  * switch to Dotclear 2.19
  * switch to php 7.3+ and php 8.0.x
  * switch to Github
+ * update license
 
 enhancePostContent 2013.11.08
  * Switch to Dotclear 2.6 (admin styles and settings)
