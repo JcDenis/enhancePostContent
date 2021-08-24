@@ -201,12 +201,13 @@ class enhancePostContentWidget
             return null;
         }
 
-        return 
-        ($w->content_only ? '' : '<div class="epc-widgetlist' .
-        ($w->class ? ' ' . html::escapeHTML($w->class) : '') . '"">') .
-        ($w->title ? '<h2>' . html::escapeHTML($w->title) . '</h2>' : '') .
-        ($w->text ? '<p>' . html::escapeHTML($w->text) . '</p>' : '') .
-        '<ul>' . $res . '</ul>' .
-        ($w->content_only ? '' : '</div>');
+        return $w->renderDiv(
+            $w->content_only, 
+            $w->class, 
+            'id="epc_' . $w->type .'"', 
+            ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') .
+            ($w->text ? '<p>' . html::escapeHTML($w->text) . '</p>' : '') .
+            '<ul>' . $res . '</ul>'
+        );
     }
 }
