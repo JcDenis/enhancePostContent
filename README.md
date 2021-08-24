@@ -22,8 +22,7 @@ atgs, acronyms, abbreviations, definition, citation, link, etc...
 First install enhancePostContent, manualy from a zip package or from 
 Dotaddict repository. (See Dotclear's documentation to know how do this)
 
-Go to ''plugins manager'', expand enhancePostContent information then 
-go to ''configure plugin'', fill in form.
+Go to ''blog preference'' => fieldset ''plugin preference', fill in form.
 
 Once it's done you can manage filters from menu 
 ''Enhance Post Content'' on sidebar or you can add dashboard icon,
