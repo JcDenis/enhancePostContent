@@ -1,15 +1,15 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of enhancePostContent, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2009-2021 Jean-Christian Denis and contributors
-# 
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief enhancePostContent, a plugin for Dotclear 2
+ * 
+ * @package Dotclear
+ * @subpackage Plugin
+ * 
+ * @author Jean-Christian Denis and Contributors
+ * 
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 class epcRecords
 {
@@ -104,9 +104,9 @@ class epcRecords
             $cur->epc_id = $this->getNextId();
             $cur->blog_id = $this->blog;
             $cur->epc_upddt = date('Y-m-d H:i:s');
-            
+
             $this->getCursor($cur);
-            
+
             $cur->insert();
             $this->con->unlock();
         } catch (Exception $e) {
@@ -120,7 +120,7 @@ class epcRecords
 
         return $cur->epc_id;
     }
-    
+
     public function updRecord($id, $cur)
     {
         $id = (integer) $id;

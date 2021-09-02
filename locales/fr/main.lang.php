@@ -211,4 +211,3 @@ $GLOBALS['__l10n']['Key:'] = 'Clé :';
 $GLOBALS['__l10n']['Value:'] = 'Valeur :';
 
 $GLOBALS['__l10n']['Configuration has been successfully updated.'] = 'La configuration a été mise à jour avec succés.';
-

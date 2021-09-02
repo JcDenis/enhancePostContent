@@ -1,15 +1,15 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of enhancePostContent, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2009-2021 Jean-Christian Denis and contributors
-# 
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief enhancePostContent, a plugin for Dotclear 2
+ * 
+ * @package Dotclear
+ * @subpackage Plugin
+ * 
+ * @author Jean-Christian Denis and Contributors
+ * 
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 # l10n
 __('Tag');__('Search');__('Acronym');__('Abbreviation');__('Definition');
@@ -23,7 +23,7 @@ class libEPC
     #
     # Default definition
     #
-    
+
     public static function defaultAllowedTplValues()
     {
         return [
@@ -32,7 +32,7 @@ class libEPC
             'comment content' => 'CommentContent',
         ];
     }
-    
+
     public static function blogAllowedTplValues()
     {
         global $core;
@@ -41,11 +41,11 @@ class libEPC
         $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedtplvalues);
         return is_array($rs) ? $rs : $allowedtplvalues;
     }
-    
+
     public static function defaultAllowedWidgetValues()
     {
         global $core;
-        
+
         $rs = [
             'entry excerpt' => [
                 'id' => 'entryexcerpt',
@@ -60,12 +60,12 @@ class libEPC
                 'callback' => ['libEPC','widgetContentCommentContent']
             ]
         ];
-        
+
         $core->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
-        
+
         return $rs;
     }
-    
+
     public static function defaultAllowedPubPages()
     {
         return [
@@ -77,7 +77,7 @@ class libEPC
             'RSS feeds' => 'rss2.xml'
         ];
     }
-    
+
     public static function blogAllowedPubPages()
     {
         global $core;
@@ -86,24 +86,24 @@ class libEPC
         $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedpubpages);
         return is_array($rs) ? $rs : $allowedpubpages;
     }
-    
+
     public static function defaultFilters()
     {
         global $core;
-        
+
         $filters = [
             'Tag' => [
                 'id' => 'tag',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterTag'],
                 'widgetListFilter' => ['libEPC', 'widgetListTag'],
-                
+
                 'help' => __('Highlight tags of your blog.'),
                 'has_list' => false,
                 'htmltag' => 'a',
                 'class' => ['a.epc-tag'],
                 'replace' => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
                 'widget' =>  '<a href="%s" title="' . __('Tag') . '">%s</a>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -115,13 +115,13 @@ class libEPC
             'Search' => [
                 'id' => 'search',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterSearch'],
-                
+
                 'help' => __('Highlight searched words.'),
                 'has_list' => false,
                 'htmltag' => '',
                 'class' => ['span.epc-search'],
                 'replace' => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
-                
+
                 'nocase' => true,
                 'plural' => true,
                 'limit' => 0,
@@ -134,14 +134,14 @@ class libEPC
                 'id' => 'acronym',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterAcronym'],
                 'widgetListFilter' => ['libEPC', 'widgetListAcronym'],
-                
+
                 'help' => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
                 'has_list' => true,
                 'htmltag' => 'acronym',
                 'class' => ['acronym.epc-acronym'],
                 'replace' => '<acronym class="epc-acronym" title="%s">%s</acronym>',
                 'widget' => '<acronym title="%s">%s</acronym>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -154,14 +154,14 @@ class libEPC
                 'id' => 'abbreviation',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterAbbreviation'],
                 'widgetListFilter' => ['libEPC', 'widgetListAbbreviation'],
-                
+
                 'help' => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
                 'has_list' => true,
                 'htmltag' => 'a',
                 'class' => ['abbr.epc-abbr'],
                 'replace' => '<abbr class="epc-abbr" title="%s">%s</abbr>',
                 'widget' =>  '<abbr title="%s">%s</abbr>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -174,14 +174,14 @@ class libEPC
                 'id' => 'definition',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterDefinition'],
                 'widgetListFilter' => ['libEPC', 'widgetListDefinition'],
-                
+
                 'help' => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
                 'has_list' => true,
                 'htmltag' => 'dfn',
                 'class' => ['dfn.epc-dfn'],
                 'replace' => '<dfn class="epc-dfn" title="%s">%s</dfn>',
                 'widget' =>  '<dfn class="epc-dfn" title="%s">%s</dfn>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -194,14 +194,14 @@ class libEPC
                 'id' => 'citation',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterCitation'],
                 'widgetListFilter' => ['libEPC', 'widgetListCitation'],
-                
+
                 'help' => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
                 'has_list' => true,
                 'htmltag' => 'cite',
                 'class' => ['cite.epc-cite'],
                 'replace' => '<cite class="epc-cite" title="%s">%s</cite>',
                 'widget' => '<cite title="%s">%s</cite>',
-                
+
                 'nocase' => true,
                 'plural' => false,
                 'limit' => 0,
@@ -214,14 +214,14 @@ class libEPC
                 'id' => 'link',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterLink'],
                 'widgetListFilter' => ['libEPC', 'widgetListLink'],
-                
+
                 'help' => __('Link some words. First term of the list is the term to link and second term the link.'),
                 'has_list' => true,
                 'htmltag' => 'a',
                 'class' => ['a.epc-link'],
                 'replace' => '<a class="epc-link" title="%s" href="%s">%s</a>',
                 'widget' => '<a title="%s" href="%s">%s</a>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -233,13 +233,13 @@ class libEPC
             'Replace' => [
                 'id' => 'replace',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterReplace'],
-                
+
                 'help' => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
                 'has_list' => true,
                 'htmltag' => '',
                 'class' => ['span.epc-replace'],
                 'replace' => '<span class="epc-replace">%s</span>',
-                
+
                 'nocase' => true,
                 'plural' => true,
                 'limit' => 0,
@@ -251,13 +251,13 @@ class libEPC
             'Update' => [
                 'id' => 'update',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterUpdate'],
-                
+
                 'help' => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
                 'has_list' => true,
                 'htmltag' => 'del,ins',
                 'class' => ['del.epc-update', 'ins.epc-update'],
                 'replace' => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
-                
+
                 'nocase' => true,
                 'plural' => true,
                 'limit' => 0,
@@ -269,13 +269,13 @@ class libEPC
             'Twitter' => [
                 'id' => 'twitter',
                 'publicContentFilter' => ['libEPC', 'publicContentFilterTwitter'],
-                
+
                 'help' => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
                 'has_list' => false,
                 'htmltag' => 'a',
                 'class' => ['a.epc-twitter'],
                 'replace' => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
-                
+
                 'nocase' => false,
                 'plural' => false,
                 'limit' => 0,
@@ -285,23 +285,23 @@ class libEPC
                 'pubPages' => ['post.html']
             ]
         ];
-        
+
         $core->callBehavior('enhancePostContentDefaultFilters', $filters);
-        
+
         return $filters;
     }
-    
+
     public static function blogFilters($one = null)
     {
         global $core;
         $core->blog->settings->addNamespace('enhancePostContent');
         $filters = self::defaultFilters();
-        
+
         foreach($filters as $name => $filter) {
             # Parse filters options
             $ns = 'enhancePostContent_' . $name;
             $opt[$name] = @unserialize($core->blog->settings->enhancePostContent->$ns);
-            
+
             if (!is_array($opt[$name])) {
                 $opt[$name] = [];
             }
@@ -327,9 +327,9 @@ class libEPC
                 $filters[$name]['pubPages'] = (array) $opt[$name]['pubPages'];
             }
         }
-        
+
         $core->callBehavior('enhancePostContentBlogFilters', $filters);
-        
+
         return $filters;
     }
 
@@ -346,7 +346,7 @@ class libEPC
          && empty($args[2]) // remove html
         ;
     }
-    
+
     public static function replaceString($p, $r, $s, $filter, $before = '\b', $after = '\b')
     {
         # Limit
@@ -386,7 +386,7 @@ class libEPC
         # Clean rest
         return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
     }
-    
+
     public static function matchString($p, $r, $s, $filter, $before = '\b', $after = '\b')
     {
         # Case sensitive
@@ -399,7 +399,7 @@ class libEPC
         if (!$t) {
             return ['total' => 0, 'matches' => []];
         }
-        
+
         # Build array
         $m = [];
         $loop = 0;
@@ -411,22 +411,22 @@ class libEPC
         }
         return ['total' => $t, 'matches' => $m];
     }
-    
+
     public static function quote($s)
     {
         return preg_quote($s, '#');
     }
-    
+
     public static function removeTags($m)
     {
         return $m[1] . preg_replace('#ççççç(?!ççççç)#s', '$1', $m[3]) . $m[4];
     }
-    
+
     public static function decodeTags($t)
     {
         return preg_match_all('#([A-Za-z0-9]+)#', (string) $t, $m) ? $m[1] : [];
     }
-    
+
     public static function implode($a)
     {
         if (is_string($a)) {
@@ -435,14 +435,14 @@ class libEPC
         if (!is_array($a)) {
             return [];
         }
-        
+
         $r = '';
         foreach($a as $k => $v) {
             $r .= $k . ':' . $v . ';';
         }
         return $r;
     }
-    
+
     public static function explode($s)
     {
         if (is_array($s)) {
@@ -451,71 +451,71 @@ class libEPC
         if (!is_string($s)) {
             return '';
         }
-        
+
         $r = [];
         $s = explode(';', (string) $s);
         if (!is_array($s)) {
             return [];
         }
-        
+
         foreach($s as $cpl) {
             $cur = explode(':', $cpl);
-            
+
             if (!is_array($cur) || !isset($cur[1])) {
                 continue;
             }
-            
+
             $key = html::escapeHTML(trim($cur[0]));
             $val = html::escapeHTML(trim($cur[1]));
-            
+
             if (empty($key) || empty($val)) {
                 continue;
             }
-            
+
             $r[$key] = $val;
         }
         return $r;
     }
-    
+
     #
     # Widgets
     #
-    
+
     public static function widgetContentEntryExcerpt($core, $w)
     {
         global $_ctx;
         if (!$_ctx->exists('posts')) {
             return;
         }
-        
+
         $res = '';
         while ($_ctx->posts->fetch()) {
             $res .= $_ctx->posts->post_excerpt;
         }
         return $res;
     }
-    
+
     public static function widgetContentEntryContent()
     {
         global $_ctx;
         if (!$_ctx->exists('posts')) {
             return;
         }
-        
+
         $res = '';
         while ($_ctx->posts->fetch()) {
             $res .= $_ctx->posts->post_content;
         }
         return $res;
     }
-    
+
     public static function widgetContentCommentContent()
     {
         global $core, $_ctx;
         if (!$_ctx->exists('posts')) {
             return;
         }
-        
+
         $res = '';
         $post_ids = [];
         while ($_ctx->posts->fetch()) {
@@ -526,19 +526,19 @@ class libEPC
         }
         return $res;
     }
-    
+
     #
     # Filters
     #
-    
+
     public static function publicContentFilterTag($core, $filter, $tag, $args)
     {
         if (!$core->plugins->moduleExists('tags')) {
             return;
         }
-        
+
         $metas = $core->meta->getMetadata(['meta_type' => 'tag']);
-        
+
         while($metas->fetch()) {
             $k = $metas->meta_id;
             $args[0] = self::replaceString(
@@ -550,7 +550,7 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListTag($core, $filter, $content, $w, &$list)
     {
         if (!$core->plugins->moduleExists('tags')) {
@@ -558,7 +558,7 @@ class libEPC
         }
 
         $metas = $core->meta->getMetadata(['meta_type' => 'tag']);
-        
+
         while($metas->fetch()) {
             $k = $metas->meta_id;
             $list[] = self::matchString(
@@ -570,15 +570,15 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterSearch($core, $filter, $tag, $args)
     {
         if (!isset($GLOBALS['_search'])) {
             return;
         }
-        
+
         $searchs = explode(' ', $GLOBALS['_search']);
-        
+
         foreach($searchs as $k => $v) {
             $args[0] = self::replaceString(
                 $v,
@@ -589,13 +589,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterAcronym($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], __($v), '\\1'),
@@ -605,13 +605,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListAcronym($core, $filter, $content, $w, &$list)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $list[] = self::matchString(
                 $k,
                 sprintf($filter['widget'], __($v), '\\1'),
@@ -621,13 +621,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterAbbreviation($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], __($v), '\\1'),
@@ -637,13 +637,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListAbbreviation($core, $filter, $content, $w, &$list)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $list[] = self::matchString(
                 $k,
                 sprintf($filter['widget'], __($v), '\\1'),
@@ -653,13 +653,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterDefinition($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], __($v), '\\1'),
@@ -669,13 +669,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListDefinition($core, $filter, $content, $w, &$list)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $list[] = self::matchString(
                 $k,
                 sprintf($filter['widget'], __($v), '\\1'),
@@ -685,13 +685,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterCitation($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], __($v), '\\1'),
@@ -701,13 +701,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListCitation($core, $filter, $content, $w, &$list)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $list[] = self::matchString(
                 $k,
                 sprintf($filter['widget'], __($v), '\\1'),
@@ -717,13 +717,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterLink($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], '\\1', $v, '\\1'),
@@ -733,13 +733,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function widgetListLink($core, $filter, $content, $w, &$list)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $list[] = self::matchString(
                 $k,
                 sprintf($filter['widget'], $v, $v, '\\1'),
@@ -749,13 +749,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterReplace($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], $v, '\\2'),
@@ -765,13 +765,13 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterUpdate($core, $filter, $tag, $args)
     {
         while($filter['list']->fetch()) {
             $k = $filter['list']->epc_key;
             $v = $filter['list']->epc_value;
-            
+
             $args[0] = self::replaceString(
                 $k,
                 sprintf($filter['replace'], '\\1', $v),
@@ -781,7 +781,7 @@ class libEPC
         }
         return;
     }
-    
+
     public static function publicContentFilterTwitter($core, $filter, $tag, $args)
     {
         $args[0] = self::replaceString(
