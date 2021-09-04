@@ -1,9 +1,16 @@
-xxxx.xx.xx
+2021.09.05.1 - dev
 - [ ] add priority on filters for replacement order
 - [ ] add priority on lists of filters for replacement order
 - [ ] add auto-find post title in content
 - [ ] split filters into modules
-- [ ] fix filters on spaces after words 
+
+2021.09.05
+- fix duplicate records id
+- fix bad UFT8 filters modifier delimiter
+- fix filters replacement limit
+- fix admin redirections
+- fix dc link to settings
+- enhance admin design
 
 2021.08.24.1
 - add links to blog prefs
