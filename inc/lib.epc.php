@@ -363,7 +363,7 @@ class libEPC
         # Plural
         $x = $filter['plural'] ? $p . 's|' . $p : $p;
         # Mark words
-        $s = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#s' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
+        $s = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
         # Nothing to parse
         if (!$count) {
             return $s;
