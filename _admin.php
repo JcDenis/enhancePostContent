@@ -108,12 +108,14 @@ class epcAdminBehaviors
         '</p>' .
         '<h5>' . __('Record list') . '</h4>' .
         '<p class="form-note">' . __('This is the default order of records lists.') . '</p>' .
-        '<p><label for="epc_list_sortby">' . __('Order by:') . '</label>' .
+        '<p class="field"><label for="epc_list_sortby">' . __('Order by:') . '</label>' .
         form::combo('epc_list_sortby', self::sortbyCombo(), $list_sortby) . '</p>' .
-        '<p><label for="epc_list_order">' . __('Sort:') . '</label>' .
+        '<p class="field"><label for="epc_list_order">' . __('Sort:') . '</label>' .
         form::combo('epc_list_order', self::orderCombo(), $list_order) . '</p>' .
-        '<p><label for="list_nb">' . __('Records per page:') . '</label>' .
+        '<p class="field"><label for="list_nb">' . __('Records per page:') . '</label>' .
         form::field('epc_list_nb', 3, 3, $list_nb) . '</p>' .
+        '<p><a href="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '">' . 
+        __('Set content filters') . '</a></p>' .
         '</div>' .
         '<div class="col">' .
         '<h5>' . __('Extra') . '</h5>' .
