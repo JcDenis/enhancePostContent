@@ -139,18 +139,13 @@ $breadcrumb = [
     html::escapeHTML($core->blog->name) => '',
     __('Enhance post content') => $p_url
 ];
-$top_menu = [];
 
+$filters_combo = [];
 foreach($filters_id as $id => $name) {
-
-    $active = '';
     if ($default_part == $id) {
         $breadcrumb[__($filters_id[$default_part])] = '';
-        $active = ' class="active"';
     }
-
-    $top_menu[] = 
-    '<a' . $active . ' href="' . $p_url . '&amp;part=' . $id . '">' . __($name) . '</a>';
+    $filters_combo[__($name)] = $id;
 }
 
 # -- Display page --
@@ -172,9 +167,12 @@ dcPage::breadcrumb($breadcrumb) .
 dcPage::notices() .
 
 # Filters list
-'<ul class="pseudo-tabs">' .
-'<li>' . implode('</li><li>', $top_menu) . '</li>' .
-'</ul>';
+'<form method="post" action="' . $p_url . '&tab=settings">' .
+'<p class="anchor-nav"><label for="epc_tab" class="classic">' . __('Goto:') . ' </label>' .
+ form::combo('part', $filters_combo, $default_part) . ' ' .
+$core->formNonce() .
+'<input type="submit" value="' . __('Ok') . '" /></p>' .
+'</form>';
 
 # Filter content
 if (isset($filters_id[$default_part])) {
@@ -348,7 +346,8 @@ if (isset($filters_id[$default_part])) {
             echo '
             <form action="' . $pager_url . '" method="post">
             <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
-            <table>
+            <div class="table-outer">
+            <table><caption class="hidden">' . __('Records') . '</caption>
             <thead><tr>
             <th><a href="' . sprintf($pager_url, 'epc_key', $page) . '">' .
             __('Key') . '</a></th>
@@ -368,15 +367,15 @@ if (isset($filters_id[$default_part])) {
                 form::hidden(['epc_old_value[]'], html::escapeHTML($list->epc_value)) .
                 form::field(['epc_key[]'], 30, 225, html::escapeHTML($list->epc_key), '') . '</td>
                 <td class="maximal">' .
-                form::field(['epc_value[]'], 90, 225, html::escapeHTML($list->epc_value), 'maximal') . '</td>
-                <td class="nowrap">' .
+                form::field(['epc_value[]'], 90, 225, html::escapeHTML($list->epc_value), '') . '</td>
+                <td class="nowrap count">' .
                 dt::dt2str(__('%Y-%m-%d %H:%M'), $list->epc_upddt,$core->auth->getInfo('user_tz')) . '</td>
                 </tr>';
             }
 
             echo '
             </tbody>
-            </table>
+            </table></div>
             <p class="form-note">' . __('In order to remove a record, leave empty its key or value.') . '</p>
             <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
 
@@ -422,10 +421,4 @@ $core->callBehavior('enhancePostContentAdminPage', $core);
 
 dcPage::helpBlock('enhancePostContent');
 
-# Footers
-echo 
-'<hr class="clear"/><p class="right modules">
-enhancePostContent - ' . $core->plugins->moduleInfo('enhancePostContent', 'version') . '&nbsp;
-<img alt="' . __('enhancePostContent') . '" src="index.php?pf=enhancePostContent/icon.png" />
-</p>
-</body></html>';
+echo '</body></html>';
