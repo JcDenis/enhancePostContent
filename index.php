@@ -76,17 +76,22 @@ try {
      && isset($filters_id[$default_part])
      && !empty($_POST['new_key'])
      && !empty($_POST['new_value'])) {
+
         $cur = $records->openCursor();
         $cur->epc_filter = $filters_id[$default_part];
         $cur->epc_key = html::escapeHTML($_POST['new_key']);
         $cur->epc_value = html::escapeHTML($_POST['new_value']);
-        $records->addRecord($cur);
+        if ($records->isRecord($cur->epc_filter, $cur->epc_key)) {
+            dcPage::addErrorNotice(__('Key already exists for this filter'));
+        } else {
+            $records->addRecord($cur);
 
-        $core->blog->triggerBlog();
+            $core->blog->triggerBlog();
 
-        dcPage::addSuccessNotice(
-            __('Filter successfully updated.')
-        );
+            dcPage::addSuccessNotice(
+                __('Filter successfully updated.')
+            );
+        }
         $core->adminurl->redirect(
             'admin.plugin.enhancePostContent', 
             ['part' => $default_part],
@@ -95,6 +100,7 @@ try {
     }
 
     # Update filter records
+    $error = false;
     if ($action == 'saveupdaterecords'
      && isset($filters_id[$default_part])
      && $_filters[$filters_id[$default_part]]['has_list']) {
@@ -112,7 +118,12 @@ try {
                 $cur->epc_filter = $filters_id[$default_part];
                 $cur->epc_key = html::escapeHTML($_POST['epc_key'][$k]);
                 $cur->epc_value = html::escapeHTML($_POST['epc_value'][$k]);
-                $records->updRecord($id, $cur);
+                if ($records->isRecord($cur->epc_filter, $cur->epc_key, $id)) {
+                    dcPage::addErrorNotice(__('Key already exists for this filter'));
+                    $error = true;
+                } else {
+                    $records->updRecord($id, $cur);
+                }
             }
         }
 
@@ -121,10 +132,11 @@ try {
         $redir = !empty($_REQUEST['redir']) ? 
             $_REQUEST['redir'] :
             $core->adminurl->get('admin.plugin.enhancePostContent', ['part' => $default_part]) . '#record';
-
-        dcPage::addSuccessNotice(
-            __('Filter successfully updated.')
-        );
+        if (!$error) {
+            dcPage::addSuccessNotice(
+                __('Filter successfully updated.')
+            );
+        }
         http::redirect(
             $redir
         );
@@ -135,10 +147,7 @@ try {
 
 # -- Prepare page --
 
-$breadcrumb = [
-    html::escapeHTML($core->blog->name) => '',
-    __('Enhance post content') => $p_url
-];
+$breadcrumb = [html::escapeHTML($core->blog->name) => '', __('Enhance post content') => '', __('Filters') => ''];
 
 $filters_combo = [];
 foreach($filters_id as $id => $name) {
@@ -153,7 +162,7 @@ foreach($filters_id as $id => $name) {
 # Headers
 echo '
 <html><head><title>' . __('Enhance post content') . '</title>' .
-dcPage::jsLoad('js/_posts_list.js') .
+//dcPage::jsLoad('js/_posts_list.js') .
 dcPage::jsToolbar() .
 dcPage::jsPageTabs() .
 
@@ -168,7 +177,7 @@ dcPage::notices() .
 
 # Filters list
 '<form method="post" action="' . $p_url . '&tab=settings">' .
-'<p class="anchor-nav"><label for="epc_tab" class="classic">' . __('Goto:') . ' </label>' .
+'<p class="anchor-nav"><label for="epc_tab" class="classic">' . __('Select filter:') . ' </label>' .
  form::combo('part', $filters_combo, $default_part) . ' ' .
 $core->formNonce() .
 '<input type="submit" value="' . __('Ok') . '" /></p>' .
@@ -319,23 +328,23 @@ if (isset($filters_id[$default_part])) {
         try {
             $list = $records->getRecords($params);
             $counter = $records->getRecords($params, true);
+
+            $pager_url = $p_url .
+                '&amp;nb=' . $nb .
+                '&amp;sortby=%s' .
+                '&amp;order=%s' . //($order == 'desc' ? 'desc' : 'asc') .
+                '&amp;page=%s' .
+                '&amp;part=' . $default_part .
+                '#record';
+
+            $pager = new pager($page, $counter->f(0), $nb, 10);
+            $pager->html_prev = __('&#171;prev.');
+            $pager->html_next = __('next&#187;');
+            $pager->base_url = sprintf($pager_url, $sortby, $order, '%s');
+            $pager->var_page = 'page';
         } catch (Exception $e) {
             $core->error->add($e->getMessage());
         }
-
-        $pager_url = $p_url .
-            '&amp;nb=' . $nb .
-            '&amp;sortby=%s' .
-            '&amp;order=' . ($order == 'desc' ? 'desc' : 'asc') .
-            '&amp;page=%s' .
-            '&amp;part=' . $default_part .
-            '#record';
-
-        $pager = new pager($page, $counter->f(0), $nb, 10);
-        $pager->html_prev = __('&#171;prev.');
-        $pager->html_next = __('next&#187;');
-        $pager->base_url = sprintf($pager_url, $sortby, '%s');
-        $pager->var_page = 'page';
 
         echo '
         <div class="multi-part" id="record" title="' . __('Records') . '">';
@@ -344,16 +353,16 @@ if (isset($filters_id[$default_part])) {
             echo '<p>' . __('No record') . '</p>';
         } else {
             echo '
-            <form action="' . $pager_url . '" method="post">
+            <form action="' . sprintf($pager_url, 'epc_key', $order, $page) . '" method="post">
             <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
             <div class="table-outer">
             <table><caption class="hidden">' . __('Records') . '</caption>
             <thead><tr>
-            <th><a href="' . sprintf($pager_url, 'epc_key', $page) . '">' .
+            <th><a href="' . sprintf($pager_url, 'epc_key', $order, $page) . '">' .
             __('Key') . '</a></th>
-            <th><a href="' . sprintf($pager_url, 'epc_value', $page) . '">' .
+            <th><a href="' . sprintf($pager_url, 'epc_value', $order, $page) . '">' .
             __('Value') . '</a></th>
-            <th><a href="' . sprintf($pager_url, 'epc_upddt', $page) . '">' .
+            <th><a href="' . sprintf($pager_url, 'epc_upddt', $order, $page) . '">' .
             __('Date') . '</a></th>
             </tr></thead>
             <tbody>';
@@ -382,7 +391,7 @@ if (isset($filters_id[$default_part])) {
             <div class="clear">
             <p>' .
             $core->formNonce() .
-            form::hidden(['redir'], sprintf($pager_url, $sortby, $page)) .
+            form::hidden(['redir'], sprintf($pager_url, $sortby, $order, $page)) .
             form::hidden(['action'], 'saveupdaterecords') . '
             <input type="submit" name="save" value="' . __('Save') . '" />
             </p>
@@ -396,7 +405,9 @@ if (isset($filters_id[$default_part])) {
         # New record
         echo '
         <div class="multi-part" id="newrecord" title="' . __('New record') . '">
-        <form action="' . $p_url . '&amp;part=' . $default_part . '&amp;tab=setting" method="post">' .
+        <form action="' . 
+            $core->adminurl->get('admin.plugin.enhancePostContent', ['part' => $default_part]) . 
+            '#record" method="post">' .
 
         '<p><label for="new_key">' . __('Key:') . '</label>' .
         form::field('new_key', 60, 255) .
