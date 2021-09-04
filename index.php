@@ -63,8 +63,11 @@ try {
         dcPage::addSuccessNotice(
             __('Filter successfully updated.')
         );
-        http::redirect(
-            $p_url . 'part=' . $default_part . '#setting'
+
+        $core->adminurl->redirect(
+            'admin.plugin.enhancePostContent', 
+            ['part' => $default_part],
+            '#settings'
         );
     }
 
@@ -84,8 +87,10 @@ try {
         dcPage::addSuccessNotice(
             __('Filter successfully updated.')
         );
-        http::redirect(
-            $p_url . '&part=' . $default_part . '#record'
+        $core->adminurl->redirect(
+            'admin.plugin.enhancePostContent', 
+            ['part' => $default_part],
+            '#record'
         );
     }
 
@@ -115,7 +120,7 @@ try {
 
         $redir = !empty($_REQUEST['redir']) ? 
             $_REQUEST['redir'] :
-            $p_url . '&part=' . $default_part . '#record';
+            $core->adminurl->get('admin.plugin.enhancePostContent', ['part' => $default_part]) . '#record';
 
         dcPage::addSuccessNotice(
             __('Filter successfully updated.')
