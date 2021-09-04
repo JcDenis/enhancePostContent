@@ -20,6 +20,8 @@ __('atom feeds');__('RSS feeds');
 
 class libEPC
 {
+    public static $epcFilterLimit = [];
+
     #
     # Default definition
     #
@@ -351,12 +353,12 @@ class libEPC
     {
         # Limit
         if ($filter['limit'] > 0) {
-            $l = isset($GLOBALS['epcFilterLimit'][$filter['id']][$p]) ? $GLOBALS['epcFilterLimit'][$filter['id']][$p] : $filter['limit'];
-            if ($l < 1) {
+            $limit = in_array($filter['id'] . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter['id'] . '_' . $p] : $filter['limit'];
+            if ($limit < 1) {
                 return $s;
             }
         } else {
-            $l = -1;
+            $limit = -1;
         }
         # Case sensitive
         $i = $filter['nocase'] ? 'i' : '';
@@ -380,9 +382,9 @@ class libEPC
         # Remove words inside html tag (class, title, alt, href, ...)
         $s = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
         # Replace words by what you want (with limit)
-        $s = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $l, $count);
+        $s = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $limit, $count);
         # update limit
-        $GLOBALS['epcFilterLimit'][$filter['id']][$p] = $l - $count;
+        self::$epcFilterLimit[$filter['id'] . '_' . $p] = $limit - $count;
         # Clean rest
         return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
     }
