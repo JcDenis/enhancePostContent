@@ -19,7 +19,7 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2021.09.05',
+    '2021.09.05.1',
     [
         'requires' => [['core', '2.19']],
         'permissions' => 'contentadmin',
