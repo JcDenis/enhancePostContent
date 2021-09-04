@@ -1,19 +1,19 @@
 <?php
 // Language: Français 
-// Module: enhancePostContent - 2021.08.24
-// Date: 2021-08-24 20:55:32 
-// Translated with dcTranslater - 2021.08.18 
+// Module: enhancePostContent - 2021.08.24.1
+// Date: 2021-09-04 22:57:01 
+// Translated with dcTranslater - 2021.09.02.1 
 
 #_admin.php:24
 #_admin.php:52
 #_admin.php:100
 #_widgets.php:41
-#index.php:135
-#index.php:155
+#index.php:150
+#index.php:164
 $GLOBALS['__l10n']['Enhance post content'] = 'Amélioration du contenu';
 
 #_admin.php:75
-#index.php:349
+#index.php:362
 $GLOBALS['__l10n']['Key'] = 'Clé';
 
 #_admin.php:105
@@ -31,19 +31,19 @@ $GLOBALS['__l10n']['This is the default order of records lists.'] = 'Ceci est l\
 #_admin.php:115
 $GLOBALS['__l10n']['Records per page:'] = 'Enregistrements par page :';
 
-#_admin.php:120
+#_admin.php:122
 $GLOBALS['__l10n']['This is a special feature to edit list of allowed template values and public pages where this plugin works.'] = 'Ceci est une option spéciale pour modifier les listes des balises de template et des pages publiques ou le plugin sera actif.';
 
-#_admin.php:121
+#_admin.php:123
 $GLOBALS['__l10n']['Allowed DC template values:'] = 'Autoriser les balises de template :';
 
-#_admin.php:123
+#_admin.php:125
 $GLOBALS['__l10n']['Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".'] = 'Utiliser "titre1:valeur_de_template1;titre2:valeur_de_template2;" exemple "entry content:EntreyContent;entry excerpt:EntreyExcerpt;".';
 
-#_admin.php:124
+#_admin.php:126
 $GLOBALS['__l10n']['Allowed public pages:'] = 'Autoriser les pages publiques :';
 
-#_admin.php:126
+#_admin.php:128
 $GLOBALS['__l10n']['Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".'] = 'Utiliser "titre1:page_de_template1;titre2:page_de_template2;" comme "post page:post.html;home page:home.html;".';
 
 #_widgets.php:44
@@ -106,108 +106,124 @@ $GLOBALS['__l10n']['atom feeds'] = 'les flux Atom';
 #inc/lib.epc.php:19
 $GLOBALS['__l10n']['RSS feeds'] = 'les flux RSS';
 
-#inc/lib.epc.php:100
+#inc/lib.epc.php:102
 $GLOBALS['__l10n']['Highlight tags of your blog.'] = 'Met en avant les Tags de votre blog';
 
-#inc/lib.epc.php:119
+#inc/lib.epc.php:121
 $GLOBALS['__l10n']['Highlight searched words.'] = 'Met en avant les mots recherchés';
 
-#inc/lib.epc.php:138
-$GLOBALS['__l10n']['Explain some acronyms. First term of the list is the acornym and second term the explanation.'] = 'Explique des acronymes. Le premier terme de la liste est l\'acronyme et les second terme l\'explication.';
+#inc/lib.epc.php:140
+$GLOBALS['__l10n']['Explain some acronyms. First term of the list is the acornym and second term the explanation.'] = 'Explique des acronymes. Le premier terme de la liste est l\'acronyme et les second terme est l\'explication.';
 
-#inc/lib.epc.php:158
-$GLOBALS['__l10n']['Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'] = 'Explique des abréviations. Le premier terme de la liste est l\'abréviation et le second terme l\'explication.';
+#inc/lib.epc.php:160
+$GLOBALS['__l10n']['Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'] = 'Explique des abréviations. Le premier terme de la liste est l\'abréviation et le second terme est l\'explication.';
 
-#inc/lib.epc.php:178
+#inc/lib.epc.php:180
 $GLOBALS['__l10n']['Explain some definition. First term of the list is the sample to define and second term the explanation.'] = 'Explique des définitions. Le premier terme de la liste est la chaine à expliquer et le second terme est la définition.';
 
-#inc/lib.epc.php:198
+#inc/lib.epc.php:200
 $GLOBALS['__l10n']['Highlight citation of people. First term of the list is the citation and second term the author.'] = 'Met en avant les citation des gens. Le premier terme est la citation et le second terme est l\'auteur.';
 
-#inc/lib.epc.php:218
+#inc/lib.epc.php:220
 $GLOBALS['__l10n']['Link some words. First term of the list is the term to link and second term the link.'] = 'Ajouter des liens. Le premier terme de la liste est le texte à lier et le second terme est l\'adresse de lien.';
 
-#inc/lib.epc.php:237
-$GLOBALS['__l10n']['Replace some text. First term of the list is the text to replace and second term the replacement.'] = 'Remplace du texte. Le premier terme de la liste est le terme à remplacer et le second le nouveau terme.';
+#inc/lib.epc.php:239
+$GLOBALS['__l10n']['Replace some text. First term of the list is the text to replace and second term the replacement.'] = 'Remplace du texte. Le premier terme de la liste est le terme à remplacer et le second est le nouveau terme.';
 
-#inc/lib.epc.php:255
-$GLOBALS['__l10n']['Update and show terms. First term of the list is the term to update and second term the new term.'] = 'Met à jour du contenu. Le premier terme de la liste est l\'ancien texte et le second le nouveau texte.';
+#inc/lib.epc.php:257
+$GLOBALS['__l10n']['Update and show terms. First term of the list is the term to update and second term the new term.'] = 'Met à jour du contenu. Le premier terme de la liste est l\'ancien texte et le second est le nouveau texte.';
 
-#inc/lib.epc.php:273
+#inc/lib.epc.php:275
 $GLOBALS['__l10n']['Add link to twitter user page. Every word started with "@" will be considered as twitter user.'] = 'Ajouter un lien vers une page Twitter. Chaque mot commençant par "@" sera considéré comme un nom de compte Twitter';
 
-#inc/lib.epc.php:277
+#inc/lib.epc.php:279
 $GLOBALS['__l10n']['View this user\'s twitter page'] = 'Voir la page Twitter de cet utilisateur';
 
+#inc/lib.epc.records.php:139
+#inc/lib.epc.records.php:165
+$GLOBALS['__l10n']['No such record ID'] = 'Clé inconnue';
+
+#inc/lib.epc.records.php:195
+$GLOBALS['__l10n']['No record key'] = 'Pas de clé';
+
+#inc/lib.epc.records.php:198
+$GLOBALS['__l10n']['No record value'] = 'Pas de valeur';
+
+#inc/lib.epc.records.php:201
+$GLOBALS['__l10n']['No record filter'] = 'Pas de filtre';
+
 #index.php:64
-#index.php:85
-#index.php:121
+#index.php:92
+#index.php:137
 $GLOBALS['__l10n']['Filter successfully updated.'] = 'Filtre mis à jour.';
 
-#index.php:187
-$GLOBALS['__l10n']['Settings'] = 'Réglages';
+#index.php:85
+#index.php:122
+$GLOBALS['__l10n']['Key already exists for this filter'] = 'Cette clé existe déjà pour ce filter';
 
-#index.php:192
+#index.php:180
+$GLOBALS['__l10n']['Select filter:'] = 'Sélectionner un filtre :';
+
+#index.php:204
 $GLOBALS['__l10n']['Pages to be filtered'] = 'Pages à filtrer';
 
-#index.php:210
+#index.php:222
 $GLOBALS['__l10n']['Filtering'] = 'Filtrage';
 
-#index.php:214
+#index.php:226
 $GLOBALS['__l10n']['Case insensitive'] = 'Insensible à la casse';
 
-#index.php:218
+#index.php:230
 $GLOBALS['__l10n']['Also use the plural'] = 'Utiliser également le pluriel';
 
-#index.php:221
+#index.php:233
 $GLOBALS['__l10n']['Limit the number of replacement to:'] = 'Limiter le nombre de remplacement à :';
 
-#index.php:224
+#index.php:236
 $GLOBALS['__l10n']['Leave it blank or set it to 0 for no limit'] = 'Laisser vide ou mettre à 0 pour aucune limite';
 
-#index.php:230
+#index.php:242
 $GLOBALS['__l10n']['Contents to be filtered'] = 'Contenus à filtrer';
 
-#index.php:248
+#index.php:260
 $GLOBALS['__l10n']['Style'] = 'Style';
 
-#index.php:253
+#index.php:265
 $GLOBALS['__l10n']['Class "%s":'] = 'Class CSS "%s" :';
 
-#index.php:264
+#index.php:276
 $GLOBALS['__l10n']['The inserted HTML tag looks like: %s'] = 'Le code HTML de la balise est le suivant: %s';
 
-#index.php:266
+#index.php:278
 $GLOBALS['__l10n']['Ignore HTML tags:'] = 'Ignorer les balises HTML :';
 
-#index.php:269
+#index.php:281
 $GLOBALS['__l10n']['This is the list of HTML tags where content will be ignored.'] = 'Ceci est la liste des balises HTML dont le contenu sera ignoré.';
 
-#index.php:270
+#index.php:282
 $GLOBALS['__l10n']['Tag "%s" always be ignored.'] = 'Les balises "%s" seront toujours ignorées.';
 
-#index.php:332
+#index.php:341
 $GLOBALS['__l10n']['&#171;prev.'] = 'préc.';
 
-#index.php:333
+#index.php:342
 $GLOBALS['__l10n']['next&#187;'] = 'suiv.';
 
-#index.php:338
+#index.php:350
+#index.php:359
 $GLOBALS['__l10n']['Records'] = 'Enregistrements';
 
-#index.php:341
+#index.php:353
 $GLOBALS['__l10n']['No record'] = 'Pas d\'enregistrement';
 
-#index.php:375
+#index.php:388
 $GLOBALS['__l10n']['In order to remove a record, leave empty its key or value.'] = 'Pour retirer un enregistrement, laisser vide sa clé ou sa valeur.';
 
-#index.php:394
+#index.php:407
 $GLOBALS['__l10n']['New record'] = 'Nouvel enregistrement';
 
-#index.php:397
+#index.php:412
 $GLOBALS['__l10n']['Key:'] = 'Clé :';
 
-#index.php:401
+#index.php:416
 $GLOBALS['__l10n']['Value:'] = 'Valeur :';
-
-$GLOBALS['__l10n']['Configuration has been successfully updated.'] = 'La configuration a été mise à jour avec succés.';
