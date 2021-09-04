@@ -97,7 +97,7 @@ class epcAdminBehaviors
         $allowedpubpages    = libEPC::blogAllowedPubPages();
 
         echo
-        '<div class="fieldset"><h4 id="fac_params">' . __('Enhance post content') .'</h4>' .
+        '<div class="fieldset"><h4 id="epc_params">' . __('Enhance post content') .'</h4>' .
         '<div class="two-cols">' .
         '<div class="col">' .
         '<p><label class="classic">' .

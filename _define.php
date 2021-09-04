@@ -26,6 +26,9 @@ $this->registerModule(
         'type' => 'plugin',
         'support' => 'https://github.com/JcDenis/enhancePostContent',
         'details' => 'https://plugins.dotaddict.org/dc2/details/enhancePostContent',
-        'repository' => 'https://raw.githubusercontent.com/JcDenis/enhancePostContent/master/dcstore.xml'
+        'repository' => 'https://raw.githubusercontent.com/JcDenis/enhancePostContent/master/dcstore.xml',
+        'settings' => [
+            'blog' => '#params.epc_params'
+        ]
     ]
 );
