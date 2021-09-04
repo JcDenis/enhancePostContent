@@ -70,11 +70,21 @@ class epcRecords
 
         if (!empty($params['epc_id'])) {
             if (is_array($params['epc_id'])) {
-                array_walk($params['epc_id'], create_function('&$v,$k', 'if($v!==null){$v=(integer)$v;}'));
+                array_walk($params['epc_id'], function(&$v, $k) { if ($v !==null) { $v = (integer) $v; }});
             } else {
                 $params['epc_id'] = [(integer) $params['epc_id']];
             }
             $strReq .= 'AND E.epc_id ' . $this->con->in($params['epc_id']);
+        } elseif (isset($params['not_id']) && is_numeric($params['not_id'])) {
+            $strReq .= "AND NOT E.epc_id = '" . $params['not_id'] . "' ";
+        }
+
+        if (isset($params['epc_key'])) {
+            if (is_array($params['epc_key']) && !empty($params['epc_key'])) {
+                $strReq .= 'AND E.epc_key ' . $this->con->in($params['epc_key']);
+            } elseif ($params['epc_key'] != '') {
+                $strReq .= "AND E.epc_key = '" . $this->con->escape($params['epc_key']) . "' ";
+            }
         }
 
         if (!empty($params['sql'])) {
@@ -136,6 +146,15 @@ class epcRecords
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord
         $this->core->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
+    }
+
+    public function isRecord($filter, $key, $not_id = null)
+    {
+        return 0 < $this->getRecords([
+                'epc_filter' => $filter, 
+                'epc_key' => $key, 
+                'not_id' => $not_id
+            ], true)->f(0);
     }
 
     public function delRecord($id)
