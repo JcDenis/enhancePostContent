@@ -298,50 +298,28 @@ if (isset($filters_id[$default_part])) {
 
     # Filter records list
     if ($filter['has_list']) {
+        $sorts = new adminGenericFilter($core, 'epc');
+        $sorts->add(dcAdminFilters::getPageFilter());
 
-        $sortby_combo = [
-            'epc_upddt',
-            'epc_key',
-            'epc_value',
-            'epc_id'
-        ];
-
-        $order_combo = [
-            'asc',
-            'desc'
-        ];
-
-        $sortby = !empty($_GET['sortby']) ? $_GET['sortby'] : (string) $s->enhancePostContent_list_sortby;
-        $order = !empty($_GET['order']) ? $_GET['order'] : (string) $s->enhancePostContent_list_order;
-        $page = !empty($_GET['page']) ? (integer) $_GET['page'] : 1;
-        $nb = !empty($_GET['nb']) && (integer) $_GET['nb'] > 0 ? (integer) $_GET['nb'] : (integer) $s->enhancePostContent_list_nb;
-
-        $params = [];
+        $params = $sorts->params();
         $params['epc_filter'] = $name;
-        $params['limit'] = [(($page - 1) * $nb), $nb];
-
-        if ($sortby !== '' && in_array($sortby, $sortby_combo)) {
-            if ($order !== '' && in_array($order, $order_combo)) {
-                $params['order'] = $sortby . ' ' . $order;
-            }
-        }
 
         try {
             $list = $records->getRecords($params);
             $counter = $records->getRecords($params, true);
 
             $pager_url = $p_url .
-                '&amp;nb=' . $nb .
+                '&amp;nb=' . $sorts->nb .
                 '&amp;sortby=%s' .
-                '&amp;order=%s' . //($order == 'desc' ? 'desc' : 'asc') .
+                '&amp;order=%s' . 
                 '&amp;page=%s' .
                 '&amp;part=' . $default_part .
                 '#record';
 
-            $pager = new pager($page, $counter->f(0), $nb, 10);
+            $pager = new pager($sorts->page, $counter->f(0), $sorts->nb, 10);
             $pager->html_prev = __('&#171;prev.');
             $pager->html_next = __('next&#187;');
-            $pager->base_url = sprintf($pager_url, $sortby, $order, '%s');
+            $pager->base_url = sprintf($pager_url, $sorts->sortby, $sorts->order, '%s');
             $pager->var_page = 'page';
         } catch (Exception $e) {
             $core->error->add($e->getMessage());
@@ -354,17 +332,22 @@ if (isset($filters_id[$default_part])) {
             echo '<p>' . __('No record') . '</p>';
         } else {
             echo '
-            <form action="' . sprintf($pager_url, 'epc_key', $order, $page) . '" method="post">
+            <form action="' . sprintf($pager_url, $sorts->sortby, $sorts->order, $sorts->page) . '" method="post">
             <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
             <div class="table-outer">
             <table><caption class="hidden">' . __('Records') . '</caption>
-            <thead><tr>
-            <th><a href="' . sprintf($pager_url, 'epc_key', $order, $page) . '">' .
-            __('Key') . '</a></th>
-            <th><a href="' . sprintf($pager_url, 'epc_value', $order, $page) . '">' .
-            __('Value') . '</a></th>
-            <th><a href="' . sprintf($pager_url, 'epc_upddt', $order, $page) . '">' .
-            __('Date') . '</a></th>
+            <thead><tr>';
+
+            $lines = [
+                __('Key')   => 'epc_key',
+                __('Value') => 'epc_value',
+                __('Date')  => 'epc_date'
+            ];
+            foreach($lines as $k => $v) {
+                echo '<th><a href="' . sprintf($pager_url, $v, $sorts->sortby == $v ? $sorts->order == 'asc' ? 'desc' : 'asc' : $sorts->order, $sorts->page) . '">' .$k . '</a></th>';
+            }
+
+            echo '
             </tr></thead>
             <tbody>';
 
@@ -392,7 +375,7 @@ if (isset($filters_id[$default_part])) {
             <div class="clear">
             <p>' .
             $core->formNonce() .
-            form::hidden(['redir'], sprintf($pager_url, $sortby, $order, $page)) .
+            form::hidden(['redir'], sprintf($pager_url, $sorts->sortby, $sorts->order, $sorts->page)) .
             form::hidden(['action'], 'saveupdaterecords') . '
             <input type="submit" name="save" value="' . __('Save') . '" />
             </p>

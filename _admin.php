@@ -43,6 +43,10 @@ $core->addBehavior(
     'adminBeforeBlogSettingsUpdate',
     ['epcAdminBehaviors', 'adminBeforeBlogSettingsUpdate']
 );
+$core->addBehavior(
+    'adminFiltersLists',
+    ['epcAdminBehaviors', 'adminFiltersLists']
+);
 
 class epcAdminBehaviors
 {
@@ -78,21 +82,9 @@ class epcAdminBehaviors
         ];
     }
 
-    public static function orderCombo()
-    {
-        return [
-            __('Ascending') => 'asc',
-            __('Descending') => 'desc'
-        ];
-    }
-
     public static function adminBlogPreferencesForm(dcCore $core, dcSettings $blog_settings)
     {
         $active         = (boolean) $blog_settings->enhancePostContent->enhancePostContent_active;
-        $list_sortby        = (string) $blog_settings->enhancePostContent->enhancePostContent_list_sortby;
-        $list_order     = (string) $blog_settings->enhancePostContent->enhancePostContent_list_order;
-        $list_nb            = (integer) $blog_settings->enhancePostContent->enhancePostContent_list_nb;
-        $_filters           = libEPC::blogFilters();
         $allowedtplvalues   = libEPC::blogAllowedTplValues();
         $allowedpubpages    = libEPC::blogAllowedPubPages();
 
@@ -106,14 +98,6 @@ class epcAdminBehaviors
         '<p class="form-note">' .
         __('This enable public widgets and contents filter.') .
         '</p>' .
-        '<h5>' . __('Record list') . '</h4>' .
-        '<p class="form-note">' . __('This is the default order of records lists.') . '</p>' .
-        '<p class="field"><label for="epc_list_sortby">' . __('Order by:') . '</label>' .
-        form::combo('epc_list_sortby', self::sortbyCombo(), $list_sortby) . '</p>' .
-        '<p class="field"><label for="epc_list_order">' . __('Sort:') . '</label>' .
-        form::combo('epc_list_order', self::orderCombo(), $list_order) . '</p>' .
-        '<p class="field"><label for="list_nb">' . __('Records per page:') . '</label>' .
-        form::field('epc_list_nb', 3, 3, $list_nb) . '</p>' .
         '<p><a href="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '">' . 
         __('Set content filters') . '</a></p>' .
         '</div>' .
@@ -135,17 +119,22 @@ class epcAdminBehaviors
     public static function adminBeforeBlogSettingsUpdate(dcSettings $blog_settings)
     {
         $active = !empty($_POST['epc_active']);
-        $list_sortby = in_array($_POST['epc_list_sortby'], self::sortbyCombo()) ? $_POST['epc_list_sortby'] : 'epc_id';
-        $list_order = in_array($_POST['epc_list_order'], self::orderCombo()) ? $_POST['epc_list_order'] : 'desc';
-        $list_nb = isset($_POST['epc_list_nb']) && $_POST['epc_list_nb'] > 0 ? $_POST['epc_list_nb'] : 20;
         $allowedtplvalues = libEPC::explode($_POST['epc_allowedtplvalues']);
         $allowedpubpages = libEPC::explode($_POST['epc_allowedpubpages']);
 
         $blog_settings->enhancePostContent->put('enhancePostContent_active', $active);
-        $blog_settings->enhancePostContent->put('enhancePostContent_list_sortby', $list_sortby);
-        $blog_settings->enhancePostContent->put('enhancePostContent_list_order', $list_order);
-        $blog_settings->enhancePostContent->put('enhancePostContent_list_nb', $list_nb);
         $blog_settings->enhancePostContent->put('enhancePostContent_allowedtplvalues', serialize($allowedtplvalues));
         $blog_settings->enhancePostContent->put('enhancePostContent_allowedpubpages', serialize($allowedpubpages));
+    }
+
+    public static function adminFiltersLists(dcCore $core, $sorts)
+    {
+        $sorts['epc'] = [
+            __('Enhance post content'),
+            self::sortbyCombo(),
+            'epc_upddt',
+            'desc',
+            [__('records per page'), 20]
+        ];
     }
 }
