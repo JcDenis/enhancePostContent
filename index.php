@@ -316,11 +316,8 @@ if (isset($filters_id[$default_part])) {
                 '&amp;part=' . $default_part .
                 '#record';
 
-            $pager = new pager($sorts->page, $counter->f(0), $sorts->nb, 10);
-            $pager->html_prev = __('&#171;prev.');
-            $pager->html_next = __('next&#187;');
+            $pager = new dcPager($sorts->page, $counter->f(0), $sorts->nb, 10);
             $pager->base_url = sprintf($pager_url, $sorts->sortby, $sorts->order, '%s');
-            $pager->var_page = 'page';
         } catch (Exception $e) {
             $core->error->add($e->getMessage());
         }
@@ -332,8 +329,10 @@ if (isset($filters_id[$default_part])) {
             echo '<p>' . __('No record') . '</p>';
         } else {
             echo '
-            <form action="' . sprintf($pager_url, $sorts->sortby, $sorts->order, $sorts->page) . '" method="post">
-            <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
+            <form action="' . sprintf($pager_url, $sorts->sortby, $sorts->order, $sorts->page) . '" method="post">' .
+
+            $pager->getLinks() . '
+
             <div class="table-outer">
             <table><caption class="hidden">' . __('Records') . '</caption>
             <thead><tr>';
@@ -369,8 +368,9 @@ if (isset($filters_id[$default_part])) {
             echo '
             </tbody>
             </table></div>
-            <p class="form-note">' . __('In order to remove a record, leave empty its key or value.') . '</p>
-            <p>' . __('Page(s)') . ' : ' . $pager->getLinks() . '</p>
+            <p class="form-note">' . __('In order to remove a record, leave empty its key or value.') . '</p>' .
+
+            $pager->getLinks() . '
 
             <div class="clear">
             <p>' .
