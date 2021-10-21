@@ -3,6 +3,8 @@
 - [ ] add priority on lists of filters for replacement order
 - [ ] add auto-find post title in content
 - [ ] split filters into modules
+- [x] add autosubmit onadmin menu
+- [ ] move sort options from blog pref to user pref
 
 2021.09.05
 - fix duplicate records id

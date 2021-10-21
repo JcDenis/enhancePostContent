@@ -165,6 +165,7 @@ echo '
 //dcPage::jsLoad('js/_posts_list.js') .
 dcPage::jsToolbar() .
 dcPage::jsPageTabs() .
+dcPage::jsLoad(dcPage::getPF('enhancePostContent/js/index.js')) .
 
 # --BEHAVIOR-- enhancePostContentAdminHeader
 $core->callBehavior('enhancePostContentAdminHeader', $core) . '
