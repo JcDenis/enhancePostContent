@@ -1,5 +1,12 @@
 # README
 
+[![Release](https://img.shields.io/github/v/release/JcDenis/enhancePostContent)](https://github.com/JcDenis/enhancePostContent/releases)
+[![Date](https://img.shields.io/github/release-date/JcDenis/enhancePostContent)](https://github.com/JcDenis/enhancePostContent/releases)
+[![Issues](https://img.shields.io/github/issues/JcDenis/enhancePostContent)](https://github.com/JcDenis/enhancePostContent/issues)
+[![Dotclear](https://img.shields.io/badge/dotclear-v2.19-blue.svg)](https://fr.dotclear.org/download)
+[![Dotaddict](https://img.shields.io/badge/dotaddict-official-green.svg)](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
+[![License](https://img.shields.io/github/license/JcDenis/enhancePostContent)](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
+
 ## WHAT IS ENHANCEPOSTCONTENT ?
 
 "Enhance Post Content" is a plugin for the open-source 
