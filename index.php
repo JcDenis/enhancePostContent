@@ -17,8 +17,6 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 dcPage::check('contentadmin');
 
-$core->blog->settings->addNamespace('enhancePostContent');
-$s = $core->blog->settings->enhancePostContent;
 
 # -- Prepare queries and object --
 
@@ -43,20 +41,22 @@ if (!empty($action)) {
 try {
     # Update filter settings
     if ($action == 'savefiltersetting'
-     && isset($filters_id[$default_part])) {
+        && isset($filters_id[$default_part])
+    ) {
         # Parse filters options
         $name = $filters_id[$default_part];
         $f = [
-            'nocase' => !empty($_POST['filter_nocase']),
-            'plural' => !empty($_POST['filter_plural']),
-            'limit' => abs((integer) $_POST['filter_limit']),
-            'style' => (array) $_POST['filter_style'],
-            'notag' => (string) $_POST['filter_notag'],
+            'nocase'    => !empty($_POST['filter_nocase']),
+            'plural'    => !empty($_POST['filter_plural']),
+            'limit'     => abs((integer) $_POST['filter_limit']),
+            'style'     => (array) $_POST['filter_style'],
+            'notag'     => (string) $_POST['filter_notag'],
             'tplValues' => (array) $_POST['filter_tplValues'],
-            'pubPages' => (array) $_POST['filter_pubPages']
+            'pubPages'  => (array) $_POST['filter_pubPages']
         ];
 
-        $s->put('enhancePostContent_' . $name, serialize($f));
+        $core->blog->settings->addNamespace('enhancePostContent');
+        $core->blog->settings->enhancePostContent->put('enhancePostContent_' . $name, serialize($f));
 
         $core->blog->triggerBlog();
 
@@ -73,14 +73,15 @@ try {
 
     # Add new filter record
     if ($action == 'savenewrecord'
-     && isset($filters_id[$default_part])
-     && !empty($_POST['new_key'])
-     && !empty($_POST['new_value'])) {
-
+        && isset($filters_id[$default_part])
+        && !empty($_POST['new_key'])
+        && !empty($_POST['new_value'])
+    ) {
         $cur = $records->openCursor();
         $cur->epc_filter = $filters_id[$default_part];
-        $cur->epc_key = html::escapeHTML($_POST['new_key']);
-        $cur->epc_value = html::escapeHTML($_POST['new_value']);
+        $cur->epc_key    = html::escapeHTML($_POST['new_key']);
+        $cur->epc_value  = html::escapeHTML($_POST['new_value']);
+
         if ($records->isRecord($cur->epc_filter, $cur->epc_key)) {
             dcPage::addErrorNotice(__('Key already exists for this filter'));
         } else {
@@ -102,22 +103,25 @@ try {
     # Update filter records
     $error = false;
     if ($action == 'saveupdaterecords'
-     && isset($filters_id[$default_part])
-     && $_filters[$filters_id[$default_part]]['has_list']) {
+        && isset($filters_id[$default_part])
+        && $_filters[$filters_id[$default_part]]['has_list']
+    ) {
         foreach($_POST['epc_id'] as $k => $id) {
-
             $k = abs((integer) $k);
             $id = abs((integer) $id);
 
             if (empty($_POST['epc_key'][$k])
-             || empty($_POST['epc_value'][$k])) {
+                || empty($_POST['epc_value'][$k])
+            ) {
                 $records->delRecord($id);
             } elseif ($_POST['epc_key'][$k] != $_POST['epc_old_key'][$k] 
-             || $_POST['epc_value'][$k] != $_POST['epc_old_value'][$k]) {
+                || $_POST['epc_value'][$k] != $_POST['epc_old_value'][$k]
+            ) {
                 $cur = $records->openCursor();
                 $cur->epc_filter = $filters_id[$default_part];
-                $cur->epc_key = html::escapeHTML($_POST['epc_key'][$k]);
-                $cur->epc_value = html::escapeHTML($_POST['epc_value'][$k]);
+                $cur->epc_key    = html::escapeHTML($_POST['epc_key'][$k]);
+                $cur->epc_value  = html::escapeHTML($_POST['epc_value'][$k]);
+
                 if ($records->isRecord($cur->epc_filter, $cur->epc_key, $id)) {
                     dcPage::addErrorNotice(__('Key already exists for this filter'));
                     $error = true;
@@ -186,7 +190,6 @@ $core->formNonce() .
 
 # Filter content
 if (isset($filters_id[$default_part])) {
-
     $name = $filters_id[$default_part];
     $filter = $_filters[$name];
 
