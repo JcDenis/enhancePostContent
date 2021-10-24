@@ -5,6 +5,9 @@
 - [ ] split filters into modules
 - [x] add autosubmit onadmin menu
 - [x] move sort options from blog pref to user pref
+- [x] add pager for records list
+- [x] add some js helpers
+- [x] remove ability to edit record (=> delete then create)
 
 2021.09.05
 - fix duplicate records id
