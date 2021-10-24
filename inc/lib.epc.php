@@ -328,6 +328,7 @@ class libEPC
             if (isset($opt[$name]['pubPages'])) {
                 $filters[$name]['pubPages'] = (array) $opt[$name]['pubPages'];
             }
+            $filters[$name]['name'] = $name;
         }
 
         $core->callBehavior('enhancePostContentBlogFilters', $filters);
