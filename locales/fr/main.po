@@ -3,7 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Project-Id-Version: enhancePostContent 2021.09.05.1\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-10-23T19:50:15+00:00\n"
+"PO-Revision-Date: 2021-10-24T21:45:33+00:00\n"
 "Last-Translator: Jean-Christian Denis\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -60,6 +60,18 @@ msgstr "Recherche également le pluriel"
 
 msgid "Show the number of appearance"
 msgstr "Afficher le nombre d'occurence"
+
+msgid "No record matches the filter"
+msgstr "Aucun enregistrement correspondant au filtre"
+
+msgid "No record"
+msgstr "Pas d'enregistrement"
+
+msgid "List of %s records matching the filter."
+msgstr "Listes des %s enregistrements correspondant au filtre"
+
+msgid "List of %s records."
+msgstr "Liste des %s enregistrements"
 
 msgid "Acronym"
 msgstr "Acronyme"
@@ -199,11 +211,8 @@ msgstr "Les balises \"%s\" seront toujours ignorées."
 msgid "Records"
 msgstr "Enregistrements"
 
-msgid "No record"
-msgstr "Pas d'enregistrement"
-
-msgid "In order to remove a record, leave empty its key or value."
-msgstr "Pour retirer un enregistrement, laisser vide sa clé ou sa valeur."
+msgid "Delete selected records"
+msgstr "Effacer les enregistrements sélectionnés"
 
 msgid "New record"
 msgstr "Nouvel enregistrement"
