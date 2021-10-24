@@ -20,7 +20,7 @@ $core->blog->settings->addNamespace('enhancePostContent');
 require dirname(__FILE__) . '/_widgets.php';
 
 # Admin menu
-$_menu['Blog']->addItem(
+$_menu['Plugins']->addItem(
     __('Enhance post content'),
     'plugin.php?p=enhancePostContent',
     'index.php?pf=enhancePostContent/icon.png',
