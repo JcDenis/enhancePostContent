@@ -180,7 +180,7 @@ dcPage::notices() .
 
 # Filters select menu list
 '<form method="get" action="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '" id="filters_menu">' .
-'<p class="anchor-nav"><label for="epc_tab" class="classic">' . __('Select filter:') . ' </label>' .
+'<p class="anchor-nav"><label for="part" class="classic">' . __('Select filter:') . ' </label>' .
 form::combo('part', $filters_combo, $part) . ' ' .
 '<input type="submit" value="' . __('Ok') . '" />' .
 form::hidden('p', 'enhancePostContent') . '</p>' .
