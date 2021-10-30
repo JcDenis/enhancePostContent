@@ -1,13 +1,14 @@
-2021.09.05.1 - dev
+dev
 - [ ] add priority on filters for replacement order
 - [ ] add priority on lists of filters for replacement order
 - [ ] add auto-find post title in content
 - [ ] split filters into modules
-- [x] add autosubmit onadmin menu
-- [x] move sort options from blog pref to user pref
-- [x] add pager for records list
-- [x] add some js helpers
-- [x] remove ability to edit record (=> delete then create)
+- add autosubmit onadmin menu
+- move sort options from blog pref to user pref
+- add pager for records list
+- add some js helpers
+- remove ability to edit record (=> delete then create)
+- use url handler for css
 
 2021.09.05
 - fix duplicate records id
