@@ -20,3 +20,10 @@ $d = dirname(__FILE__) . '/inc/';
 $__autoload['libEPC']       = $d . 'lib.epc.php';
 $__autoload['epcRecords']   = $d . 'lib.epc.records.php';
 $__autoload['adminEpcList'] = $d . 'lib.epc.pager.php';
+
+$core->url->register(
+    'epccss',
+    'epc.css',
+    '^epc\.css',
+    ['publicEnhancePostContent', 'css']
+);

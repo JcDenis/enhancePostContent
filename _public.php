@@ -45,12 +45,16 @@ class publicEnhancePostContent
      */
     public static function publicHeadContent(dcCore $core)
     {
+        echo dcUtils::cssLoad($core->blog->url . $core->url->getURLFor('epccss'));
+    }
+
+    public static function css($args)
+    {
+        $css = [];
         $filters = libEPC::blogFilters();
 
         foreach($filters as $name => $filter) {
-
-            if (empty($filter['class']) 
-             || empty($filter['style'])) {
+            if (empty($filter['class']) || empty($filter['style'])) {
                 continue;
             }
 
@@ -63,11 +67,16 @@ class publicEnhancePostContent
             }
 
             if (!empty($res)) {
-                echo 
-                "\n<!-- CSS for enhancePostContent " . $name . " --> \n" .
-                "<style type=\"text/css\"> " . $res . "</style> \n";
+                $css[] = 
+                "/* CSS for enhancePostContent " . $name . " */ \n" . $res . "\n";
             }
         }
+
+        header('Content-Type: text/css; charset=UTF-8');
+
+        echo implode("\n", $css);
+
+        exit;
     }
 
     /**
