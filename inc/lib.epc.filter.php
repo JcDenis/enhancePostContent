@@ -19,6 +19,7 @@ abstract class epcFilter
     private $records = null;
 
     private $properties = [
+        'priority' => 500,
         'name'     => 'undefined',
         'help'     => 'undefined',
         'has_list' => false,

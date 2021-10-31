@@ -16,12 +16,13 @@ class epcFilterTag extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
-            'name'    => __('Tag'),
-            'help'    => __('Highlight tags of your blog.'),
-            'htmltag' => 'a',
-            'class'   => ['a.epc-tag'],
-            'replace' => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
-            'widget'  => '<a href="%s" title="' . __('Tag') . '">%s</a>'
+            'priority' => 900,
+            'name'     => __('Tag'),
+            'help'     => __('Highlight tags of your blog.'),
+            'htmltag'  => 'a',
+            'class'    => ['a.epc-tag'],
+            'replace'  => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
+            'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>'
         ]);
 
         $this->setSettings([
@@ -80,6 +81,7 @@ class epcFilterSearch extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 100,
             'name'     => __('Search'),
             'help'     => __('Highlight searched words.'),
             'htmltag'  => '',
@@ -125,6 +127,7 @@ class epcFilterAcronym extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 700,
             'name'     => __('Acronym'),
             'help'     => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
             'has_list' => true,
@@ -178,6 +181,7 @@ class epcFilterAbbreviation extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 400,
             'name'     => __('Abbreviation'),
             'help'     => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
             'has_list' => true,
@@ -231,6 +235,7 @@ class epcFilterDefinition extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 800,
             'name'     => __('Definition'),
             'help'     => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
             'has_list' => true,
@@ -284,6 +289,7 @@ class epcFilterCitation extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 600,
             'name'     => __('Citation'),
             'help'     => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
             'has_list' => true,
@@ -338,6 +344,7 @@ class epcFilterLink extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 500,
             'name'     => __('Link'),
             'help'     => __('Link some words. First term of the list is the term to link and second term the link.'),
             'has_list' => true,
@@ -391,6 +398,7 @@ class epcFilterReplace extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 200,
             'name'     => __('Replace'),
             'help'     => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
             'has_list' => true,
@@ -431,6 +439,7 @@ class epcFilterUpdate extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 300,
             'name'     => __('Update'),
             'help'     => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
             'has_list' => true,
@@ -471,6 +480,7 @@ class epcFilterTwitter extends epcFilter
     protected function init(): string
     {
         $this->setProperties([
+            'priority' => 1000,
             'name'     => __('Twitter'),
             'help'     => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
             'htmltag'  => 'a',

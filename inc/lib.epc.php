@@ -103,7 +103,7 @@ class libEPC
         global $core;
 
         if (self::$default_filters === null) {
-            $final = [];
+            $final = $sort = [];
             $filters = new arrayObject();
 
             try {
@@ -111,12 +111,14 @@ class libEPC
 
                 foreach($filters as $filter) {
                     if ($filter instanceOf epcFilter && !isset($final[$filter->id()])) {
+                        $sort[$filter->id()] = $filter->priority;
                         $final[$filter->id()] = $filter;
                     }
                 }
             } catch (Exception $e) {
                 $core->error->add($e->getMessage());
             }
+            array_multisort($sort, $final);
             self::$default_filters = $final;
         }
 

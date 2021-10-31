@@ -1,7 +1,6 @@
 dev
-- [ ] add priority on filters for replacement order
-- [ ] add priority on lists of filters for replacement order
 - [ ] add auto-find post title in content
+- add priority on filters for replacement order
 - split filters into modules
 - add autosubmit onadmin menu
 - move sort options from blog pref to user pref
