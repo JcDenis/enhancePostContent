@@ -66,26 +66,26 @@ try {
     $s->put('enhancePostContent_allowedpubpages', serialize(libEPC::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
     # Filters settings
-    $filters = libEPC::defaultFilters();
-    foreach($filters as $name => $filter) {
+    $filters = libEPC::getFilters();
+    foreach($filters as $id => $filter) {
         # Only editable options
         $opt = [
-            'nocase' => $filter['nocase'],
-            'plural' => $filter['plural'],
-            'style' => $filter['style'],
-            'notag' => $filter['notag'],
-            'tplValues' => $filter['tplValues'],
-            'pubPages' => $filter['pubPages']
+            'nocase'    => $filter->nocase,
+            'plural'    => $filter->plural,
+            'style'     => $filter->style,
+            'notag'     => $filter->notag,
+            'tplValues' => $filter->tplValues,
+            'pubPages'  => $filter->pubPages
         ];
-        $s->put('enhancePostContent_' . $name, serialize($opt), 'string', 'Settings for ' . $name, false, true);
-        # only tables
+        $s->put('enhancePostContent_' . $id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
+/*        # only tables
         if (isset($filter['list'])) {
-            $s->put('enhancePostContent_' . $name . 'List', serialize($filter['list']), 'string', 'List for ' . $name, false, true);
+            $s->put('enhancePostContent_' . $id . 'List', serialize($filter['list']), 'string', 'List for ' . $id, false, true);
         }
-    }
+*/    }
 
-    # Move old filters lists from settings to database
-    if ($old_version && version_compare('0.6.6', $old_version, '>=')) {
+    # Update old versions
+    if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {
         include_once dirname(__FILE__) . '/inc/lib.epc.update.php';
     }
 

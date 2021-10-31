@@ -44,12 +44,7 @@ class enhancePostContentWidget
             __('List filtered contents.')
         );
         # Title
-        $w->epclist->setting(
-            'title',
-            __('Title:'),
-            __('In this article'),
-            'text'
-        );
+        $w->epclist->addTitle(__('In this article'));
         # Text
         $w->epclist->setting(
             'text',
@@ -58,15 +53,10 @@ class enhancePostContentWidget
             'text'
         );
         # Type
-        $filters = libEPC::blogFilters();
+        $filters = libEPC::getFilters();
         $types = [];
-        foreach($filters as $name => $filter) {
-            if (!isset($filter['widgetListFilter'])
-             || !is_callable($filter['widgetListFilter'])) {
-                continue;
-            }
-
-            $types[__($name)] = $name;
+        foreach($filters as $id => $filter) {
+            $types[$filter->name] = $id;
         }
         $w->epclist->setting(
             'type',
@@ -106,19 +96,11 @@ class enhancePostContentWidget
             1,
             'check'
         );
-        # widget option - content only
-        $w->epclist->setting(
-            'content_only',
-            __('Content only'),
-            0,
-            'check'
-        );
-        # widget option - additionnal CSS
-        $w->epclist->setting(
-            'class',
-            __('CSS class:'),
-            ''
-        );
+        # widget options
+        $w->epclist
+            ->addContentOnly()
+            ->addClass()
+            ->addOffline();
     }
 
     /**
@@ -130,24 +112,26 @@ class enhancePostContentWidget
     {
         global $core, $_ctx;
 
+        if ($w->offline) {
+            return null;
+        }
+
         $core->blog->settings->addNamespace('enhancePostContent');
 
         # Page
         if (!$core->blog->settings->enhancePostContent->enhancePostContent_active
-         || !in_array($_ctx->current_tpl, ['post.html', 'page.html'])) {
+            || !in_array($_ctx->current_tpl, ['post.html', 'page.html'])
+        ) {
             return null;
         }
 
         # Content
         $content = '';
-        $allowedwidgetvalues = libEPC::defaultAllowedWidgetValues();
-        foreach($allowedwidgetvalues as $k => $v) {
-
+        foreach(libEPC::defaultAllowedWidgetValues() as $k => $v) {
             $ns = 'content' . $v['id'];
-            if ($w->$ns && is_callable($v['callback'])) {
-
+            if ($w->$ns && is_callable($v['cb'])) {
                 $content .= call_user_func_array(
-                    $v['callback'],
+                    $v['cb'],
                     [$core, $w]
                 );
             }
@@ -159,25 +143,12 @@ class enhancePostContentWidget
 
         # Filter
         $list = [];
-        $filters = libEPC::blogFilters();
+        $filters = libEPC::getFilters();
 
-        if (isset($filters[$w->type]) 
-         && isset($filters[$w->type]['widgetListFilter'])
-         && is_callable($filters[$w->type]['widgetListFilter'])) {
-            $filters[$w->type]['nocase'] = $w->nocase;
-            $filters[$w->type]['plural'] = $w->plural;
-
-            if ($filters[$w->type]['has_list']) {
-                $records = new epcRecords($core);
-                $filters[$w->type]['list'] = $records->getRecords(
-                    ['epc_filter' => $w->type]
-                );
-            }
-
-            call_user_func_array(
-                $filters[$w->type]['widgetListFilter'],
-                [$core, $filters[$w->type], $content, $w, &$list]
-            );
+        if (isset($filters[$w->type])) {
+            $filters[$w->type]->nocase = $w->nocase;
+            $filters[$w->type]->plural = $w->plural;
+            $filters[$w->type]->widgetList($content, $w, $list);
         }
 
         if (empty($list)) {

@@ -17,15 +17,14 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 dcPage::check('contentadmin');
 
-
 # -- Prepare queries and object --
 
-$_filters = libEPC::blogFilters();
+$_filters = libEPC::getFilters();
 
 $filters_id = $filters_combo = [];
-foreach($_filters as $name => $filter) {
-    $filters_id[$filter['id']] = $name;
-    $filters_combo[__($name)] = $filter['id'];
+foreach($_filters as $id => $filter) {
+    $filters_id[$id] = $filter->name;
+    $filters_combo[$filter->name] = $id;
 }
 
 $action = $_POST['action'] ?? '';
@@ -36,7 +35,7 @@ if (!isset($filters_id[$part])) {
 }
 
 $header  = '';
-$filter  = $_filters[$filters_id[$part]];
+$filter  = $_filters[$part];
 $records = new epcRecords($core);
 
 # -- Action --
@@ -61,7 +60,7 @@ try {
         ];
 
         $core->blog->settings->addNamespace('enhancePostContent');
-        $core->blog->settings->enhancePostContent->put('enhancePostContent_' . $filter['name'], serialize($f));
+        $core->blog->settings->enhancePostContent->put('enhancePostContent_' . $filter->id(), serialize($f));
 
         $core->blog->triggerBlog();
 
@@ -82,7 +81,7 @@ try {
         && !empty($_POST['new_value'])
     ) {
         $cur = $records->openCursor();
-        $cur->epc_filter = $filter['name'];
+        $cur->epc_filter = $filter->id();
         $cur->epc_key    = html::escapeHTML($_POST['new_key']);
         $cur->epc_value  = html::escapeHTML($_POST['new_value']);
 
@@ -105,7 +104,7 @@ try {
     }
 
     # Update filter records
-    if ($action == 'deleterecords' && $filter['has_list'] 
+    if ($action == 'deleterecords' && $filter->has_list 
         && !empty($_POST['epc_id']) && is_array($_POST['epc_id'])
     ) {
         foreach($_POST['epc_id'] as $id) {
@@ -134,13 +133,13 @@ try {
 
 # -- Prepare page --
 
-if ($filter['has_list']) {
+if ($filter->has_list) {
     $sorts = new adminGenericFilter($core, 'epc');
     $sorts->add(dcAdminFilters::getPageFilter());
     $sorts->add('part', $part);
 
     $params = $sorts->params();
-    $params['epc_filter'] = $filter['name'];
+    $params['epc_filter'] = $filter->id();
 
     try {
         $list    = $records->getRecords($params);
@@ -159,8 +158,6 @@ if ($filter['has_list']) {
 # Page headers
 echo '
 <html><head><title>' . __('Enhance post content') . '</title>' .
-//dcPage::jsLoad('js/_posts_list.js') .
-dcPage::jsToolbar() .
 dcPage::jsPageTabs() .
 dcPage::jsLoad(dcPage::getPF('enhancePostContent/js/index.js')) .
 $header .
@@ -174,7 +171,7 @@ $core->callBehavior('enhancePostContentAdminHeader', $core) . '
 dcPage::breadcrumb([
     __('Plugins')              => '',
     __('Enhance post content') => '',
-    __($filter['name'])        => ''
+    $filter->name              => ''
 ]) .
 dcPage::notices() .
 
@@ -188,8 +185,8 @@ form::hidden('p', 'enhancePostContent') . '</p>' .
 
 # Filter title and description
 echo '
-<h3>' . __($filter['name']) . '</h3>
-<p>' . $filter['help'] . '</p>';
+<h3>' . $filter->name . '</h3>
+<p>' . $filter->help . '</p>';
 
 # Filter settings
 echo '
@@ -205,7 +202,7 @@ foreach(libEPC::blogAllowedPubPages() as $k => $v) {
     form::checkbox(
         ['filter_pubPages[]', 'filter_pubPages' . $v],
         $v,
-        in_array($v, $filter['pubPages'])
+        in_array($v, $filter->pubPages)
     ) .
     __($k) . '</label></p>';
 }
@@ -215,16 +212,16 @@ echo '
 <h4>' . __('Filtering') . '</h4>
 
 <p><label for="filter_nocase">' .
-form::checkbox('filter_nocase', '1', $filter['nocase']) .
+form::checkbox('filter_nocase', '1', $filter->nocase) .
 __('Case insensitive') . '</label></p>
 
 <p><label for="filter_plural">' .
-form::checkbox('filter_plural', '1', $filter['plural']) .
+form::checkbox('filter_plural', '1', $filter->plural) .
 __('Also use the plural') . '</label></p>
 
 <p><label for="filter_limit">' .
 __('Limit the number of replacement to:') . '</label>' .
-form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (integer) $filter['limit']]) . '
+form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (integer) $filter->limit]) . '
 </p>
 <p class="form-note">' . __('Leave it blank or set it to 0 for no limit') . '</p>
 
@@ -237,7 +234,7 @@ foreach(libEPC::blogAllowedTplValues() as $k => $v) {
     form::checkbox(
         ['filter_tplValues[]', 'filter_tplValues' . $v],
         $v,
-        in_array($v, $filter['tplValues'])
+        in_array($v, $filter->tplValues)
     ) .
     __($k) . '</label></p>';
 }
@@ -246,7 +243,7 @@ echo '
 </div><div class="two-boxes even">
 <h4>' . __('Style') . '</h4>';
 
-foreach($filter['class'] as $k => $v) {
+foreach($filter->class as $k => $v) {
     echo '
     <p><label for="filter_style' . $k . '">' .
     sprintf(__('Class "%s":'), $v) . '</label>' .
@@ -254,19 +251,19 @@ foreach($filter['class'] as $k => $v) {
         ['filter_style[]', 'filter_style'.$k],
         60,
         255,
-        html::escapeHTML($filter['style'][$k])
+        html::escapeHTML($filter->style[$k])
     ) .
     '</p>';
 }
 
 echo '
-<p class="form-note">' . sprintf(__('The inserted HTML tag looks like: %s'), html::escapeHTML(str_replace('%s', '...', $filter['replace']))) . '</p>
+<p class="form-note">' . sprintf(__('The inserted HTML tag looks like: %s'), html::escapeHTML(str_replace('%s', '...', $filter->replace))) . '</p>
 
 <p><label for="filter_notag">' . __('Ignore HTML tags:') . '</label>' .
-form::field('filter_notag', 60, 255, html::escapeHTML($filter['notag'])) . '
+form::field('filter_notag', 60, 255, html::escapeHTML($filter->notag)) . '
 </p>
 <p class="form-note">' . __('This is the list of HTML tags where content will be ignored.') . ' ' .
-(empty($filter['htmltag']) ? '' : sprintf(__('Tag "%s" always be ignored.'), $filter['htmltag'])) . '</p>
+('' != $filter->htmltag ? '' : sprintf(__('Tag "%s" always be ignored.'), $filter->htmltag)) . '</p>
 </div>
 <div class="clear">
 <p>' .
@@ -281,7 +278,7 @@ form::hidden(['part'], $part) . '
 </div>';
 
 # Filter records list
-if ($filter['has_list']) {
+if ($filter->has_list) {
     $pager_url = $core->adminurl->get('admin.plugin.enhancePostContent', array_diff_key($sorts->values(true), ['page' => ''])).'&page=%s#record';
 
     echo '

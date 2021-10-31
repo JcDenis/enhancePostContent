@@ -15,11 +15,30 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
+$filters = [
+    'Tag',
+    'Search',
+    'Acronym',
+    'Abbreviation',
+    'Definition',
+    'Citation',
+    'Link',
+    'Replace',
+    'Update',
+    'Twitter'
+];
+
 $d = dirname(__FILE__) . '/inc/';
 
 $__autoload['libEPC']       = $d . 'lib.epc.php';
+$__autoload['epcFilter']    = $d . 'lib.epc.filter.php';
 $__autoload['epcRecords']   = $d . 'lib.epc.records.php';
 $__autoload['adminEpcList'] = $d . 'lib.epc.pager.php';
+
+foreach($filters as $f) {
+    $__autoload['epcFilter' . $f] = $d . 'lib.epc.filters.php';
+    $core->addBehavior('enhancePostContentFilters', ['epcFilter' . $f, 'create']);
+}
 
 $core->url->register(
     'epccss',

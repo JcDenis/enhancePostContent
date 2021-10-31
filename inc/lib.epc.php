@@ -12,14 +12,13 @@
  */
 
 # l10n
-__('Tag');__('Search');__('Acronym');__('Abbreviation');__('Definition');
-__('Citation');__('Link');__('Replace');__('Update');__('Twitter');
 __('entry excerpt');__('entry content');__('comment content');
 __('home page');__('post page');__('category page');__('search results page');
 __('atom feeds');__('RSS feeds');
 
 class libEPC
 {
+    protected static $default_filters = null;
     public static $epcFilterLimit = [];
 
     #
@@ -28,333 +27,118 @@ class libEPC
 
     public static function defaultAllowedTplValues()
     {
-        return [
-            'entry excerpt' => 'EntryExcerpt',
-            'entry content' => 'EntryContent',
+        $rs = new arrayObject([
+            'entry excerpt'   => 'EntryExcerpt',
+            'entry content'   => 'EntryContent',
             'comment content' => 'CommentContent',
-        ];
+        ]);
+
+        $core->callBehavior('enhancePostContentAllowedTplValues', $rs);
+
+        return iterator_to_array($rs, true);
     }
 
     public static function blogAllowedTplValues()
     {
         global $core;
+
         $core->blog->settings->addNamespace('enhancePostContent');
-        $allowedtplvalues = self::defaultAllowedTplValues();
         $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedtplvalues);
-        return is_array($rs) ? $rs : $allowedtplvalues;
+
+        return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
 
     public static function defaultAllowedWidgetValues()
     {
         global $core;
 
-        $rs = [
+        $rs = new arrayObject([
             'entry excerpt' => [
                 'id' => 'entryexcerpt',
-                'callback' => ['libEPC','widgetContentEntryExcerpt']
+                'cb' => ['libEPC','widgetContentEntryExcerpt']
             ],
             'entry content' => [
                 'id' => 'entrycontent',
-                'callback' => ['libEPC','widgetContentEntryContent']
+                'cb' => ['libEPC','widgetContentEntryContent']
             ],
             'comment content' => [
                 'id' => 'commentcontent',
-                'callback' => ['libEPC','widgetContentCommentContent']
+                'cb' => ['libEPC','widgetContentCommentContent']
             ]
-        ];
+        ]);
 
         $core->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
 
-        return $rs;
+        return iterator_to_array($rs, true);
     }
 
     public static function defaultAllowedPubPages()
     {
-        return [
-            'home page' => 'home.html',
-            'post page' => 'post.html',
-            'category page' => 'category.html',
+        $rs = new arrayObject([
+            'home page'           => 'home.html',
+            'post page'           => 'post.html',
+            'category page'       => 'category.html',
             'search results page' => 'search.html',
-            'atom feeds' => 'atom.xml',
-            'RSS feeds' => 'rss2.xml'
-        ];
+            'atom feeds'          => 'atom.xml',
+            'RSS feeds'           => 'rss2.xml'
+        ]);
+
+        $core->callBehavior('enhancePostContentAllowedPubPages', $rs);
+
+        return iterator_to_array($rs, true);
     }
 
     public static function blogAllowedPubPages()
     {
         global $core;
+
         $core->blog->settings->addNamespace('enhancePostContent');
-        $allowedpubpages = self::defaultAllowedPubPages();
         $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedpubpages);
-        return is_array($rs) ? $rs : $allowedpubpages;
+
+        return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }
 
-    public static function defaultFilters()
+    public static function getFilters()
     {
         global $core;
 
-        $filters = [
-            'Tag' => [
-                'id' => 'tag',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterTag'],
-                'widgetListFilter' => ['libEPC', 'widgetListTag'],
+        if (self::$default_filters === null) {
+            $final = [];
+            $filters = new arrayObject();
 
-                'help' => __('Highlight tags of your blog.'),
-                'has_list' => false,
-                'htmltag' => 'a',
-                'class' => ['a.epc-tag'],
-                'replace' => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
-                'widget' =>  '<a href="%s" title="' . __('Tag') . '">%s</a>',
+            try {
+                $core->callBehavior('enhancePostContentFilters', $filters, $core);
 
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
-                'notag' => 'a,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html']
-            ],
-            'Search' => [
-                'id' => 'search',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterSearch'],
-
-                'help' => __('Highlight searched words.'),
-                'has_list' => false,
-                'htmltag' => '',
-                'class' => ['span.epc-search'],
-                'replace' => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
-
-                'nocase' => true,
-                'plural' => true,
-                'limit' => 0,
-                'style' => ['color: #FFCC66;'],
-                'notag' => 'h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['search.html']
-            ],
-            'Acronym' => [
-                'id' => 'acronym',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterAcronym'],
-                'widgetListFilter' => ['libEPC', 'widgetListAcronym'],
-
-                'help' => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
-                'has_list' => true,
-                'htmltag' => 'acronym',
-                'class' => ['acronym.epc-acronym'],
-                'replace' => '<acronym class="epc-acronym" title="%s">%s</acronym>',
-                'widget' => '<acronym title="%s">%s</acronym>',
-
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['font-weight: bold;'],
-                'notag' => 'a,acronym,abbr,dfn,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Abbreviation' => [
-                'id' => 'abbreviation',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterAbbreviation'],
-                'widgetListFilter' => ['libEPC', 'widgetListAbbreviation'],
-
-                'help' => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
-                'has_list' => true,
-                'htmltag' => 'a',
-                'class' => ['abbr.epc-abbr'],
-                'replace' => '<abbr class="epc-abbr" title="%s">%s</abbr>',
-                'widget' =>  '<abbr title="%s">%s</abbr>',
-
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['font-weight: bold;'],
-                'notag' => 'a,acronym,abbr,dfn,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Definition' => [
-                'id' => 'definition',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterDefinition'],
-                'widgetListFilter' => ['libEPC', 'widgetListDefinition'],
-
-                'help' => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
-                'has_list' => true,
-                'htmltag' => 'dfn',
-                'class' => ['dfn.epc-dfn'],
-                'replace' => '<dfn class="epc-dfn" title="%s">%s</dfn>',
-                'widget' =>  '<dfn class="epc-dfn" title="%s">%s</dfn>',
-
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['font-weight: bold;'],
-                'notag' => 'a,acronym,abbr,dfn,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Citation' => [
-                'id' => 'citation',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterCitation'],
-                'widgetListFilter' => ['libEPC', 'widgetListCitation'],
-
-                'help' => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
-                'has_list' => true,
-                'htmltag' => 'cite',
-                'class' => ['cite.epc-cite'],
-                'replace' => '<cite class="epc-cite" title="%s">%s</cite>',
-                'widget' => '<cite title="%s">%s</cite>',
-
-                'nocase' => true,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['font-style: italic;'],
-                'notag' => 'a,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Link' => [
-                'id' => 'link',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterLink'],
-                'widgetListFilter' => ['libEPC', 'widgetListLink'],
-
-                'help' => __('Link some words. First term of the list is the term to link and second term the link.'),
-                'has_list' => true,
-                'htmltag' => 'a',
-                'class' => ['a.epc-link'],
-                'replace' => '<a class="epc-link" title="%s" href="%s">%s</a>',
-                'widget' => '<a title="%s" href="%s">%s</a>',
-
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['text-decoration: none; font-style: italic; color: #0000FF;'],
-                'notag' => 'a,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Replace' => [
-                'id' => 'replace',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterReplace'],
-
-                'help' => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
-                'has_list' => true,
-                'htmltag' => '',
-                'class' => ['span.epc-replace'],
-                'replace' => '<span class="epc-replace">%s</span>',
-
-                'nocase' => true,
-                'plural' => true,
-                'limit' => 0,
-                'style' => ['font-style: italic;'],
-                'notag' => 'h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Update' => [
-                'id' => 'update',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterUpdate'],
-
-                'help' => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
-                'has_list' => true,
-                'htmltag' => 'del,ins',
-                'class' => ['del.epc-update', 'ins.epc-update'],
-                'replace' => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
-
-                'nocase' => true,
-                'plural' => true,
-                'limit' => 0,
-                'style' => ['text-decoration: line-through;', 'font-style: italic;'],
-                'notag' => 'h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html'],
-            ],
-            'Twitter' => [
-                'id' => 'twitter',
-                'publicContentFilter' => ['libEPC', 'publicContentFilterTwitter'],
-
-                'help' => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
-                'has_list' => false,
-                'htmltag' => 'a',
-                'class' => ['a.epc-twitter'],
-                'replace' => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
-
-                'nocase' => false,
-                'plural' => false,
-                'limit' => 0,
-                'style' => ['text-decoration: none; font-weight: bold; font-style: italic; color: #0000FF;'],
-                'notag' => 'a,h1,h2,h3',
-                'tplValues' => ['EntryContent'],
-                'pubPages' => ['post.html']
-            ]
-        ];
-
-        $core->callBehavior('enhancePostContentDefaultFilters', $filters);
-
-        return $filters;
-    }
-
-    public static function blogFilters($one = null)
-    {
-        global $core;
-        $core->blog->settings->addNamespace('enhancePostContent');
-        $filters = self::defaultFilters();
-
-        foreach($filters as $name => $filter) {
-            # Parse filters options
-            $ns = 'enhancePostContent_' . $name;
-            $opt[$name] = @unserialize($core->blog->settings->enhancePostContent->$ns);
-
-            if (!is_array($opt[$name])) {
-                $opt[$name] = [];
+                foreach($filters as $filter) {
+                    if ($filter instanceOf epcFilter && !isset($final[$filter->id()])) {
+                        $final[$filter->id()] = $filter;
+                    }
+                }
+            } catch (Exception $e) {
+                $core->error->add($e->getMessage());
             }
-            if (isset($opt[$name]['nocase'])) {
-                $filters[$name]['nocase'] = (boolean) $opt[$name]['nocase'];
-            }
-            if (isset($opt[$name]['plural'])) {
-                $filters[$name]['plural'] = (boolean) $opt[$name]['plural'];
-            }
-            if (isset($opt[$name]['limit'])) {
-                $filters[$name]['limit'] = abs((integer) $opt[$name]['limit']);
-            }
-            if (isset($opt[$name]['style']) && is_array($opt[$name]['style'])) {
-                $filters[$name]['style'] = (array) $opt[$name]['style'];
-            }
-            if (isset($opt[$name]['notag'])) {
-                $filters[$name]['notag'] = (string) $opt[$name]['notag'];
-            }
-            if (isset($opt[$name]['tplValues'])) {
-                $filters[$name]['tplValues'] = (array) $opt[$name]['tplValues'];
-            }
-            if (isset($opt[$name]['pubPages'])) {
-                $filters[$name]['pubPages'] = (array) $opt[$name]['pubPages'];
-            }
-            $filters[$name]['name'] = $name;
+            self::$default_filters = $final;
         }
 
-        $core->callBehavior('enhancePostContentBlogFilters', $filters);
-
-        return $filters;
+        return self::$default_filters;
     }
 
-    public static function testContext($tag, $args, $opt)
+    public static function testContext($tag, $args, $filter)
     {
-        return 
-            isset($opt['pubPages']) 
-         && is_array($opt['pubPages']) 
-         && in_array($GLOBALS['_ctx']->current_tpl,$opt['pubPages'])
-         && isset($opt['tplValues']) 
-         && is_array($opt['tplValues']) 
-         && in_array($tag, $opt['tplValues']) 
-         && $args[0] != '' //content
-         && empty($args[2]) // remove html
+        return is_array($filter->pubPages) 
+            && in_array($GLOBALS['_ctx']->current_tpl,$filter->pubPages)
+            && is_array($filter->tplValues) 
+            && in_array($tag, $filter->tplValues) 
+            && $args[0] != '' //content
+            && empty($args[2]) // remove html
         ;
     }
 
     public static function replaceString($p, $r, $s, $filter, $before = '\b', $after = '\b')
     {
         # Limit
-        if ($filter['limit'] > 0) {
-            $limit = in_array($filter['id'] . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter['id'] . '_' . $p] : $filter['limit'];
+        if ($filter->limit > 0) {
+            $limit = in_array($filter->id() . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter->id() . '_' . $p] : $filter->limit;
             if ($limit < 1) {
                 return $s;
             }
@@ -362,9 +146,9 @@ class libEPC
             $limit = -1;
         }
         # Case sensitive
-        $i = $filter['nocase'] ? 'i' : '';
+        $i = $filter->nocase ? 'i' : '';
         # Plural
-        $x = $filter['plural'] ? $p . 's|' . $p : $p;
+        $x = $filter->plural ? $p . 's|' . $p : $p;
         # Mark words
         $s = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
         # Nothing to parse
@@ -373,7 +157,7 @@ class libEPC
         }
         # Remove words that are into unwanted html tags
         $tags = '';
-        $ignore_tags = array_merge(self::decodeTags($filter['htmltag']), self::decodeTags($filter['notag']));
+        $ignore_tags = array_merge(self::decodeTags($filter->htmltag), self::decodeTags($filter->notag));
         if (is_array($ignore_tags) && !empty($ignore_tags)) {
             $tags = implode('|', $ignore_tags);
         }
@@ -385,7 +169,7 @@ class libEPC
         # Replace words by what you want (with limit)
         $s = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $limit, $count);
         # update limit
-        self::$epcFilterLimit[$filter['id'] . '_' . $p] = $limit - $count;
+        self::$epcFilterLimit[$filter->id() . '_' . $p] = $limit - $count;
         # Clean rest
         return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
     }
@@ -393,11 +177,11 @@ class libEPC
     public static function matchString($p, $r, $s, $filter, $before = '\b', $after = '\b')
     {
         # Case sensitive
-        $i = $filter['nocase'] ? 'i' : '';
+        $i = $filter->nocase ? 'i' : '';
         # Plural
-        $x = $filter['plural'] ? $p . 's|' . $p : $p;
+        $x = $filter->plural ? $p . 's|' . $p : $p;
         # Mark words
-        $t = preg_match_all('#' . $before . '(' . $x . ')' . $after . '#s' . $i, $s, $matches);
+        $t = preg_match_all('#' . $before . '(' . $x . ')' . $after . '#su' . $i, $s, $matches);
         # Nothing to parse
         if (!$t) {
             return ['total' => 0, 'matches' => []];
@@ -487,36 +271,41 @@ class libEPC
     public static function widgetContentEntryExcerpt($core, $w)
     {
         global $_ctx;
+
         if (!$_ctx->exists('posts')) {
-            return;
+            return null;
         }
 
         $res = '';
         while ($_ctx->posts->fetch()) {
             $res .= $_ctx->posts->post_excerpt;
         }
+
         return $res;
     }
 
     public static function widgetContentEntryContent()
     {
         global $_ctx;
+
         if (!$_ctx->exists('posts')) {
-            return;
+            return null;
         }
 
         $res = '';
         while ($_ctx->posts->fetch()) {
             $res .= $_ctx->posts->post_content;
         }
+
         return $res;
     }
 
     public static function widgetContentCommentContent()
     {
         global $core, $_ctx;
+
         if (!$_ctx->exists('posts')) {
-            return;
+            return null;
         }
 
         $res = '';
@@ -527,274 +316,7 @@ class libEPC
                 $res .= $comments->getContent();
             }
         }
+
         return $res;
-    }
-
-    #
-    # Filters
-    #
-
-    public static function publicContentFilterTag($core, $filter, $tag, $args)
-    {
-        if (!$core->plugins->moduleExists('tags')) {
-            return;
-        }
-
-        $metas = $core->meta->getMetadata(['meta_type' => 'tag']);
-
-        while($metas->fetch()) {
-            $k = $metas->meta_id;
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], $core->blog->url . $core->url->getBase('tag') . '/' . $k, '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListTag($core, $filter, $content, $w, &$list)
-    {
-        if (!$core->plugins->moduleExists('tags')) {
-            return;
-        }
-
-        $metas = $core->meta->getMetadata(['meta_type' => 'tag']);
-
-        while($metas->fetch()) {
-            $k = $metas->meta_id;
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], $core->blog->url . $core->url->getBase('tag') . '/' . $k, '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterSearch($core, $filter, $tag, $args)
-    {
-        if (!isset($GLOBALS['_search'])) {
-            return;
-        }
-
-        $searchs = explode(' ', $GLOBALS['_search']);
-
-        foreach($searchs as $k => $v) {
-            $args[0] = self::replaceString(
-                $v,
-                sprintf($filter['replace'], '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterAcronym($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], __($v), '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListAcronym($core, $filter, $content, $w, &$list)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], __($v), '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterAbbreviation($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], __($v), '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListAbbreviation($core, $filter, $content, $w, &$list)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], __($v), '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterDefinition($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], __($v), '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListDefinition($core, $filter, $content, $w, &$list)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], __($v), '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterCitation($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], __($v), '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListCitation($core, $filter, $content, $w, &$list)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], __($v), '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterLink($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], '\\1', $v, '\\1'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function widgetListLink($core, $filter, $content, $w, &$list)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $list[] = self::matchString(
-                $k,
-                sprintf($filter['widget'], $v, $v, '\\1'),
-                $content,
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterReplace($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], $v, '\\2'),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterUpdate($core, $filter, $tag, $args)
-    {
-        while($filter['list']->fetch()) {
-            $k = $filter['list']->epc_key;
-            $v = $filter['list']->epc_value;
-
-            $args[0] = self::replaceString(
-                $k,
-                sprintf($filter['replace'], '\\1', $v),
-                $args[0],
-                $filter
-            );
-        }
-        return;
-    }
-
-    public static function publicContentFilterTwitter($core, $filter, $tag, $args)
-    {
-        $args[0] = self::replaceString(
-            '[A-Za-z0-9_]{2,}',
-            sprintf($filter['replace'], 'http://twitter.com/\\1', '\\1'),
-            $args[0],
-            $filter,
-            '[^@]@',
-            '\b'
-        );
-        return;
     }
 }

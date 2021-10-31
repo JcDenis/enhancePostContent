@@ -51,16 +51,17 @@ class publicEnhancePostContent
     public static function css($args)
     {
         $css = [];
-        $filters = libEPC::blogFilters();
+        $filters = libEPC::getFilters();
 
-        foreach($filters as $name => $filter) {
-            if (empty($filter['class']) || empty($filter['style'])) {
+        foreach($filters as $id => $filter) {
+            if ('' != $filter->class || '' != $filter->style) {
                 continue;
             }
 
             $res = '';
-            foreach($filter['class'] as $k => $class) {
-                $style = html::escapeHTML(trim($filter['style'][$k]));
+            foreach($filter->class as $k => $class) {
+                $styles = $filter->style;
+                $style = html::escapeHTML(trim($styles[$k]));
                 if ('' != $style) {
                     $res .= $class . " {" . $style . "} ";
                 }
@@ -68,7 +69,7 @@ class publicEnhancePostContent
 
             if (!empty($res)) {
                 $css[] = 
-                "/* CSS for enhancePostContent " . $name . " */ \n" . $res . "\n";
+                "/* CSS for enhancePostContent " . $id . " */ \n" . $res . "\n";
             }
         }
 
@@ -88,30 +89,13 @@ class publicEnhancePostContent
      */
     public static function publicContentFilter(dcCore $core, $tag, $args)
     {
-        $filters = libEPC::blogFilters();
-        $records = new epcRecords($core);
+        $filters = libEPC::getFilters();
 
-        foreach($filters as $name => $filter) {
-
-            if (!isset($filter['publicContentFilter'])
-             || !is_callable($filter['publicContentFilter']) 
-             || !libEPC::testContext($tag,$args,$filter)) {
+        foreach($filters as $id => $filter) {
+            if (!libEPC::testContext($tag, $args, $filter)) {
                 continue;
             }
-
-            if ($filter['has_list']) {
-                $filter['list'] = $records->getRecords(array(
-                    'epc_filter' => $name)
-                );
-                if ($filter['list']->isEmpty()) {
-                    continue;
-                }
-            }
-
-            call_user_func_array(
-                $filter['publicContentFilter'],
-                [$core, $filter, $tag, $args]
-            );
+            $filter->publicContent($tag, $args);
         }
     }
 }
