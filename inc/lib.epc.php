@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 # l10n
 __('entry excerpt');__('entry content');__('comment content');
 __('home page');__('post page');__('category page');__('search results page');
@@ -19,7 +18,7 @@ __('atom feeds');__('RSS feeds');
 class libEPC
 {
     protected static $default_filters = null;
-    public static $epcFilterLimit = [];
+    public static $epcFilterLimit     = [];
 
     #
     # Default definition
@@ -103,15 +102,15 @@ class libEPC
         global $core;
 
         if (self::$default_filters === null) {
-            $final = $sort = [];
+            $final   = $sort   = [];
             $filters = new arrayObject();
 
             try {
                 $core->callBehavior('enhancePostContentFilters', $filters, $core);
 
-                foreach($filters as $filter) {
-                    if ($filter instanceOf epcFilter && !isset($final[$filter->id()])) {
-                        $sort[$filter->id()] = $filter->priority;
+                foreach ($filters as $filter) {
+                    if ($filter instanceof epcFilter && !isset($final[$filter->id()])) {
+                        $sort[$filter->id()]  = $filter->priority;
                         $final[$filter->id()] = $filter;
                     }
                 }
@@ -127,10 +126,10 @@ class libEPC
 
     public static function testContext($tag, $args, $filter)
     {
-        return is_array($filter->pubPages) 
-            && in_array($GLOBALS['_ctx']->current_tpl,$filter->pubPages)
-            && is_array($filter->tplValues) 
-            && in_array($tag, $filter->tplValues) 
+        return is_array($filter->pubPages)
+            && in_array($GLOBALS['_ctx']->current_tpl, $filter->pubPages)
+            && is_array($filter->tplValues)
+            && in_array($tag, $filter->tplValues)
             && $args[0] != '' //content
             && empty($args[2]) // remove html
         ;
@@ -158,7 +157,7 @@ class libEPC
             return $s;
         }
         # Remove words that are into unwanted html tags
-        $tags = '';
+        $tags        = '';
         $ignore_tags = array_merge(self::decodeTags($filter->htmltag), self::decodeTags($filter->notag));
         if (is_array($ignore_tags) && !empty($ignore_tags)) {
             $tags = implode('|', $ignore_tags);
@@ -190,14 +189,15 @@ class libEPC
         }
 
         # Build array
-        $m = [];
+        $m    = [];
         $loop = 0;
-        foreach($matches[1] as $match) {
-            $m[$loop]['key'] = $match;
+        foreach ($matches[1] as $match) {
+            $m[$loop]['key']   = $match;
             $m[$loop]['match'] = preg_replace('#(' . $p . '(s|))#s' . $i, $r, $match, -1, $count);
-            $m[$loop]['num'] = $count;
+            $m[$loop]['num']   = $count;
             $loop++;
         }
+
         return ['total' => $t, 'matches' => $m];
     }
 
@@ -226,9 +226,10 @@ class libEPC
         }
 
         $r = '';
-        foreach($a as $k => $v) {
+        foreach ($a as $k => $v) {
             $r .= $k . ':' . $v . ';';
         }
+
         return $r;
     }
 
@@ -247,7 +248,7 @@ class libEPC
             return [];
         }
 
-        foreach($s as $cpl) {
+        foreach ($s as $cpl) {
             $cur = explode(':', $cpl);
 
             if (!is_array($cur) || !isset($cur[1])) {
@@ -263,6 +264,7 @@ class libEPC
 
             $r[$key] = $val;
         }
+
         return $r;
     }
 
@@ -310,7 +312,7 @@ class libEPC
             return null;
         }
 
-        $res = '';
+        $res      = '';
         $post_ids = [];
         while ($_ctx->posts->fetch()) {
             $comments = $core->blog->getComments(['post_id' => $_ctx->posts->post_id]);

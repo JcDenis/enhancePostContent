@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class epcFilterTag extends epcFilter
 {
     protected function init(): string
@@ -43,7 +42,7 @@ class epcFilterTag extends epcFilter
 
         $metas = $this->core->meta->getMetadata(['meta_type' => 'tag']);
 
-        while($metas->fetch()) {
+        while ($metas->fetch()) {
             $args[0] = libEPC::replaceString(
                 $metas->meta_id,
                 sprintf($this->replace, $this->core->blog->url . $this->core->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
@@ -63,7 +62,7 @@ class epcFilterTag extends epcFilter
 
         $metas = $this->core->meta->getMetadata(['meta_type' => 'tag']);
 
-        while($metas->fetch()) {
+        while ($metas->fetch()) {
             $list[] = libEPC::matchString(
                 $metas->meta_id,
                 sprintf($this->widget, $this->core->blog->url . $this->core->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
@@ -109,7 +108,7 @@ class epcFilterSearch extends epcFilter
 
         $searchs = explode(' ', $GLOBALS['_search']);
 
-        foreach($searchs as $k => $v) {
+        foreach ($searchs as $k => $v) {
             $args[0] = libEPC::replaceString(
                 $v,
                 sprintf($this->replace, '\\1'),
@@ -149,7 +148,7 @@ class epcFilterAcronym extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, __($this->records()->epc_value), '\\1'),
@@ -163,8 +162,8 @@ class epcFilterAcronym extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        while($this->records()->fetch()) {
-             $list[] = libEPC::matchString(
+        while ($this->records()->fetch()) {
+            $list[] = libEPC::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, __($this->records()->epc_value), '\\1'),
                 $content,
@@ -188,7 +187,7 @@ class epcFilterAbbreviation extends epcFilter
             'htmltag'  => 'a',
             'class'    => ['abbr.epc-abbr'],
             'replace'  => '<abbr class="epc-abbr" title="%s">%s</abbr>',
-            'widget'   =>  '<abbr title="%s">%s</abbr>'
+            'widget'   => '<abbr title="%s">%s</abbr>'
         ]);
 
         $this->setSettings([
@@ -203,7 +202,7 @@ class epcFilterAbbreviation extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, __($this->records()->epc_value), '\\1'),
@@ -217,7 +216,7 @@ class epcFilterAbbreviation extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $list[] = libEPC::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, __($this->records()->epc_value), '\\1'),
@@ -242,7 +241,7 @@ class epcFilterDefinition extends epcFilter
             'htmltag'  => 'dfn',
             'class'    => ['dfn.epc-dfn'],
             'replace'  => '<dfn class="epc-dfn" title="%s">%s</dfn>',
-            'widget'   =>  '<dfn class="epc-dfn" title="%s">%s</dfn>'
+            'widget'   => '<dfn class="epc-dfn" title="%s">%s</dfn>'
         ]);
 
         $this->setSettings([
@@ -257,7 +256,7 @@ class epcFilterDefinition extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, __($this->records()->epc_value), '\\1'),
@@ -271,7 +270,7 @@ class epcFilterDefinition extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $list[] = libEPC::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, __($this->records()->epc_value), '\\1'),
@@ -312,7 +311,7 @@ class epcFilterCitation extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, __($this->records()->epc_value), '\\1'),
@@ -326,7 +325,7 @@ class epcFilterCitation extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $list[] = libEPC::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, __($this->records()->epc_value), '\\1'),
@@ -366,7 +365,7 @@ class epcFilterLink extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, '\\1', $this->records()->epc_value, '\\1'),
@@ -380,7 +379,7 @@ class epcFilterLink extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $list[] = libEPC::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, $this->records()->epc_value, $this->records()->epc_value, '\\1'),
@@ -421,7 +420,7 @@ class epcFilterReplace extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, $this->records()->epc_value, '\\2'),
@@ -462,7 +461,7 @@ class epcFilterUpdate extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        while($this->records()->fetch()) {
+        while ($this->records()->fetch()) {
             $args[0] = libEPC::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, '\\1', $this->records()->epc_value),

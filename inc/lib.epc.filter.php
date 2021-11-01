@@ -1,21 +1,20 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 abstract class epcFilter
 {
     public $core;
 
-    private $id = 'undefined';
+    private $id      = 'undefined';
     private $records = null;
 
     private $properties = [
@@ -41,7 +40,7 @@ abstract class epcFilter
     final public function __construct(dcCore $core)
     {
         $this->core = $core;
-        $this->id = $this->init();
+        $this->id   = $this->init();
 
         $this->blogSettings();
     }
@@ -84,11 +83,12 @@ abstract class epcFilter
     final protected function setProperties($property, $value = null): bool
     {
         $properties = is_array($property) ? $property : [$property => $value];
-        foreach($properties as $k => $v) {
+        foreach ($properties as $k => $v) {
             if (isset($this->properties[$k])) {
                 $this->properties[$k] = $v;
             }
         }
+
         return true;
     }
 
@@ -100,17 +100,18 @@ abstract class epcFilter
     final protected function setSettings($setting, $value = null): bool
     {
         $settings = is_array($setting) ? $setting : [$setting => $value];
-        foreach($settings as $k => $v) {
+        foreach ($settings as $k => $v) {
             if (isset($this->settings[$k])) {
                 $this->settings[$k] = $v;
             }
         }
+
         return true;
     }
 
     private function blogSettings()
     {
-        $ns = 'enhancePostContent_' . $this->id;
+        $ns  = 'enhancePostContent_' . $this->id;
         $opt = @unserialize($this->core->blog->settings->enhancePostContent->$ns);
 
         if (!is_array($opt)) {
@@ -142,7 +143,7 @@ abstract class epcFilter
     final public function records()
     {
         if ($this->records === null && $this->has_list) {
-            $records = new epcRecords($this->core);
+            $records       = new epcRecords($this->core);
             $this->records = $records->getRecords(['epc_filter' => $this->id()]);
         }
 

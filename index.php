@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
@@ -22,12 +21,12 @@ dcPage::check('contentadmin');
 $_filters = libEPC::getFilters();
 
 $filters_id = $filters_combo = [];
-foreach($_filters as $id => $filter) {
-    $filters_id[$id] = $filter->name;
+foreach ($_filters as $id => $filter) {
+    $filters_id[$id]              = $filter->name;
     $filters_combo[$filter->name] = $id;
 }
 
-$action = $_POST['action'] ?? '';
+$action = $_POST['action']  ?? '';
 $part   = $_REQUEST['part'] ?? key($filters_id);
 
 if (!isset($filters_id[$part])) {
@@ -69,7 +68,7 @@ try {
         );
 
         $core->adminurl->redirect(
-            'admin.plugin.enhancePostContent', 
+            'admin.plugin.enhancePostContent',
             ['part' => $part],
             '#settings'
         );
@@ -80,7 +79,7 @@ try {
         && !empty($_POST['new_key'])
         && !empty($_POST['new_value'])
     ) {
-        $cur = $records->openCursor();
+        $cur             = $records->openCursor();
         $cur->epc_filter = $filter->id();
         $cur->epc_key    = html::escapeHTML($_POST['new_key']);
         $cur->epc_value  = html::escapeHTML($_POST['new_value']);
@@ -97,17 +96,17 @@ try {
             );
         }
         $core->adminurl->redirect(
-            'admin.plugin.enhancePostContent', 
+            'admin.plugin.enhancePostContent',
             ['part' => $part],
             '#record'
         );
     }
 
     # Update filter records
-    if ($action == 'deleterecords' && $filter->has_list 
+    if ($action == 'deleterecords' && $filter->has_list
         && !empty($_POST['epc_id']) && is_array($_POST['epc_id'])
     ) {
-        foreach($_POST['epc_id'] as $id) {
+        foreach ($_POST['epc_id'] as $id) {
             $records->delRecord($id);
         }
 
@@ -121,13 +120,13 @@ try {
             http::redirect($_REQUEST['redir']);
         } else {
             $core->adminurl->redirect(
-                'admin.plugin.enhancePostContent', 
+                'admin.plugin.enhancePostContent',
                 ['part' => $part],
                 '#record'
             );
         }
     }
-} catch(Exception $e) {
+} catch (Exception $e) {
     $core->error->add($e->getMessage());
 }
 
@@ -138,19 +137,18 @@ if ($filter->has_list) {
     $sorts->add(dcAdminFilters::getPageFilter());
     $sorts->add('part', $part);
 
-    $params = $sorts->params();
+    $params               = $sorts->params();
     $params['epc_filter'] = $filter->id();
 
     try {
         $list    = $records->getRecords($params);
         $counter = $records->getRecords($params, true);
         $pager   = new adminEpcList($core, $list, $counter->f(0));
-
     } catch (Exception $e) {
         $core->error->add($e->getMessage());
     }
 
-    $header = $sorts->js($core->adminurl->get('admin.plugin.enhancePostContent', ['part' => $part], '&').'#record');
+    $header = $sorts->js($core->adminurl->get('admin.plugin.enhancePostContent', ['part' => $part], '&') . '#record');
 }
 
 # -- Display page --
@@ -196,7 +194,7 @@ echo '
 <div class="two-boxes odd">
 <h4>' . __('Pages to be filtered') . '</h4>';
 
-foreach(libEPC::blogAllowedPubPages() as $k => $v) {
+foreach (libEPC::blogAllowedPubPages() as $k => $v) {
     echo '
     <p><label for="filter_pubPages' . $v . '">' .
     form::checkbox(
@@ -228,7 +226,7 @@ form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (integer) $f
 </div><div class="two-boxes odd">
 <h4>' . __('Contents to be filtered') . '</h4>';
 
-foreach(libEPC::blogAllowedTplValues() as $k => $v) {
+foreach (libEPC::blogAllowedTplValues() as $k => $v) {
     echo '
     <p><label for="filter_tplValues' . $v . '">' .
     form::checkbox(
@@ -243,12 +241,12 @@ echo '
 </div><div class="two-boxes even">
 <h4>' . __('Style') . '</h4>';
 
-foreach($filter->class as $k => $v) {
+foreach ($filter->class as $k => $v) {
     echo '
     <p><label for="filter_style' . $k . '">' .
     sprintf(__('Class "%s":'), $v) . '</label>' .
     form::field(
-        ['filter_style[]', 'filter_style'.$k],
+        ['filter_style[]', 'filter_style' . $k],
         60,
         255,
         html::escapeHTML($filter->style[$k])
@@ -279,24 +277,26 @@ form::hidden(['part'], $part) . '
 
 # Filter records list
 if ($filter->has_list) {
-    $pager_url = $core->adminurl->get('admin.plugin.enhancePostContent', array_diff_key($sorts->values(true), ['page' => ''])).'&page=%s#record';
+    $pager_url = $core->adminurl->get('admin.plugin.enhancePostContent', array_diff_key($sorts->values(true), ['page' => ''])) . '&page=%s#record';
 
     echo '
     <div class="multi-part" id="record" title="' . __('Records') . '">';
 
     $sorts->display(['admin.plugin.enhancePostContent', '#record'], form::hidden('p', 'enhancePostContent') . form::hidden('part', $part));
 
-    $pager->display($sorts, $pager_url,
+    $pager->display(
+        $sorts,
+        $pager_url,
         '<form action="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '#record" method="post" id="form-records">' .
         '%s' .
 
         '<div class="two-cols">' .
         '<p class="col checkboxes-helpers"></p>' .
 
-        '<p class="col right">' . 
+        '<p class="col right">' .
         form::hidden('action', 'deleterecords') .
         '<input id="del-action" type="submit" name="save" value="' . __('Delete selected records') . '" /></p>' .
-        $core->adminurl->getHiddenFormFields('admin.plugin.enhancePostContent', array_merge(['p' =>  'enhancePostContent'], $sorts->values(true))) . 
+        $core->adminurl->getHiddenFormFields('admin.plugin.enhancePostContent', array_merge(['p' => 'enhancePostContent'], $sorts->values(true))) .
         form::hidden('redir', $core->adminurl->get('admin.plugin.enhancePostContent', $sorts->values(true))) .
         $core->formNonce() .
         '</div>' .
@@ -311,11 +311,11 @@ if ($filter->has_list) {
     <form action="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '#record" method="post" id="form-create">' .
 
     '<p><label for="new_key">' . __('Key:') . '</label>' .
-    form::field('new_key', 60, 255, ['extra_html'   => 'required']) .
+    form::field('new_key', 60, 255, ['extra_html' => 'required']) .
     '</p>' .
 
     '<p><label for="new_value">' . __('Value:') . '</label>' .
-    form::field('new_value', 60, 255, ['extra_html'   => 'required']) .
+    form::field('new_value', 60, 255, ['extra_html' => 'required']) .
     '</p>
 
     <p class="clear">' .

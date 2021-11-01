@@ -1,22 +1,21 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$dc_min = '2.18';
-$mod_id = 'enhancePostContent';
+$dc_min      = '2.18';
+$mod_id      = 'enhancePostContent';
 $new_version = $core->plugins->moduleInfo($mod_id, 'version');
 $old_version = $core->getVersion($mod_id);
 
@@ -26,18 +25,20 @@ if (version_compare($old_version, $new_version, '>=')) {
 
 try {
     # Check Dotclear version
-    if (!method_exists('dcUtils', 'versionsCompare') 
+    if (!method_exists('dcUtils', 'versionsCompare')
      || dcUtils::versionsCompare(DC_VERSION, $dc_min, '<', false)) {
         throw new Exception(sprintf(
-            '%s requires Dotclear %s', $mod_id, $dc_min
+            '%s requires Dotclear %s',
+            $mod_id,
+            $dc_min
         ));
     }
 
     # Database
     $s = new dbStruct($core->con, $core->prefix);
     $s->epc
-        ->epc_id ('bigint', 0, false)
-        ->blog_id ('varchar', 32, false)
+        ->epc_id('bigint', 0, false)
+        ->blog_id('varchar', 32, false)
         ->epc_type('varchar', 32, false, "'epc'")
         ->epc_filter('varchar', 64, false)
         ->epc_key('varchar', 255, false)
@@ -50,15 +51,15 @@ try {
         ->index('idx_epc_filter', 'btree', 'epc_filter')
         ->index('idx_epc_key', 'btree', 'epc_key');
 
-    $si = new dbStruct($core->con, $core->prefix);
+    $si      = new dbStruct($core->con, $core->prefix);
     $changes = $si->synchronize($s);
-    $s = null;
+    $s       = null;
 
     # Settings
     $core->blog->settings->addNamespace($mod_id);
     $s = $core->blog->settings->enhancePostContent;
 
-    $s->put('enhancePostContent_active', false,'boolean', 'Enable enhancePostContent', false, true);
+    $s->put('enhancePostContent_active', false, 'boolean', 'Enable enhancePostContent', false, true);
     $s->put('enhancePostContent_list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
     $s->put('enhancePostContent_list_order', 'desc', 'string', 'Admin records list order', false, true);
     $s->put('enhancePostContent_list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
@@ -67,7 +68,7 @@ try {
 
     # Filters settings
     $filters = libEPC::getFilters();
-    foreach($filters as $id => $filter) {
+    foreach ($filters as $id => $filter) {
         # Only editable options
         $opt = [
             'nocase'    => $filter->nocase,
@@ -78,11 +79,12 @@ try {
             'pubPages'  => $filter->pubPages
         ];
         $s->put('enhancePostContent_' . $id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
-/*        # only tables
-        if (isset($filter['list'])) {
-            $s->put('enhancePostContent_' . $id . 'List', serialize($filter['list']), 'string', 'List for ' . $id, false, true);
-        }
-*/    }
+        /*        # only tables
+                if (isset($filter['list'])) {
+                    $s->put('enhancePostContent_' . $id . 'List', serialize($filter['list']), 'string', 'List for ' . $id, false, true);
+                }
+        */
+    }
 
     # Update old versions
     if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {

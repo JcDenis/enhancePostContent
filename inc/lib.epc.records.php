@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class epcRecords
 {
     public $core;
@@ -20,10 +19,10 @@ class epcRecords
 
     public function __construct($core)
     {
-        $this->core = $core;
-        $this->con = $core->con;
+        $this->core  = $core;
+        $this->con   = $core->con;
         $this->table = $core->prefix . 'epc';
-        $this->blog = $core->con->escape($core->blog->id);
+        $this->blog  = $core->con->escape($core->blog->id);
     }
 
     public function getRecords($params, $count_only = false)
@@ -35,14 +34,12 @@ class epcRecords
             if (!empty($params['columns']) && is_array($params['columns'])) {
                 $content_req .= implode(', ', $params['columns']) . ', ';
             }
-            $strReq =
-            'SELECT E.epc_id, E.blog_id, E.epc_type, E.epc_upddt, ' .
+            $strReq = 'SELECT E.epc_id, E.blog_id, E.epc_type, E.epc_upddt, ' .
             $content_req .
             'E.epc_filter, E.epc_key, E.epc_value ';
         }
 
-        $strReq .= 
-        'FROM ' . $this->table . ' E ';
+        $strReq .= 'FROM ' . $this->table . ' E ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
@@ -70,7 +67,7 @@ class epcRecords
 
         if (!empty($params['epc_id'])) {
             if (is_array($params['epc_id'])) {
-                array_walk($params['epc_id'], function(&$v, $k) { if ($v !==null) { $v = (integer) $v; }});
+                array_walk($params['epc_id'], function (&$v, $k) { if ($v !== null) { $v = (integer) $v; }});
             } else {
                 $params['epc_id'] = [(integer) $params['epc_id']];
             }
@@ -111,8 +108,8 @@ class epcRecords
         $this->con->writeLock($this->table);
 
         try {
-            $cur->epc_id = $this->getNextId();
-            $cur->blog_id = $this->blog;
+            $cur->epc_id    = $this->getNextId();
+            $cur->blog_id   = $this->blog;
             $cur->epc_upddt = date('Y-m-d H:i:s');
 
             $this->getCursor($cur);
@@ -121,6 +118,7 @@ class epcRecords
             $this->con->unlock();
         } catch (Exception $e) {
             $this->con->unlock();
+
             throw $e;
         }
         $this->trigger();
@@ -141,7 +139,7 @@ class epcRecords
 
         $cur->epc_upddt = date('Y-m-d H:i:s');
 
-        $cur->update("WHERE epc_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
+        $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
         $this->trigger();
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord
@@ -151,10 +149,10 @@ class epcRecords
     public function isRecord($filter, $key, $not_id = null)
     {
         return 0 < $this->getRecords([
-                'epc_filter' => $filter, 
-                'epc_key' => $key, 
-                'not_id' => $not_id
-            ], true)->f(0);
+            'epc_filter' => $filter,
+            'epc_key'    => $key,
+            'not_id'     => $not_id
+        ], true)->f(0);
     }
 
     public function delRecord($id)
@@ -170,7 +168,7 @@ class epcRecords
 
         $this->con->execute(
             'DELETE FROM ' . $this->table . ' ' .
-            'WHERE epc_id = ' . $id .' ' .
+            'WHERE epc_id = ' . $id . ' ' .
             "AND blog_id = '" . $this->blog . "' "
         );
 

@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_RC_PATH')) {
     return null;
 }
@@ -20,7 +19,6 @@ require dirname(__FILE__) . '/_widgets.php';
 $core->blog->settings->addNamespace('enhancePostContent');
 
 if ($core->blog->settings->enhancePostContent->enhancePostContent_active) {
-
     $core->addBehavior(
         'publicHeadContent',
         ['publicEnhancePostContent', 'publicHeadContent']
@@ -40,7 +38,7 @@ class publicEnhancePostContent
 {
     /**
      * Add filters CSS to page header
-     * 
+     *
      * @param  dcCore $core dcCore instance
      */
     public static function publicHeadContent(dcCore $core)
@@ -50,26 +48,25 @@ class publicEnhancePostContent
 
     public static function css($args)
     {
-        $css = [];
+        $css     = [];
         $filters = libEPC::getFilters();
 
-        foreach($filters as $id => $filter) {
+        foreach ($filters as $id => $filter) {
             if ('' != $filter->class || '' != $filter->style) {
                 continue;
             }
 
             $res = '';
-            foreach($filter->class as $k => $class) {
+            foreach ($filter->class as $k => $class) {
                 $styles = $filter->style;
-                $style = html::escapeHTML(trim($styles[$k]));
+                $style  = html::escapeHTML(trim($styles[$k]));
                 if ('' != $style) {
-                    $res .= $class . " {" . $style . "} ";
+                    $res .= $class . ' {' . $style . '} ';
                 }
             }
 
             if (!empty($res)) {
-                $css[] = 
-                "/* CSS for enhancePostContent " . $id . " */ \n" . $res . "\n";
+                $css[] = '/* CSS for enhancePostContent ' . $id . " */ \n" . $res . "\n";
             }
         }
 
@@ -82,7 +79,7 @@ class publicEnhancePostContent
 
     /**
      * Filter template blocks content
-     * 
+     *
      * @param  dcCore $core dcCore instance
      * @param  string $tag  Tempalte block name
      * @param  array  $args Tempalte Block arguments
@@ -91,7 +88,7 @@ class publicEnhancePostContent
     {
         $filters = libEPC::getFilters();
 
-        foreach($filters as $id => $filter) {
+        foreach ($filters as $id => $filter) {
             if (!libEPC::testContext($tag, $args, $filter)) {
                 continue;
             }

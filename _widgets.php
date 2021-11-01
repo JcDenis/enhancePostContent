@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief enhancePostContent, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_RC_PATH')) {
     return null;
 }
@@ -29,7 +28,7 @@ class enhancePostContentWidget
 {
     /**
      * Admin part for widget that show extracted content
-     * 
+     *
      * @param  dcWidgets $w dcWidgets instance
      */
     public static function adminContentList($w)
@@ -54,8 +53,8 @@ class enhancePostContentWidget
         );
         # Type
         $filters = libEPC::getFilters();
-        $types = [];
-        foreach($filters as $id => $filter) {
+        $types   = [];
+        foreach ($filters as $id => $filter) {
             $types[$filter->name] = $id;
         }
         $w->epclist->setting(
@@ -67,7 +66,7 @@ class enhancePostContentWidget
         );
         # Content
         $contents = libEPC::defaultAllowedWidgetValues();
-        foreach($contents as $k => $v) {
+        foreach ($contents as $k => $v) {
             $w->epclist->setting(
                 'content' . $v['id'],
                 sprintf(__('Enable filter on %s'), __($k)),
@@ -105,7 +104,7 @@ class enhancePostContentWidget
 
     /**
      * Public part for widget that show extracted content
-     * 
+     *
      * @param  dcWidget $w dcWidget instance
      */
     public static function publicContentList($w)
@@ -127,7 +126,7 @@ class enhancePostContentWidget
 
         # Content
         $content = '';
-        foreach(libEPC::defaultAllowedWidgetValues() as $k => $v) {
+        foreach (libEPC::defaultAllowedWidgetValues() as $k => $v) {
             $ns = 'content' . $v['id'];
             if ($w->$ns && is_callable($v['cb'])) {
                 $content .= call_user_func_array(
@@ -142,7 +141,7 @@ class enhancePostContentWidget
         }
 
         # Filter
-        $list = [];
+        $list    = [];
         $filters = libEPC::getFilters();
 
         if (isset($filters[$w->type])) {
@@ -157,14 +156,13 @@ class enhancePostContentWidget
 
         # Parse result
         $res = '';
-        foreach($list as $line) {
+        foreach ($list as $line) {
             if (empty($line['matches'][0]['match'])) {
                 continue;
             }
 
-            $res .= 
-            '<li>' . $line['matches'][0]['match'] .
-            ($w->show_total ? ' (' . $line['total'] .')' : '') .
+            $res .= '<li>' . $line['matches'][0]['match'] .
+            ($w->show_total ? ' (' . $line['total'] . ')' : '') .
             '</li>';
         }
 
@@ -173,9 +171,9 @@ class enhancePostContentWidget
         }
 
         return $w->renderDiv(
-            $w->content_only, 
-            $w->class, 
-            'id="epc_' . $w->type .'"', 
+            $w->content_only,
+            $w->class,
+            'id="epc_' . $w->type . '"',
             ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') .
             ($w->text ? '<p>' . html::escapeHTML($w->text) . '</p>' : '') .
             '<ul>' . $res . '</ul>'
