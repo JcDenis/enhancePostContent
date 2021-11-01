@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: enhancePostContent 2021.09.05.1\n"
+"Project-Id-Version: enhancePostContent 2021.09.05.2\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-10-24T21:45:33+00:00\n"
+"PO-Revision-Date: 2021-10-31T22:31:40+00:00\n"
 "Last-Translator: Jean-Christian Denis\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -61,6 +61,54 @@ msgstr "Recherche également le pluriel"
 msgid "Show the number of appearance"
 msgstr "Afficher le nombre d'occurence"
 
+msgid "Highlight tags of your blog."
+msgstr "Met en avant les Tags de votre blog"
+
+msgid "Highlight searched words."
+msgstr "Met en avant les mots recherchés"
+
+msgid "Acronym"
+msgstr "Acronyme"
+
+msgid "Explain some acronyms. First term of the list is the acornym and second term the explanation."
+msgstr "Explique des acronymes. Le premier terme de la liste est l'acronyme et les second terme est l'explication."
+
+msgid "Abbreviation"
+msgstr "Abréviation"
+
+msgid "Explain some abbreviation. First term of the list is the abbreviation and second term the explanation."
+msgstr "Explique des abréviations. Le premier terme de la liste est l'abréviation et le second terme est l'explication."
+
+msgid "Definition"
+msgstr "Définition"
+
+msgid "Explain some definition. First term of the list is the sample to define and second term the explanation."
+msgstr "Explique des définitions. Le premier terme de la liste est la chaine à expliquer et le second terme est la définition."
+
+msgid "Citation"
+msgstr "Citation"
+
+msgid "Highlight citation of people. First term of the list is the citation and second term the author."
+msgstr "Met en avant les citation des gens. Le premier terme est la citation et le second terme est l'auteur."
+
+msgid "Link some words. First term of the list is the term to link and second term the link."
+msgstr "Ajouter des liens. Le premier terme de la liste est le texte à lier et le second terme est l'adresse de lien."
+
+msgid "Replace"
+msgstr "Remplacement"
+
+msgid "Replace some text. First term of the list is the text to replace and second term the replacement."
+msgstr "Remplace du texte. Le premier terme de la liste est le terme à remplacer et le second est le nouveau terme."
+
+msgid "Update and show terms. First term of the list is the term to update and second term the new term."
+msgstr "Met à jour du contenu. Le premier terme de la liste est l'ancien texte et le second est le nouveau texte."
+
+msgid "Add link to twitter user page. Every word started with \"@\" will be considered as twitter user."
+msgstr "Ajouter un lien vers une page Twitter. Chaque mot commençant par \"@\" sera considéré comme un nom de compte Twitter"
+
+msgid "View this user's twitter page"
+msgstr "Voir la page Twitter de cet utilisateur"
+
 msgid "No record matches the filter"
 msgstr "Aucun enregistrement correspondant au filtre"
 
@@ -72,21 +120,6 @@ msgstr "Listes des %s enregistrements correspondant au filtre"
 
 msgid "List of %s records."
 msgstr "Liste des %s enregistrements"
-
-msgid "Acronym"
-msgstr "Acronyme"
-
-msgid "Abbreviation"
-msgstr "Abréviation"
-
-msgid "Definition"
-msgstr "Définition"
-
-msgid "Citation"
-msgstr "Citation"
-
-msgid "Replace"
-msgstr "Remplacement"
 
 msgid "entry excerpt"
 msgstr "le résumé du billet"
@@ -114,39 +147,6 @@ msgstr "les flux Atom"
 
 msgid "RSS feeds"
 msgstr "les flux RSS"
-
-msgid "Highlight tags of your blog."
-msgstr "Met en avant les Tags de votre blog"
-
-msgid "Highlight searched words."
-msgstr "Met en avant les mots recherchés"
-
-msgid "Explain some acronyms. First term of the list is the acornym and second term the explanation."
-msgstr "Explique des acronymes. Le premier terme de la liste est l'acronyme et les second terme est l'explication."
-
-msgid "Explain some abbreviation. First term of the list is the abbreviation and second term the explanation."
-msgstr "Explique des abréviations. Le premier terme de la liste est l'abréviation et le second terme est l'explication."
-
-msgid "Explain some definition. First term of the list is the sample to define and second term the explanation."
-msgstr "Explique des définitions. Le premier terme de la liste est la chaine à expliquer et le second terme est la définition."
-
-msgid "Highlight citation of people. First term of the list is the citation and second term the author."
-msgstr "Met en avant les citation des gens. Le premier terme est la citation et le second terme est l'auteur."
-
-msgid "Link some words. First term of the list is the term to link and second term the link."
-msgstr "Ajouter des liens. Le premier terme de la liste est le texte à lier et le second terme est l'adresse de lien."
-
-msgid "Replace some text. First term of the list is the text to replace and second term the replacement."
-msgstr "Remplace du texte. Le premier terme de la liste est le terme à remplacer et le second est le nouveau terme."
-
-msgid "Update and show terms. First term of the list is the term to update and second term the new term."
-msgstr "Met à jour du contenu. Le premier terme de la liste est l'ancien texte et le second est le nouveau texte."
-
-msgid "Add link to twitter user page. Every word started with \"@\" will be considered as twitter user."
-msgstr "Ajouter un lien vers une page Twitter. Chaque mot commençant par \"@\" sera considéré comme un nom de compte Twitter"
-
-msgid "View this user's twitter page"
-msgstr "Voir la page Twitter de cet utilisateur"
 
 msgid "No such record ID"
 msgstr "Clé inconnue"
