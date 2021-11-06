@@ -18,9 +18,9 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2021.09.05.1',
+    '2021.11.06',
     [
-        'requires'    => [['core', '2.19']],
+        'requires'    => [['core', '2.20']],
         'permissions' => 'contentadmin',
         'type'        => 'plugin',
         'support'     => 'https://github.com/JcDenis/enhancePostContent',

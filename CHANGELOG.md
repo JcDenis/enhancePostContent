@@ -1,13 +1,18 @@
 dev
 - [ ] add auto-find post title in content
+
+2021.10.06
+- update translations (and remove .lang.php file)
 - add priority on filters for replacement order
-- split filters into modules
 - add autosubmit onadmin menu
-- move sort options from blog pref to user pref
-- add pager for records list
-- add some js helpers
 - remove ability to edit record (=> delete then create)
-- use url handler for css
+- move sort options from blog pref to user pref
+- split filters into modules
+- add pager for records list
+- add user pref for filters options (dc 2.20)
+- add some js helpers
+- use url handler for css (externalize css)
+- fix various bugs and typo
 
 2021.09.05
 - fix duplicate records id
