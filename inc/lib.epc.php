@@ -26,6 +26,8 @@ class libEPC
 
     public static function defaultAllowedTplValues()
     {
+        global $core;
+
         $rs = new arrayObject([
             'entry excerpt'   => 'EntryExcerpt',
             'entry content'   => 'EntryContent',
@@ -73,6 +75,8 @@ class libEPC
 
     public static function defaultAllowedPubPages()
     {
+        global $core;
+
         $rs = new arrayObject([
             'home page'           => 'home.html',
             'post page'           => 'post.html',
