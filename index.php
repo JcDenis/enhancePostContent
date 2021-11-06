@@ -51,7 +51,7 @@ try {
         $f = [
             'nocase'    => !empty($_POST['filter_nocase']),
             'plural'    => !empty($_POST['filter_plural']),
-            'limit'     => abs((integer) $_POST['filter_limit']),
+            'limit'     => abs((int) $_POST['filter_limit']),
             'style'     => (array) $_POST['filter_style'],
             'notag'     => (string) $_POST['filter_notag'],
             'tplValues' => (array) $_POST['filter_tplValues'],
@@ -219,7 +219,7 @@ __('Also use the plural') . '</label></p>
 
 <p><label for="filter_limit">' .
 __('Limit the number of replacement to:') . '</label>' .
-form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (integer) $filter->limit]) . '
+form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (int) $filter->limit]) . '
 </p>
 <p class="form-note">' . __('Leave it blank or set it to 0 for no limit') . '</p>
 

@@ -118,13 +118,13 @@ abstract class epcFilter
             $opt = [];
         }
         if (isset($opt['nocase'])) {
-            $this->settings['nocase'] = (boolean) $opt['nocase'];
+            $this->settings['nocase'] = (bool) $opt['nocase'];
         }
         if (isset($opt['plural'])) {
-            $this->settings['plural'] = (boolean) $opt['plural'];
+            $this->settings['plural'] = (bool) $opt['plural'];
         }
         if (isset($opt['limit'])) {
-            $this->settings['limit'] = abs((integer) $opt['limit']);
+            $this->settings['limit'] = abs((int) $opt['limit']);
         }
         if (isset($opt['style']) && is_array($opt['style'])) {
             $this->settings['style'] = (array) $opt['style'];

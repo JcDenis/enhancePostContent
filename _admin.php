@@ -83,7 +83,7 @@ class epcAdminBehaviors
 
     public static function adminBlogPreferencesForm(dcCore $core, dcSettings $blog_settings)
     {
-        $active           = (boolean) $blog_settings->enhancePostContent->enhancePostContent_active;
+        $active           = (bool) $blog_settings->enhancePostContent->enhancePostContent_active;
         $allowedtplvalues = libEPC::blogAllowedTplValues();
         $allowedpubpages  = libEPC::blogAllowedPubPages();
 

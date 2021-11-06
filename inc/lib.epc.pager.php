@@ -36,7 +36,7 @@ class adminEpcList extends adminGenericList
             $epc_id = [];
             if (isset($_REQUEST['epc_id'])) {
                 foreach ($_REQUEST['epc_id'] as $v) {
-                    $epc_id[(integer) $v] = true;
+                    $epc_id[(int) $v] = true;
                 }
             }
 

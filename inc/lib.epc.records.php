@@ -67,9 +67,9 @@ class epcRecords
 
         if (!empty($params['epc_id'])) {
             if (is_array($params['epc_id'])) {
-                array_walk($params['epc_id'], function (&$v, $k) { if ($v !== null) { $v = (integer) $v; }});
+                array_walk($params['epc_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v; }});
             } else {
-                $params['epc_id'] = [(integer) $params['epc_id']];
+                $params['epc_id'] = [(int) $params['epc_id']];
             }
             $strReq .= 'AND E.epc_id ' . $this->con->in($params['epc_id']);
         } elseif (isset($params['not_id']) && is_numeric($params['not_id'])) {
@@ -131,7 +131,7 @@ class epcRecords
 
     public function updRecord($id, $cur)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such record ID'));
@@ -157,7 +157,7 @@ class epcRecords
 
     public function delRecord($id)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such record ID'));
