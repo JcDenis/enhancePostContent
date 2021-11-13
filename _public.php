@@ -52,7 +52,7 @@ class publicEnhancePostContent
         $filters = libEPC::getFilters();
 
         foreach ($filters as $id => $filter) {
-            if ('' != $filter->class || '' != $filter->style) {
+            if ('' == $filter->class || '' == $filter->style) {
                 continue;
             }
 
