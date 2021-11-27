@@ -1,5 +1,7 @@
 dev
 - [ ] add auto-find post title in content
+- [ ] add auto-find categorie
+- fix remplacement limit
 
 2021.10.06
 - update translations (and remove .lang.php file)

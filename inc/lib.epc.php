@@ -135,7 +135,10 @@ class libEPC
             && is_array($filter->tplValues)
             && in_array($tag, $filter->tplValues)
             && $args[0] != '' //content
-            && empty($args[2]) // remove html
+            && empty($args['encode_xml'])
+            && empty($args['encode_html'])
+            && empty($args['remove_html'])
+            && empty($args['strip_tags'])
         ;
     }
 
@@ -143,7 +146,7 @@ class libEPC
     {
         # Limit
         if ($filter->limit > 0) {
-            $limit = in_array($filter->id() . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter->id() . '_' . $p] : $filter->limit;
+            $limit = array_key_exists($filter->id() . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter->id() . '_' . $p] : $filter->limit;
             if ($limit < 1) {
                 return $s;
             }
