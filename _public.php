@@ -14,17 +14,17 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
-require dirname(__FILE__) . '/_widgets.php';
+require __DIR__ . '/_widgets.php';
 
-$core->blog->settings->addNamespace('enhancePostContent');
+dcCore::app()->blog->settings->addNamespace('enhancePostContent');
 
-if ($core->blog->settings->enhancePostContent->enhancePostContent_active) {
-    $core->addBehavior(
-        'publicHeadContent',
+if (dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active) {
+    dcCore::app()->addBehavior(
+        'publicHeadContentV2',
         ['publicEnhancePostContent', 'publicHeadContent']
     );
-    $core->addBehavior(
-        'publicBeforeContentFilter',
+    dcCore::app()->addBehavior(
+        'publicBeforeContentFilterV2',
         ['publicEnhancePostContent', 'publicContentFilter']
     );
 }
@@ -38,12 +38,10 @@ class publicEnhancePostContent
 {
     /**
      * Add filters CSS to page header
-     *
-     * @param  dcCore $core dcCore instance
      */
-    public static function publicHeadContent(dcCore $core)
+    public static function publicHeadContent()
     {
-        echo dcUtils::cssLoad($core->blog->url . $core->url->getURLFor('epccss'));
+        echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
     }
 
     public static function css($args)
@@ -80,11 +78,10 @@ class publicEnhancePostContent
     /**
      * Filter template blocks content
      *
-     * @param  dcCore $core dcCore instance
      * @param  string $tag  Tempalte block name
      * @param  array  $args Tempalte Block arguments
      */
-    public static function publicContentFilter(dcCore $core, $tag, $args)
+    public static function publicContentFilter($tag, $args)
     {
         $filters = libEPC::getFilters();
 

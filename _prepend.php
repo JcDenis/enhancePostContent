@@ -24,22 +24,22 @@ $filters = [
     'Link',
     'Replace',
     'Update',
-    'Twitter'
+    'Twitter',
 ];
 
-$d = dirname(__FILE__) . '/inc/';
+$d = __DIR__ . '/inc/';
 
-$__autoload['libEPC']       = $d . 'lib.epc.php';
-$__autoload['epcFilter']    = $d . 'lib.epc.filter.php';
-$__autoload['epcRecords']   = $d . 'lib.epc.records.php';
-$__autoload['adminEpcList'] = $d . 'lib.epc.pager.php';
+Clearbricks::lib()->autoload(['libEPC' => $d . 'lib.epc.php']);
+Clearbricks::lib()->autoload(['epcFilter' => $d . 'lib.epc.filter.php']);
+Clearbricks::lib()->autoload(['epcRecords' => $d . 'lib.epc.records.php']);
+Clearbricks::lib()->autoload(['adminEpcList' => $d . 'lib.epc.pager.php']);
 
 foreach ($filters as $f) {
-    $__autoload['epcFilter' . $f] = $d . 'lib.epc.filters.php';
-    $core->addBehavior('enhancePostContentFilters', ['epcFilter' . $f, 'create']);
+    Clearbricks::lib()->autoload(['epcFilter' . $f => $d . 'lib.epc.filters.php']);
+    dcCore::app()->addBehavior('enhancePostContentFilters', ['epcFilter' . $f, 'create']);
 }
 
-$core->url->register(
+dcCore::app()->url->register(
     'epccss',
     'epc.css',
     '^epc\.css',

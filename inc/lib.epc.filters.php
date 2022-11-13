@@ -21,14 +21,14 @@ class epcFilterTag extends epcFilter
             'htmltag'  => 'a',
             'class'    => ['a.epc-tag'],
             'replace'  => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
-            'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>'
+            'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>',
         ]);
 
         $this->setSettings([
             'style'     => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'tag';
@@ -36,16 +36,16 @@ class epcFilterTag extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        if (!$this->core->plugins->moduleExists('tags')) {
+        if (!dcCore::app()->plugins->moduleExists('tags')) {
             return null;
         }
 
-        $metas = $this->core->meta->getMetadata(['meta_type' => 'tag']);
+        $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
             $args[0] = libEPC::replaceString(
                 $metas->meta_id,
-                sprintf($this->replace, $this->core->blog->url . $this->core->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
+                sprintf($this->replace, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
                 $args[0],
                 $this
             );
@@ -56,16 +56,16 @@ class epcFilterTag extends epcFilter
 
     public function widgetList($content, $w, &$list)
     {
-        if (!$this->core->plugins->moduleExists('tags')) {
+        if (!dcCore::app()->plugins->moduleExists('tags')) {
             return null;
         }
 
-        $metas = $this->core->meta->getMetadata(['meta_type' => 'tag']);
+        $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
             $list[] = libEPC::matchString(
                 $metas->meta_id,
-                sprintf($this->widget, $this->core->blog->url . $this->core->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
+                sprintf($this->widget, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
                 $content,
                 $this
             );
@@ -85,7 +85,7 @@ class epcFilterSearch extends epcFilter
             'help'     => __('Highlight searched words.'),
             'htmltag'  => '',
             'class'    => ['span.epc-search'],
-            'replace'  => '<span class="epc-search" title="' . __('Search') . '">%s</span>'
+            'replace'  => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
         ]);
 
         $this->setSettings([
@@ -94,7 +94,7 @@ class epcFilterSearch extends epcFilter
             'style'     => ['color: #FFCC66;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['search.html']
+            'pubPages'  => ['search.html'],
         ]);
 
         return 'search';
@@ -102,11 +102,11 @@ class epcFilterSearch extends epcFilter
 
     public function publicContent($tag, $args)
     {
-        if (!isset($GLOBALS['_search'])) {
+        if (empty(dcCore::app()->public->search)) {
             return null;
         }
 
-        $searchs = explode(' ', $GLOBALS['_search']);
+        $searchs = explode(' ', dcCore::app()->public->search);
 
         foreach ($searchs as $k => $v) {
             $args[0] = libEPC::replaceString(
@@ -133,14 +133,14 @@ class epcFilterAcronym extends epcFilter
             'htmltag'  => 'acronym',
             'class'    => ['acronym.epc-acronym'],
             'replace'  => '<acronym class="epc-acronym" title="%s">%s</acronym>',
-            'widget'   => '<acronym title="%s">%s</acronym>'
+            'widget'   => '<acronym title="%s">%s</acronym>',
         ]);
 
         $this->setSettings([
             'style'     => ['font-weight: bold;'],
             'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'acronym';
@@ -187,14 +187,14 @@ class epcFilterAbbreviation extends epcFilter
             'htmltag'  => 'a',
             'class'    => ['abbr.epc-abbr'],
             'replace'  => '<abbr class="epc-abbr" title="%s">%s</abbr>',
-            'widget'   => '<abbr title="%s">%s</abbr>'
+            'widget'   => '<abbr title="%s">%s</abbr>',
         ]);
 
         $this->setSettings([
             'style'     => ['font-weight: bold;'],
             'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'abbreviation';
@@ -241,14 +241,14 @@ class epcFilterDefinition extends epcFilter
             'htmltag'  => 'dfn',
             'class'    => ['dfn.epc-dfn'],
             'replace'  => '<dfn class="epc-dfn" title="%s">%s</dfn>',
-            'widget'   => '<dfn class="epc-dfn" title="%s">%s</dfn>'
+            'widget'   => '<dfn class="epc-dfn" title="%s">%s</dfn>',
         ]);
 
         $this->setSettings([
             'style'     => ['font-weight: bold;'],
             'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'definition';
@@ -295,7 +295,7 @@ class epcFilterCitation extends epcFilter
             'htmltag'  => 'cite',
             'class'    => ['cite.epc-cite'],
             'replace'  => '<cite class="epc-cite" title="%s">%s</cite>',
-            'widget'   => '<cite title="%s">%s</cite>'
+            'widget'   => '<cite title="%s">%s</cite>',
         ]);
 
         $this->setSettings([
@@ -303,7 +303,7 @@ class epcFilterCitation extends epcFilter
             'style'     => ['font-style: italic;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'citation';
@@ -350,14 +350,14 @@ class epcFilterLink extends epcFilter
             'htmltag'  => 'a',
             'class'    => ['a.epc-link'],
             'replace'  => '<a class="epc-link" title="%s" href="%s">%s</a>',
-            'widget'   => '<a title="%s" href="%s">%s</a>'
+            'widget'   => '<a title="%s" href="%s">%s</a>',
         ]);
 
         $this->setSettings([
             'style'     => ['text-decoration: none; font-style: italic; color: #0000FF;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'link';
@@ -403,7 +403,7 @@ class epcFilterReplace extends epcFilter
             'has_list' => true,
             'htmltag'  => '',
             'class'    => ['span.epc-replace'],
-            'replace'  => '<span class="epc-replace">%s</span>'
+            'replace'  => '<span class="epc-replace">%s</span>',
         ]);
 
         $this->setSettings([
@@ -412,7 +412,7 @@ class epcFilterReplace extends epcFilter
             'style'     => ['font-style: italic;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'replace';
@@ -444,7 +444,7 @@ class epcFilterUpdate extends epcFilter
             'has_list' => true,
             'htmltag'  => 'del,ins',
             'class'    => ['del.epc-update', 'ins.epc-update'],
-            'replace'  => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>'
+            'replace'  => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
         ]);
 
         $this->setSettings([
@@ -453,7 +453,7 @@ class epcFilterUpdate extends epcFilter
             'style'     => ['text-decoration: line-through;', 'font-style: italic;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'update';
@@ -484,14 +484,14 @@ class epcFilterTwitter extends epcFilter
             'help'     => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
             'htmltag'  => 'a',
             'class'    => ['a.epc-twitter'],
-            'replace'  => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>'
+            'replace'  => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
         ]);
 
         $this->setSettings([
             'style'     => ['text-decoration: none; font-weight: bold; font-style: italic; color: #0000FF;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html']
+            'pubPages'  => ['post.html'],
         ]);
 
         return 'twitter';

@@ -43,7 +43,7 @@ class adminEpcList extends adminGenericList
             $cols = [
                 'key'   => '<th colspan="2" class="first">' . __('Key') . '</th>',
                 'value' => '<th scope="col">' . __('Value') . '</th>',
-                'date'  => '<th scope="col">' . __('Date') . '</th>'
+                'date'  => '<th scope="col">' . __('Date') . '</th>',
             ];
 
             $html_block = '<div class="table-outer"><table><caption>' .
@@ -75,7 +75,7 @@ class adminEpcList extends adminGenericList
             'check' => '<td class="nowrap">' . form::checkbox(['epc_id[]'], $this->rs->epc_id, ['checked' => $checked]) . '</td>',
             'key'   => '<td class="nowrap">' . html::escapeHTML($this->rs->epc_key) . '</td>',
             'value' => '<td class="maximal">' . html::escapeHTML($this->rs->epc_value) . '</td>',
-            'date'  => '<td class="nowrap count">' . dt::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>'
+            'date'  => '<td class="nowrap count">' . dt::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>',
         ];
 
         return

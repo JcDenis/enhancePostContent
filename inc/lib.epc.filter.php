@@ -12,8 +12,6 @@
  */
 abstract class epcFilter
 {
-    public $core;
-
     private $id      = 'undefined';
     private $records = null;
 
@@ -25,7 +23,7 @@ abstract class epcFilter
         'htmltag'  => '',
         'class'    => [],
         'replace'  => '',
-        'widget'   => ''
+        'widget'   => '',
     ];
     private $settings = [
         'nocase'    => false,
@@ -34,21 +32,20 @@ abstract class epcFilter
         'style'     => [],
         'notag'     => '',
         'tplValues' => [],
-        'pubPages'  => []
+        'pubPages'  => [],
     ];
 
-    final public function __construct(dcCore $core)
+    final public function __construct()
     {
-        $this->core = $core;
-        $this->id   = $this->init();
+        $this->id = $this->init();
 
         $this->blogSettings();
     }
 
-    public static function create(arrayObject $o, dcCore $core)
+    public static function create(arrayObject $o)
     {
         $c = get_called_class();
-        $o->append(new $c($core));
+        $o->append(new $c());
     }
 
     final public function id()
@@ -112,7 +109,7 @@ abstract class epcFilter
     private function blogSettings()
     {
         $ns  = 'enhancePostContent_' . $this->id;
-        $opt = @unserialize($this->core->blog->settings->enhancePostContent->$ns);
+        $opt = @unserialize(dcCore::app()->blog->settings->enhancePostContent->$ns);
 
         if (!is_array($opt)) {
             $opt = [];
@@ -143,7 +140,7 @@ abstract class epcFilter
     final public function records()
     {
         if ($this->records === null && $this->has_list) {
-            $records       = new epcRecords($this->core);
+            $records       = new epcRecords();
             $this->records = $records->getRecords(['epc_filter' => $this->id()]);
         }
 

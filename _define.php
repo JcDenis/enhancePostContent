@@ -18,16 +18,16 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2021.11.13',
+    '2021.12.11',
     [
-        'requires'    => [['core', '2.20']],
-        'permissions' => 'contentadmin',
+        'requires'    => [['core', '2.24']],
+        'permissions' => dcAuth::PERMISSION_CONTENT_ADMIN,
         'type'        => 'plugin',
         'support'     => 'https://github.com/JcDenis/enhancePostContent',
         'details'     => 'https://plugins.dotaddict.org/dc2/details/enhancePostContent',
         'repository'  => 'https://raw.githubusercontent.com/JcDenis/enhancePostContent/master/dcstore.xml',
         'settings'    => [
-            'blog' => '#params.epc_params'
-        ]
+            'blog' => '#params.epc_params',
+        ],
     ]
 );

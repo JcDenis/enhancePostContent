@@ -14,7 +14,7 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'initWidgets',
     ['enhancePostContentWidget', 'adminContentList']
 );
@@ -33,8 +33,6 @@ class enhancePostContentWidget
      */
     public static function adminContentList($w)
     {
-        global $core;
-
         $w->create(
             'epclist',
             __('Enhance post content'),
@@ -109,17 +107,15 @@ class enhancePostContentWidget
      */
     public static function publicContentList($w)
     {
-        global $core, $_ctx;
-
         if ($w->offline) {
             return null;
         }
 
-        $core->blog->settings->addNamespace('enhancePostContent');
+        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
 
         # Page
-        if (!$core->blog->settings->enhancePostContent->enhancePostContent_active
-            || !in_array($_ctx->current_tpl, ['post.html', 'page.html'])
+        if (!dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active
+            || !in_array(dcCore::app()->ctx->current_tpl, ['post.html', 'page.html'])
         ) {
             return null;
         }
@@ -131,7 +127,7 @@ class enhancePostContentWidget
             if ($w->$ns && is_callable($v['cb'])) {
                 $content .= call_user_func_array(
                     $v['cb'],
-                    [$core, $w]
+                    [dcCore::app(), $w]
                 );
             }
         }

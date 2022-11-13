@@ -14,10 +14,10 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$dc_min      = '2.18';
+$dc_min      = '2.24';
 $mod_id      = 'enhancePostContent';
-$new_version = $core->plugins->moduleInfo($mod_id, 'version');
-$old_version = $core->getVersion($mod_id);
+$new_version = dcCore::app()->plugins->moduleInfo($mod_id, 'version');
+$old_version = dcCore::app()->getVersion($mod_id);
 
 if (version_compare($old_version, $new_version, '>=')) {
     return null;
@@ -35,7 +35,7 @@ try {
     }
 
     # Database
-    $s = new dbStruct($core->con, $core->prefix);
+    $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $s->epc
         ->epc_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
@@ -51,13 +51,13 @@ try {
         ->index('idx_epc_filter', 'btree', 'epc_filter')
         ->index('idx_epc_key', 'btree', 'epc_key');
 
-    $si      = new dbStruct($core->con, $core->prefix);
+    $si      = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $changes = $si->synchronize($s);
     $s       = null;
 
     # Settings
-    $core->blog->settings->addNamespace($mod_id);
-    $s = $core->blog->settings->enhancePostContent;
+    dcCore::app()->blog->settings->addNamespace($mod_id);
+    $s = dcCore::app()->blog->settings->enhancePostContent;
 
     $s->put('enhancePostContent_active', false, 'boolean', 'Enable enhancePostContent', false, true);
     $s->put('enhancePostContent_list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
@@ -76,7 +76,7 @@ try {
             'style'     => $filter->style,
             'notag'     => $filter->notag,
             'tplValues' => $filter->tplValues,
-            'pubPages'  => $filter->pubPages
+            'pubPages'  => $filter->pubPages,
         ];
         $s->put('enhancePostContent_' . $id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
         /*        # only tables
@@ -92,11 +92,11 @@ try {
     }
 
     # Version
-    $core->setVersion($mod_id, $new_version);
+    dcCore::app()->setVersion($mod_id, $new_version);
 
     return true;
 } catch (Exception $e) {
-    $core->error->add($e->getMessage());
+    dcCore::app()->error->add($e->getMessage());
 }
 
 return false;

@@ -14,12 +14,12 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$core->blog->settings->addNamespace('enhancePostContent');
+dcCore::app()->blog->settings->addNamespace('enhancePostContent');
 
-require dirname(__FILE__) . '/_widgets.php';
+require __DIR__ . '/_widgets.php';
 
 # Admin menu
-$_menu['Plugins']->addItem(
+dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('Enhance post content'),
     'plugin.php?p=enhancePostContent',
     'index.php?pf=enhancePostContent/icon.png',
@@ -27,40 +27,40 @@ $_menu['Plugins']->addItem(
         '/plugin.php\?p=enhancePostContent(&.*)?$/',
         $_SERVER['REQUEST_URI']
     ),
-    $core->auth->check('contentadmin', $core->blog->id)
+    dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)
 );
 
-$core->addBehavior(
-    'adminDashboardFavorites',
+dcCore::app()->addBehavior(
+    'adminDashboardFavoritesV2',
     ['epcAdminBehaviors', 'adminDashboardFavorites']
 );
-$core->addBehavior(
-    'adminBlogPreferencesForm',
+dcCore::app()->addBehavior(
+    'adminBlogPreferencesFormV2',
     ['epcAdminBehaviors', 'adminBlogPreferencesForm']
 );
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'adminBeforeBlogSettingsUpdate',
     ['epcAdminBehaviors', 'adminBeforeBlogSettingsUpdate']
 );
-$core->addBehavior(
-    'adminFiltersLists',
+dcCore::app()->addBehavior(
+    'adminFiltersListsV2',
     ['epcAdminBehaviors', 'adminFiltersLists']
 );
 
 class epcAdminBehaviors
 {
-    public static function adminDashboardFavorites($core, $favs)
+    public static function adminDashboardFavorites(dcFavorites $favs)
     {
         $favs->register('enhancePostContent', [
             'title'       => __('Enhance post content'),
             'url'         => 'plugin.php?p=enhancePostContent',
             'small-icon'  => 'index.php?pf=enhancePostContent/icon.png',
             'large-icon'  => 'index.php?pf=enhancePostContent/icon-big.png',
-            'permissions' => $core->auth->check('contentadmin', $core->blog->id),
+            'permissions' => dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id),
             'active_cb'   => [
                 'epcAdminBehaviors',
-                'adminDashboardFavoritesActive'
-            ]
+                'adminDashboardFavoritesActive',
+            ],
         ]);
     }
 
@@ -77,11 +77,11 @@ class epcAdminBehaviors
             __('Date')  => 'epc_upddt',
             __('Key')   => 'epc_key',
             __('Value') => 'epc_value',
-            __('ID')    => 'epc_id'
+            __('ID')    => 'epc_id',
         ];
     }
 
-    public static function adminBlogPreferencesForm(dcCore $core, dcSettings $blog_settings)
+    public static function adminBlogPreferencesForm(dcSettings $blog_settings)
     {
         $active           = (bool) $blog_settings->enhancePostContent->enhancePostContent_active;
         $allowedtplvalues = libEPC::blogAllowedTplValues();
@@ -97,7 +97,7 @@ class epcAdminBehaviors
         '<p class="form-note">' .
         __('This enable public widgets and contents filter.') .
         '</p>' .
-        '<p><a href="' . $core->adminurl->get('admin.plugin.enhancePostContent') . '">' .
+        '<p><a href="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '">' .
         __('Set content filters') . '</a></p>' .
         '</div>' .
         '<div class="col">' .
@@ -126,14 +126,14 @@ class epcAdminBehaviors
         $blog_settings->enhancePostContent->put('enhancePostContent_allowedpubpages', serialize($allowedpubpages));
     }
 
-    public static function adminFiltersLists(dcCore $core, $sorts)
+    public static function adminFiltersLists($sorts)
     {
         $sorts['epc'] = [
             __('Enhance post content'),
             self::sortbyCombo(),
             'epc_upddt',
             'desc',
-            [__('records per page'), 20]
+            [__('records per page'), 20],
         ];
     }
 }

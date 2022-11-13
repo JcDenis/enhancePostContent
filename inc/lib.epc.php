@@ -11,9 +11,15 @@
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 # l10n
-__('entry excerpt');__('entry content');__('comment content');
-__('home page');__('post page');__('category page');__('search results page');
-__('atom feeds');__('RSS feeds');
+__('entry excerpt');
+__('entry content');
+__('comment content');
+__('home page');
+__('post page');
+__('category page');
+__('search results page');
+__('atom feeds');
+__('RSS feeds');
 
 class libEPC
 {
@@ -26,91 +32,79 @@ class libEPC
 
     public static function defaultAllowedTplValues()
     {
-        global $core;
-
         $rs = new arrayObject([
             'entry excerpt'   => 'EntryExcerpt',
             'entry content'   => 'EntryContent',
             'comment content' => 'CommentContent',
         ]);
 
-        $core->callBehavior('enhancePostContentAllowedTplValues', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedTplValues', $rs);
 
         return iterator_to_array($rs, true);
     }
 
     public static function blogAllowedTplValues()
     {
-        global $core;
-
-        $core->blog->settings->addNamespace('enhancePostContent');
-        $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedtplvalues);
+        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
+        $rs = @unserialize(dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_allowedtplvalues);
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
 
     public static function defaultAllowedWidgetValues()
     {
-        global $core;
-
         $rs = new arrayObject([
             'entry excerpt' => [
                 'id' => 'entryexcerpt',
-                'cb' => ['libEPC','widgetContentEntryExcerpt']
+                'cb' => ['libEPC','widgetContentEntryExcerpt'],
             ],
             'entry content' => [
                 'id' => 'entrycontent',
-                'cb' => ['libEPC','widgetContentEntryContent']
+                'cb' => ['libEPC','widgetContentEntryContent'],
             ],
             'comment content' => [
                 'id' => 'commentcontent',
-                'cb' => ['libEPC','widgetContentCommentContent']
-            ]
+                'cb' => ['libEPC','widgetContentCommentContent'],
+            ],
         ]);
 
-        $core->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
 
         return iterator_to_array($rs, true);
     }
 
     public static function defaultAllowedPubPages()
     {
-        global $core;
-
         $rs = new arrayObject([
             'home page'           => 'home.html',
             'post page'           => 'post.html',
             'category page'       => 'category.html',
             'search results page' => 'search.html',
             'atom feeds'          => 'atom.xml',
-            'RSS feeds'           => 'rss2.xml'
+            'RSS feeds'           => 'rss2.xml',
         ]);
 
-        $core->callBehavior('enhancePostContentAllowedPubPages', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedPubPages', $rs);
 
         return iterator_to_array($rs, true);
     }
 
     public static function blogAllowedPubPages()
     {
-        global $core;
-
-        $core->blog->settings->addNamespace('enhancePostContent');
-        $rs = @unserialize($core->blog->settings->enhancePostContent->enhancePostContent_allowedpubpages);
+        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
+        $rs = @unserialize(dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_allowedpubpages);
 
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }
 
     public static function getFilters()
     {
-        global $core;
-
         if (self::$default_filters === null) {
-            $final   = $sort   = [];
+            $final   = $sort = [];
             $filters = new arrayObject();
 
             try {
-                $core->callBehavior('enhancePostContentFilters', $filters, $core);
+                dcCore::app()->callBehavior('enhancePostContentFilters', $filters);
 
                 foreach ($filters as $filter) {
                     if ($filter instanceof epcFilter && !isset($final[$filter->id()])) {
@@ -119,7 +113,7 @@ class libEPC
                     }
                 }
             } catch (Exception $e) {
-                $core->error->add($e->getMessage());
+                dcCore::app()->error->add($e->getMessage());
             }
             array_multisort($sort, $final);
             self::$default_filters = $final;
@@ -131,7 +125,7 @@ class libEPC
     public static function testContext($tag, $args, $filter)
     {
         return is_array($filter->pubPages)
-            && in_array($GLOBALS['_ctx']->current_tpl, $filter->pubPages)
+            && in_array(dcCore::app()->ctx->current_tpl, $filter->pubPages)
             && is_array($filter->tplValues)
             && in_array($tag, $filter->tplValues)
             && $args[0] != '' //content
@@ -279,17 +273,15 @@ class libEPC
     # Widgets
     #
 
-    public static function widgetContentEntryExcerpt($core, $w)
+    public static function widgetContentEntryExcerpt($w)
     {
-        global $_ctx;
-
-        if (!$_ctx->exists('posts')) {
+        if (!dcCore::app()->ctx->exists('posts')) {
             return null;
         }
 
         $res = '';
-        while ($_ctx->posts->fetch()) {
-            $res .= $_ctx->posts->post_excerpt;
+        while (dcCore::app()->ctx->posts->fetch()) {
+            $res .= dcCore::app()->ctx->posts->post_excerpt;
         }
 
         return $res;
@@ -297,15 +289,13 @@ class libEPC
 
     public static function widgetContentEntryContent()
     {
-        global $_ctx;
-
-        if (!$_ctx->exists('posts')) {
+        if (!dcCore::app()->ctx->exists('posts')) {
             return null;
         }
 
         $res = '';
-        while ($_ctx->posts->fetch()) {
-            $res .= $_ctx->posts->post_content;
+        while (dcCore::app()->ctx->posts->fetch()) {
+            $res .= dcCore::app()->ctx->posts->post_content;
         }
 
         return $res;
@@ -313,16 +303,14 @@ class libEPC
 
     public static function widgetContentCommentContent()
     {
-        global $core, $_ctx;
-
-        if (!$_ctx->exists('posts')) {
+        if (!dcCore::app()->ctx->exists('posts')) {
             return null;
         }
 
         $res      = '';
         $post_ids = [];
-        while ($_ctx->posts->fetch()) {
-            $comments = $core->blog->getComments(['post_id' => $_ctx->posts->post_id]);
+        while (dcCore::app()->ctx->posts->fetch()) {
+            $comments = dcCore::app()->blog->getComments(['post_id' => dcCore::app()->ctx->posts->post_id]);
             while ($comments->fetch()) {
                 $res .= $comments->getContent();
             }

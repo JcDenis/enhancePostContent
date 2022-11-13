@@ -12,17 +12,15 @@
  */
 class epcRecords
 {
-    public $core;
     public $con;
     public $table;
     public $blog;
 
-    public function __construct($core)
+    public function __construct()
     {
-        $this->core  = $core;
-        $this->con   = $core->con;
-        $this->table = $core->prefix . 'epc';
-        $this->blog  = $core->con->escape($core->blog->id);
+        $this->con   = dcCore::app()->con;
+        $this->table = dcCore::app()->prefix . 'epc';
+        $this->blog  = dcCore::app()->con->escape(dcCore::app()->blog->id);
     }
 
     public function getRecords($params, $count_only = false)
@@ -124,7 +122,7 @@ class epcRecords
         $this->trigger();
 
         # --BEHAVIOR-- enhancePostContentAfterAddRecord
-        $this->core->callBehavior('enhancePostContentAfterAddRecord', $cur);
+        dcCore::app()->callBehavior('enhancePostContentAfterAddRecord', $cur);
 
         return $cur->epc_id;
     }
@@ -143,7 +141,7 @@ class epcRecords
         $this->trigger();
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord
-        $this->core->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
+        dcCore::app()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
     }
 
     public function isRecord($filter, $key, $not_id = null)
@@ -151,7 +149,7 @@ class epcRecords
         return 0 < $this->getRecords([
             'epc_filter' => $filter,
             'epc_key'    => $key,
-            'not_id'     => $not_id
+            'not_id'     => $not_id,
         ], true)->f(0);
     }
 
@@ -164,7 +162,7 @@ class epcRecords
         }
 
         # --BEHAVIOR-- enhancePostContentBeforeDelRecord
-        $this->core->callBehavior('enhancePostContentbeforeDelRecord', $id);
+        dcCore::app()->callBehavior('enhancePostContentbeforeDelRecord', $id);
 
         $this->con->execute(
             'DELETE FROM ' . $this->table . ' ' .
@@ -203,6 +201,6 @@ class epcRecords
 
     private function trigger()
     {
-        $this->core->blog->triggerBlog();
+        dcCore::app()->blog->triggerBlog();
     }
 }
