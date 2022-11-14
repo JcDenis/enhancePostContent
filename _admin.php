@@ -27,7 +27,7 @@ dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
         '/plugin.php\?p=enhancePostContent(&.*)?$/',
         $_SERVER['REQUEST_URI']
     ),
-    dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id)
 );
 
 dcCore::app()->addBehavior(
@@ -56,7 +56,7 @@ class epcAdminBehaviors
             'url'         => 'plugin.php?p=enhancePostContent',
             'small-icon'  => 'index.php?pf=enhancePostContent/icon.png',
             'large-icon'  => 'index.php?pf=enhancePostContent/icon-big.png',
-            'permissions' => dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id),
+            'permissions' => dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id),
             'active_cb'   => [
                 'epcAdminBehaviors',
                 'adminDashboardFavoritesActive',

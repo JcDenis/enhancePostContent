@@ -14,7 +14,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-dcPage::check('contentadmin');
+dcPage::check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]));
 
 # -- Prepare queries and object --
 
@@ -63,7 +63,7 @@ try {
 
         dcCore::app()->blog->triggerBlog();
 
-        dcPage::addSuccessNotice(
+        dcAdminNotices::addSuccessNotice(
             __('Filter successfully updated.')
         );
 
@@ -85,13 +85,13 @@ try {
         $cur->epc_value  = html::escapeHTML($_POST['new_value']);
 
         if ($records->isRecord($cur->epc_filter, $cur->epc_key)) {
-            dcPage::addErrorNotice(__('Key already exists for this filter'));
+            dcAdminNotices::addErrorNotice(__('Key already exists for this filter'));
         } else {
             $records->addRecord($cur);
 
             dcCore::app()->blog->triggerBlog();
 
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Filter successfully updated.')
             );
         }
@@ -112,7 +112,7 @@ try {
 
         dcCore::app()->blog->triggerBlog();
 
-        dcPage::addSuccessNotice(
+        dcAdminNotices::addSuccessNotice(
             __('Filter successfully updated.')
         );
 
