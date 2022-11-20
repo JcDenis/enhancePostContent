@@ -3,6 +3,9 @@ dev
 - [ ] add auto-find categorie
 - fix remplacement limit
 
+2022.11.20
+- fix compatibility with Dotclear 2.24 (required)
+
 2021.10.06
 - update translations (and remove .lang.php file)
 - add priority on filters for replacement order

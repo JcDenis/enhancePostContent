@@ -2,11 +2,11 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="enhancePostContent">
     <name>Enhance post content</name>
-    <version>2021.11.13</version>
+    <version>2022.11.20</version>
     <author>Jean-Christian Denis and Contributors</author>
     <desc>Add features to words in post content</desc>
-    <file>https://github.com/JcDenis/enhancePostContent/releases/download/v2021.11.13/plugin-enhancePostContent.zip</file>
-    <da:dcmin>2.20</da:dcmin>
+    <file>https://github.com/JcDenis/enhancePostContent/releases/download/v2022.11.20/plugin-enhancePostContent.zip</file>
+    <da:dcmin>2.24</da:dcmin>
     <da:details>https://plugins.dotaddict.org/dc2/details/enhancePostContent</da:details>
     <da:support>https://github.com/JcDenis/enhancePostContent</da:support>
   </module>

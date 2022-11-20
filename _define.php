@@ -18,7 +18,7 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2022.11.12',
+    '2022.11.20',
     [
         'requires'    => [['core', '2.24']],
         'permissions' => dcAuth::PERMISSION_CONTENT_ADMIN,
