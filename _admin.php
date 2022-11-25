@@ -22,7 +22,7 @@ require __DIR__ . '/_widgets.php';
 dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('Enhance post content'),
     'plugin.php?p=enhancePostContent',
-    'index.php?pf=enhancePostContent/icon.png',
+    urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
     preg_match(
         '/plugin.php\?p=enhancePostContent(&.*)?$/',
         $_SERVER['REQUEST_URI']
@@ -54,8 +54,8 @@ class epcAdminBehaviors
         $favs->register('enhancePostContent', [
             'title'       => __('Enhance post content'),
             'url'         => 'plugin.php?p=enhancePostContent',
-            'small-icon'  => 'index.php?pf=enhancePostContent/icon.png',
-            'large-icon'  => 'index.php?pf=enhancePostContent/icon-big.png',
+            'small-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
+            'large-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
             'permissions' => dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id),
             'active_cb'   => [
                 'epcAdminBehaviors',
