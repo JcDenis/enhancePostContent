@@ -19,7 +19,7 @@ class epcRecords
     public function __construct()
     {
         $this->con   = dcCore::app()->con;
-        $this->table = dcCore::app()->prefix . 'epc';
+        $this->table = dcCore::app()->prefix . initEnhancePostContent::EPC_TABLE_NAME;
         $this->blog  = dcCore::app()->con->escape(dcCore::app()->blog->id);
     }
 

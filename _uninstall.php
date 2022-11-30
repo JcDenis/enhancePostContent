@@ -27,6 +27,17 @@ $this->addUserAction(
 
 $this->addUserAction(
     /* type */
+    'tables',
+    /* action */
+    'delete',
+    /* ns */
+    initEnhancePostContent::EPC_TABLE_NAME,
+    /* desc */
+    __('delete table')
+);
+
+$this->addUserAction(
+    /* type */
     'plugins',
     /* action */
     'delete',
@@ -56,6 +67,17 @@ $this->addDirectAction(
     'enhancePostContent',
     /* description */
     sprintf(__('delete all %s settings'), 'enhancePostContent')
+);
+
+$this->addDirectAction(
+    /* type */
+    'tables',
+    /* action */
+    'delete',
+    /* ns */
+    initEnhancePostContent::EPC_TABLE_NAME,
+    /* desc */
+    sprintf(__('delete %s table'), 'enhancePostContent')
 );
 
 $this->addDirectAction(

@@ -14,8 +14,8 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$dc_min      = '2.24';
 $mod_id      = 'enhancePostContent';
+$dc_min      = dcCore::app()->plugins->moduleInfo($mod_id, 'requires')[0][1];
 $new_version = dcCore::app()->plugins->moduleInfo($mod_id, 'version');
 $old_version = dcCore::app()->getVersion($mod_id);
 
@@ -36,7 +36,7 @@ try {
 
     # Database
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
-    $s->epc
+    $s->{initEnhancePostContent::EPC_TABLE_NAME}
         ->epc_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
         ->epc_type('varchar', 32, false, "'epc'")
