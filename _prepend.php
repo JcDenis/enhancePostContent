@@ -45,5 +45,34 @@ dcCore::app()->url->register(
     'epccss',
     'epc.css',
     '^epc\.css',
-    ['publicEnhancePostContent', 'css']
+    function($args)
+    {
+        $css     = [];
+        $filters = libEPC::getFilters();
+
+        foreach ($filters as $id => $filter) {
+            if ('' == $filter->class || '' == $filter->style) {
+                continue;
+            }
+
+            $res = '';
+            foreach ($filter->class as $k => $class) {
+                $styles = $filter->style;
+                $style  = html::escapeHTML(trim($styles[$k]));
+                if ('' != $style) {
+                    $res .= $class . ' {' . $style . '} ';
+                }
+            }
+
+            if (!empty($res)) {
+                $css[] = '/* CSS for enhancePostContent ' . $id . " */ \n" . $res . "\n";
+            }
+        }
+
+        header('Content-Type: text/css; charset=UTF-8');
+
+        echo implode("\n", $css);
+
+        exit;
+    }
 );

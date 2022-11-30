@@ -18,78 +18,22 @@ require __DIR__ . '/_widgets.php';
 
 dcCore::app()->blog->settings->addNamespace('enhancePostContent');
 
-if (dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active) {
-    dcCore::app()->addBehavior(
-        'publicHeadContentV2',
-        ['publicEnhancePostContent', 'publicHeadContent']
-    );
-    dcCore::app()->addBehavior(
-        'publicBeforeContentFilterV2',
-        ['publicEnhancePostContent', 'publicContentFilter']
-    );
+if (!dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active) {
+    return null;
 }
 
-/**
- * @ingroup DC_PLUGIN_ENHANCEPOSTCONTENT
- * @brief Filter posts content - public methods.
- * @since 2.6
- */
-class publicEnhancePostContent
-{
-    /**
-     * Add filters CSS to page header
-     */
-    public static function publicHeadContent()
-    {
-        echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
-    }
+// Add filters CSS to page header
+dcCore::app()->addBehavior('publicHeadContent', function() {
+    echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
+});
+// Filter template blocks content
+dcCore::app()->addBehavior('publicBeforeContentFilterV2', function($tag, $args) {
+    $filters = libEPC::getFilters();
 
-    public static function css($args)
-    {
-        $css     = [];
-        $filters = libEPC::getFilters();
-
-        foreach ($filters as $id => $filter) {
-            if ('' == $filter->class || '' == $filter->style) {
-                continue;
-            }
-
-            $res = '';
-            foreach ($filter->class as $k => $class) {
-                $styles = $filter->style;
-                $style  = html::escapeHTML(trim($styles[$k]));
-                if ('' != $style) {
-                    $res .= $class . ' {' . $style . '} ';
-                }
-            }
-
-            if (!empty($res)) {
-                $css[] = '/* CSS for enhancePostContent ' . $id . " */ \n" . $res . "\n";
-            }
+    foreach ($filters as $id => $filter) {
+        if (!libEPC::testContext($tag, $args, $filter)) {
+            continue;
         }
-
-        header('Content-Type: text/css; charset=UTF-8');
-
-        echo implode("\n", $css);
-
-        exit;
+        $filter->publicContent($tag, $args);
     }
-
-    /**
-     * Filter template blocks content
-     *
-     * @param  string $tag  Tempalte block name
-     * @param  array  $args Tempalte Block arguments
-     */
-    public static function publicContentFilter($tag, $args)
-    {
-        $filters = libEPC::getFilters();
-
-        foreach ($filters as $id => $filter) {
-            if (!libEPC::testContext($tag, $args, $filter)) {
-                continue;
-            }
-            $filter->publicContent($tag, $args);
-        }
-    }
-}
+});
