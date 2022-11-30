@@ -34,7 +34,7 @@ dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $f
         'url'         => dcCore::app()->adminurl->get('admin.plugin.enhancePostContent'),
         'small-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
         'large-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
-        'permissions' => dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id),
+        'permissions' => dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]),
     ]);
 });
 
