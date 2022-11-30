@@ -29,10 +29,12 @@ $filters = [
 
 $d = __DIR__ . '/inc/';
 
-Clearbricks::lib()->autoload(['libEPC' => $d . 'lib.epc.php']);
-Clearbricks::lib()->autoload(['epcFilter' => $d . 'lib.epc.filter.php']);
-Clearbricks::lib()->autoload(['epcRecords' => $d . 'lib.epc.records.php']);
-Clearbricks::lib()->autoload(['adminEpcList' => $d . 'lib.epc.pager.php']);
+Clearbricks::lib()->autoload([
+    'libEPC'       => $d . 'lib.epc.php',
+    'epcFilter'    => $d . 'lib.epc.filter.php',
+    'epcRecords'   => $d . 'lib.epc.records.php',
+    'adminEpcList' => $d . 'lib.epc.pager.php',
+]);
 
 foreach ($filters as $f) {
     Clearbricks::lib()->autoload(['epcFilter' . $f => $d . 'lib.epc.filters.php']);
