@@ -14,16 +14,17 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$mod_id      = 'enhancePostContent';
-$dc_min      = dcCore::app()->plugins->moduleInfo($mod_id, 'requires')[0][1];
-$new_version = dcCore::app()->plugins->moduleInfo($mod_id, 'version');
-$old_version = dcCore::app()->getVersion($mod_id);
-
-if (version_compare($old_version, $new_version, '>=')) {
-    return null;
-}
-
 try {
+    # Grab info
+    $mod_id      = basename(__DIR__);
+    $dc_min      = dcCore::app()->plugins->moduleInfo($mod_id, 'requires')[0][1];
+    $new_version = dcCore::app()->plugins->moduleInfo($mod_id, 'version');
+    $old_version = dcCore::app()->getVersion($mod_id);
+
+    if (version_compare($old_version, $new_version, '>=')) {
+        return null;
+    }
+
     # Check Dotclear version
     if (!method_exists('dcUtils', 'versionsCompare')
      || dcUtils::versionsCompare(DC_VERSION, $dc_min, '<', false)) {
