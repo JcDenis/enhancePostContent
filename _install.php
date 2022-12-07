@@ -18,10 +18,9 @@ try {
     # Grab info
     $mod_id      = basename(__DIR__);
     $dc_min      = dcCore::app()->plugins->moduleInfo($mod_id, 'requires')[0][1];
-    $new_version = dcCore::app()->plugins->moduleInfo($mod_id, 'version');
     $old_version = dcCore::app()->getVersion($mod_id);
 
-    if (version_compare($old_version, $new_version, '>=')) {
+    if (version_compare($old_version, dcCore::app()->plugins->moduleInfo($mod_id, 'version'), '>=')) {
         return null;
     }
 
@@ -91,9 +90,6 @@ try {
     if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {
         include_once dirname(__FILE__) . '/inc/lib.epc.update.php';
     }
-
-    # Version
-    dcCore::app()->setVersion($mod_id, $new_version);
 
     return true;
 } catch (Exception $e) {
