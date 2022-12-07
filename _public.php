@@ -23,11 +23,11 @@ if (!dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_activ
 }
 
 // Add filters CSS to page header
-dcCore::app()->addBehavior('publicHeadContent', function() {
+dcCore::app()->addBehavior('publicHeadContent', function () {
     echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
 });
 // Filter template blocks content
-dcCore::app()->addBehavior('publicBeforeContentFilterV2', function($tag, $args) {
+dcCore::app()->addBehavior('publicBeforeContentFilterV2', function ($tag, $args) {
     $filters = libEPC::getFilters();
 
     foreach ($filters as $id => $filter) {

@@ -45,8 +45,7 @@ dcCore::app()->url->register(
     'epccss',
     'epc.css',
     '^epc\.css',
-    function($args)
-    {
+    function ($args) {
         $css     = [];
         $filters = libEPC::getFilters();
 
