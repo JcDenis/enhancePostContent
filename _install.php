@@ -15,23 +15,12 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 }
 
 try {
-    # Grab info
-    $mod_id      = basename(__DIR__);
-    $dc_min      = dcCore::app()->plugins->moduleInfo($mod_id, 'requires')[0][1];
-    $old_version = dcCore::app()->getVersion($mod_id);
-
-    if (version_compare($old_version, dcCore::app()->plugins->moduleInfo($mod_id, 'version'), '>=')) {
+    # Version
+    if (!dcCore::app()->newVersion(
+        basename(__DIR__), 
+        dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version')
+    )) {
         return null;
-    }
-
-    # Check Dotclear version
-    if (!method_exists('dcUtils', 'versionsCompare')
-     || dcUtils::versionsCompare(DC_VERSION, $dc_min, '<', false)) {
-        throw new Exception(sprintf(
-            '%s requires Dotclear %s',
-            $mod_id,
-            $dc_min
-        ));
     }
 
     # Database
@@ -56,8 +45,8 @@ try {
     $s       = null;
 
     # Settings
-    dcCore::app()->blog->settings->addNamespace($mod_id);
-    $s = dcCore::app()->blog->settings->enhancePostContent;
+    dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
+    $s = dcCore::app()->blog->settings->__get(basename(__DIR__));
 
     $s->put('enhancePostContent_active', false, 'boolean', 'Enable enhancePostContent', false, true);
     $s->put('enhancePostContent_list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
@@ -87,6 +76,7 @@ try {
     }
 
     # Update old versions
+    $old_version = dcCore::app()->getVersion($mod_id);
     if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {
         include_once dirname(__FILE__) . '/inc/lib.epc.update.php';
     }
