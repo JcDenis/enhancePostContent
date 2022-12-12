@@ -33,6 +33,7 @@ Clearbricks::lib()->autoload([
     'enhancePostContent' => $d . 'class.enhancepostcontent.php',
     'epcFilter'    => $d . 'class.epcfilter.php',
     'epcRecords'   => $d . 'class.epcrecords.php',
+    'epcUpgrade'   => $d . 'class.epcupgrade.php',
     'adminEpcList' => $d . 'class.adminepclist.php',
 ]);
 
