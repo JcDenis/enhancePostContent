@@ -25,7 +25,7 @@ try {
 
     # Database
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
-    $s->{initEnhancePostContent::EPC_TABLE_NAME}
+    $s->{initEnhancePostContent::TABLE_NAME}
         ->epc_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
         ->epc_type('varchar', 32, false, "'epc'")

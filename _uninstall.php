@@ -31,7 +31,7 @@ $this->addUserAction(
     /* action */
     'delete',
     /* ns */
-    initEnhancePostContent::EPC_TABLE_NAME,
+    initEnhancePostContent::TABLE_NAME,
     /* desc */
     __('delete table')
 );
@@ -75,7 +75,7 @@ $this->addDirectAction(
     /* action */
     'delete',
     /* ns */
-    initEnhancePostContent::EPC_TABLE_NAME,
+    initEnhancePostContent::TABLE_NAME,
     /* desc */
     sprintf(__('delete %s table'), 'enhancePostContent')
 );

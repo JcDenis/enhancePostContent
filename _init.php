@@ -16,5 +16,5 @@ if (!defined('DC_RC_PATH')) {
 
 class initEnhancePostContent
 {
-    public const EPC_TABLE_NAME = 'epc';
+    public const TABLE_NAME = 'epc';
 }
