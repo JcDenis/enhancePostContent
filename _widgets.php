@@ -111,10 +111,10 @@ class enhancePostContentWidget
             return null;
         }
 
-        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
+        dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
 
         # Page
-        if (!dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active
+        if (!dcCore::app()->blog->settings->__get(basename(__DIR__))->active
             || !in_array(dcCore::app()->ctx->current_tpl, ['post.html', 'page.html'])
         ) {
             return null;

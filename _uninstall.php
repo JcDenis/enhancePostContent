@@ -20,7 +20,7 @@ $this->addUserAction(
     /* action */
     'delete_all',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
     __('delete all settings')
 );
@@ -42,7 +42,7 @@ $this->addUserAction(
     /* action */
     'delete',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
     __('delete plugin files')
 );
@@ -53,7 +53,7 @@ $this->addUserAction(
     /* action */
     'delete',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
     __('delete the version number')
 );
@@ -64,9 +64,9 @@ $this->addDirectAction(
     /* action */
     'delete_all',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
-    sprintf(__('delete all %s settings'), 'enhancePostContent')
+    sprintf(__('delete all %s settings'), basename(__DIR__))
 );
 
 $this->addDirectAction(
@@ -77,7 +77,7 @@ $this->addDirectAction(
     /* ns */
     initEnhancePostContent::TABLE_NAME,
     /* desc */
-    sprintf(__('delete %s table'), 'enhancePostContent')
+    sprintf(__('delete %s table'), basename(__DIR__))
 );
 
 $this->addDirectAction(
@@ -86,9 +86,9 @@ $this->addDirectAction(
     /* action */
     'delete',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
-    sprintf(__('delete %s plugin files'), 'enhancePostContent')
+    sprintf(__('delete %s plugin files'), basename(__DIR__))
 );
 
 $this->addDirectAction(
@@ -97,7 +97,7 @@ $this->addDirectAction(
     /* action */
     'delete',
     /* ns */
-    'enhancePostContent',
+    basename(__DIR__),
     /* description */
-    sprintf(__('delete %s version number'), 'enhancePostContent')
+    sprintf(__('delete %s version number'), basename(__DIR__))
 );

@@ -45,8 +45,8 @@ class enhancePostContent
 
     public static function blogAllowedTplValues()
     {
-        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
-        $rs = @unserialize(dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_allowedtplvalues);
+        dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
+        $rs = @unserialize(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->allowedtplvalues);
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
@@ -91,8 +91,8 @@ class enhancePostContent
 
     public static function blogAllowedPubPages()
     {
-        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
-        $rs = @unserialize(dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_allowedpubpages);
+        dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
+        $rs = @unserialize(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->allowedpubpages);
 
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }

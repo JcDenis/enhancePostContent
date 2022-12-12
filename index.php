@@ -60,8 +60,8 @@ try {
             'pubPages'  => (array) $_POST['filter_pubPages'],
         ];
 
-        dcCore::app()->blog->settings->addNamespace('enhancePostContent');
-        dcCore::app()->blog->settings->enhancePostContent->put('enhancePostContent_' . $filter->id(), serialize($f));
+        dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
+        dcCore::app()->blog->settings->__get(basename(__DIR__))->put($filter->id(), serialize($f));
 
         dcCore::app()->blog->triggerBlog();
 
@@ -70,7 +70,7 @@ try {
         );
 
         dcCore::app()->adminurl->redirect(
-            'admin.plugin.enhancePostContent',
+            'admin.plugin.' . basename(__DIR__),
             ['part' => $part],
             '#settings'
         );
@@ -98,7 +98,7 @@ try {
             );
         }
         dcCore::app()->adminurl->redirect(
-            'admin.plugin.enhancePostContent',
+            'admin.plugin.' . basename(__DIR__),
             ['part' => $part],
             '#record'
         );
@@ -122,7 +122,7 @@ try {
             http::redirect($_REQUEST['redir']);
         } else {
             dcCore::app()->adminurl->redirect(
-                'admin.plugin.enhancePostContent',
+                'admin.plugin.' . basename(__DIR__),
                 ['part' => $part],
                 '#record'
             );
@@ -150,7 +150,7 @@ if ($filter->has_list) {
         dcCore::app()->error->add($e->getMessage());
     }
 
-    $header = $sorts->js(dcCore::app()->adminurl->get('admin.plugin.enhancePostContent', ['part' => $part], '&') . '#record');
+    $header = $sorts->js(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__), ['part' => $part], '&') . '#record');
 }
 
 # -- Display page --
@@ -159,7 +159,7 @@ if ($filter->has_list) {
 echo '
 <html><head><title>' . __('Enhance post content') . '</title>' .
 dcPage::jsPageTabs() .
-dcPage::jsLoad(dcPage::getPF('enhancePostContent/js/index.js')) .
+dcPage::jsLoad(dcPage::getPF(basename(__DIR__) . '/js/index.js')) .
 $header .
 
 # --BEHAVIOR-- enhancePostContentAdminHeader
@@ -176,11 +176,11 @@ dcPage::breadcrumb([
 dcPage::notices() .
 
 # Filters select menu list
-'<form method="get" action="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '" id="filters_menu">' .
+'<form method="get" action="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '" id="filters_menu">' .
 '<p class="anchor-nav"><label for="part" class="classic">' . __('Select filter:') . ' </label>' .
 form::combo('part', $filters_combo, $part) . ' ' .
 '<input type="submit" value="' . __('Ok') . '" />' .
-form::hidden('p', 'enhancePostContent') . '</p>' .
+form::hidden('p', basename(__DIR__)) . '</p>' .
 '</form>';
 
 # Filter title and description
@@ -191,7 +191,7 @@ echo '
 # Filter settings
 echo '
 <div class="multi-part" id="setting" title="' . __('Settings') . '">
-<form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '#setting">
+<form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '#setting">
 
 <div class="two-boxes odd">
 <h4>' . __('Pages to be filtered') . '</h4>';
@@ -279,17 +279,17 @@ form::hidden(['part'], $part) . '
 
 # Filter records list
 if ($filter->has_list && isset($sorts) && isset($pager)) {
-    $pager_url = dcCore::app()->adminurl->get('admin.plugin.enhancePostContent', array_diff_key($sorts->values(true), ['page' => ''])) . '&page=%s#record';
+    $pager_url = dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__), array_diff_key($sorts->values(true), ['page' => ''])) . '&page=%s#record';
 
     echo '
     <div class="multi-part" id="record" title="' . __('Records') . '">';
 
-    $sorts->display(['admin.plugin.enhancePostContent', '#record'], form::hidden('p', 'enhancePostContent') . form::hidden('part', $part));
+    $sorts->display(['admin.plugin.' . basename(__DIR__), '#record'], form::hidden('p', basename(__DIR__)) . form::hidden('part', $part));
 
     $pager->display(
         $sorts,
         $pager_url,
-        '<form action="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '#record" method="post" id="form-records">' .
+        '<form action="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '#record" method="post" id="form-records">' .
         '%s' .
 
         '<div class="two-cols">' .
@@ -298,8 +298,8 @@ if ($filter->has_list && isset($sorts) && isset($pager)) {
         '<p class="col right">' .
         form::hidden('action', 'deleterecords') .
         '<input id="del-action" type="submit" name="save" value="' . __('Delete selected records') . '" /></p>' .
-        dcCore::app()->adminurl->getHiddenFormFields('admin.plugin.enhancePostContent', array_merge(['p' => 'enhancePostContent'], $sorts->values(true))) .
-        form::hidden('redir', dcCore::app()->adminurl->get('admin.plugin.enhancePostContent', $sorts->values(true))) .
+        dcCore::app()->adminurl->getHiddenFormFields('admin.plugin.' . basename(__DIR__), array_merge(['p' => basename(__DIR__)], $sorts->values(true))) .
+        form::hidden('redir', dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__), $sorts->values(true))) .
         dcCore::app()->formNonce() .
         '</div>' .
         '</form>'
@@ -310,7 +310,7 @@ if ($filter->has_list && isset($sorts) && isset($pager)) {
     # New record
     echo '
     <div class="multi-part" id="newrecord" title="' . __('New record') . '">
-    <form action="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '#record" method="post" id="form-create">' .
+    <form action="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '#record" method="post" id="form-create">' .
 
     '<p><label for="new_key">' . __('Key:') . '</label>' .
     form::field('new_key', 60, 255, ['extra_html' => 'required']) .

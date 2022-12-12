@@ -108,8 +108,7 @@ abstract class epcFilter
 
     private function blogSettings()
     {
-        $ns  = 'enhancePostContent_' . $this->id;
-        $opt = @unserialize(dcCore::app()->blog->settings->enhancePostContent->$ns);
+        $opt = @unserialize(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->__get($this->id));
 
         if (!is_array($opt)) {
             $opt = [];

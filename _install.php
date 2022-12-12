@@ -48,12 +48,12 @@ try {
     dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
     $s = dcCore::app()->blog->settings->__get(basename(__DIR__));
 
-    $s->put('enhancePostContent_active', false, 'boolean', 'Enable enhancePostContent', false, true);
-    $s->put('enhancePostContent_list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
-    $s->put('enhancePostContent_list_order', 'desc', 'string', 'Admin records list order', false, true);
-    $s->put('enhancePostContent_list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
-    $s->put('enhancePostContent_allowedtplvalues', serialize(enhancePostContent::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
-    $s->put('enhancePostContent_allowedpubpages', serialize(enhancePostContent::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
+    $s->put('active', false, 'boolean', 'Enable enhancePostContent', false, true);
+    $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
+    $s->put('list_order', 'desc', 'string', 'Admin records list order', false, true);
+    $s->put('list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
+    $s->put('allowedtplvalues', serialize(enhancePostContent::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
+    $s->put('allowedpubpages', serialize(enhancePostContent::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
     # Filters settings
     $filters = enhancePostContent::getFilters();
@@ -67,16 +67,11 @@ try {
             'tplValues' => $filter->tplValues,
             'pubPages'  => $filter->pubPages,
         ];
-        $s->put('enhancePostContent_' . $id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
-        /*        # only tables
-                if (isset($filter['list'])) {
-                    $s->put('enhancePostContent_' . $id . 'List', serialize($filter['list']), 'string', 'List for ' . $id, false, true);
-                }
-        */
+        $s->put($id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
     }
 
     # Update old versions
-    $old_version = dcCore::app()->getVersion($mod_id);
+    $old_version = dcCore::app()->getVersion(basename(__DIR__));
     if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {
         include_once dirname(__FILE__) . '/inc/lib.epc.update.php';
     }

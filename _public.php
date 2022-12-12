@@ -16,9 +16,9 @@ if (!defined('DC_RC_PATH')) {
 
 require __DIR__ . '/_widgets.php';
 
-dcCore::app()->blog->settings->addNamespace('enhancePostContent');
+dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
 
-if (!dcCore::app()->blog->settings->enhancePostContent->enhancePostContent_active) {
+if (!dcCore::app()->blog->settings->__get(basename(__DIR__))->active) {
     return null;
 }
 
