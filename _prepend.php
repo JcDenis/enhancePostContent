@@ -30,14 +30,14 @@ $filters = [
 $d = __DIR__ . '/inc/';
 
 Clearbricks::lib()->autoload([
-    'libEPC'       => $d . 'lib.epc.php',
-    'epcFilter'    => $d . 'lib.epc.filter.php',
-    'epcRecords'   => $d . 'lib.epc.records.php',
-    'adminEpcList' => $d . 'lib.epc.pager.php',
+    'enhancePostContent' => $d . 'class.enhancepostcontent.php',
+    'epcFilter'    => $d . 'class.epcfilter.php',
+    'epcRecords'   => $d . 'class.epcrecords.php',
+    'adminEpcList' => $d . 'class.adminepclist.php',
 ]);
 
 foreach ($filters as $f) {
-    Clearbricks::lib()->autoload(['epcFilter' . $f => $d . 'lib.epc.filters.php']);
+    Clearbricks::lib()->autoload(['epcFilter' . $f => $d . 'class.epcfilter' . strtolower($f) . '.php']);
     dcCore::app()->addBehavior('enhancePostContentFilters', ['epcFilter' . $f, 'create']);
 }
 
@@ -47,7 +47,7 @@ dcCore::app()->url->register(
     '^epc\.css',
     function ($args) {
         $css     = [];
-        $filters = libEPC::getFilters();
+        $filters = enhancePostContent::getFilters();
 
         foreach ($filters as $id => $filter) {
             if ('' == $filter->class || '' == $filter->style) {

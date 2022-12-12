@@ -20,7 +20,7 @@ dcPage::check(dcCore::app()->auth->makePermissions([
 
 # -- Prepare queries and object --
 
-$_filters = libEPC::getFilters();
+$_filters = enhancePostContent::getFilters();
 
 $filters_id = $filters_combo = [];
 foreach ($_filters as $id => $filter) {
@@ -196,7 +196,7 @@ echo '
 <div class="two-boxes odd">
 <h4>' . __('Pages to be filtered') . '</h4>';
 
-foreach (libEPC::blogAllowedPubPages() as $k => $v) {
+foreach (enhancePostContent::blogAllowedPubPages() as $k => $v) {
     echo '
     <p><label for="filter_pubPages' . $v . '">' .
     form::checkbox(
@@ -228,7 +228,7 @@ form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (int) $filte
 </div><div class="two-boxes odd">
 <h4>' . __('Contents to be filtered') . '</h4>';
 
-foreach (libEPC::blogAllowedTplValues() as $k => $v) {
+foreach (enhancePostContent::blogAllowedTplValues() as $k => $v) {
     echo '
     <p><label for="filter_tplValues' . $v . '">' .
     form::checkbox(

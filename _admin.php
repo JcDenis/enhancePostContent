@@ -41,8 +41,8 @@ dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $f
 # Preference form
 dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $blog_settings) {
     $active           = (bool) $blog_settings->enhancePostContent->enhancePostContent_active;
-    $allowedtplvalues = libEPC::blogAllowedTplValues();
-    $allowedpubpages  = libEPC::blogAllowedPubPages();
+    $allowedtplvalues = enhancePostContent::blogAllowedTplValues();
+    $allowedpubpages  = enhancePostContent::blogAllowedPubPages();
 
     echo
     '<div class="fieldset"><h4 id="epc_params">' . __('Enhance post content') . '</h4>' .
@@ -61,10 +61,10 @@ dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $b
     '<h5>' . __('Extra') . '</h5>' .
     '<p>' . __('This is a special feature to edit list of allowed template values and public pages where this plugin works.') . '</p>' .
     '<p><label for="epc_allowedtplvalues">' . __('Allowed DC template values:') . '</label>' .
-    form::field('epc_allowedtplvalues', 100, 0, libEPC::implode($allowedtplvalues)) . '</p>' .
+    form::field('epc_allowedtplvalues', 100, 0, enhancePostContent::implode($allowedtplvalues)) . '</p>' .
     '<p class="form-note">' . __('Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".') . '</p>' .
     '<p><label for="epc_allowedpubpages">' . __('Allowed public pages:') . '</label>' .
-    form::field('epc_allowedpubpages', 100, 0, libEPC::implode($allowedpubpages)) . '</p>' .
+    form::field('epc_allowedpubpages', 100, 0, enhancePostContent::implode($allowedpubpages)) . '</p>' .
     '<p class="form-note">' . __('Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".') . '</p>' .
     '</div>' .
     '</div>' .
@@ -75,8 +75,8 @@ dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $b
 # Save preference
 dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', function (dcSettings $blog_settings) {
     $active           = !empty($_POST['epc_active']);
-    $allowedtplvalues = libEPC::explode($_POST['epc_allowedtplvalues']);
-    $allowedpubpages  = libEPC::explode($_POST['epc_allowedpubpages']);
+    $allowedtplvalues = enhancePostContent::explode($_POST['epc_allowedtplvalues']);
+    $allowedpubpages  = enhancePostContent::explode($_POST['epc_allowedpubpages']);
 
     $blog_settings->enhancePostContent->put('enhancePostContent_active', $active);
     $blog_settings->enhancePostContent->put('enhancePostContent_allowedtplvalues', serialize($allowedtplvalues));

@@ -28,10 +28,10 @@ dcCore::app()->addBehavior('publicHeadContent', function () {
 });
 // Filter template blocks content
 dcCore::app()->addBehavior('publicBeforeContentFilterV2', function ($tag, $args) {
-    $filters = libEPC::getFilters();
+    $filters = enhancePostContent::getFilters();
 
     foreach ($filters as $id => $filter) {
-        if (!libEPC::testContext($tag, $args, $filter)) {
+        if (!enhancePostContent::testContext($tag, $args, $filter)) {
             continue;
         }
         $filter->publicContent($tag, $args);

@@ -52,11 +52,11 @@ try {
     $s->put('enhancePostContent_list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
     $s->put('enhancePostContent_list_order', 'desc', 'string', 'Admin records list order', false, true);
     $s->put('enhancePostContent_list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
-    $s->put('enhancePostContent_allowedtplvalues', serialize(libEPC::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
-    $s->put('enhancePostContent_allowedpubpages', serialize(libEPC::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
+    $s->put('enhancePostContent_allowedtplvalues', serialize(enhancePostContent::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
+    $s->put('enhancePostContent_allowedpubpages', serialize(enhancePostContent::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
     # Filters settings
-    $filters = libEPC::getFilters();
+    $filters = enhancePostContent::getFilters();
     foreach ($filters as $id => $filter) {
         # Only editable options
         $opt = [

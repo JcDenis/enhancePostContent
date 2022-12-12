@@ -50,7 +50,7 @@ class enhancePostContentWidget
             'text'
         );
         # Type
-        $filters = libEPC::getFilters();
+        $filters = enhancePostContent::getFilters();
         $types   = [];
         foreach ($filters as $id => $filter) {
             $types[$filter->name] = $id;
@@ -63,7 +63,7 @@ class enhancePostContentWidget
             $types
         );
         # Content
-        $contents = libEPC::defaultAllowedWidgetValues();
+        $contents = enhancePostContent::defaultAllowedWidgetValues();
         foreach ($contents as $k => $v) {
             $w->epclist->setting(
                 'content' . $v['id'],
@@ -122,7 +122,7 @@ class enhancePostContentWidget
 
         # Content
         $content = '';
-        foreach (libEPC::defaultAllowedWidgetValues() as $k => $v) {
+        foreach (enhancePostContent::defaultAllowedWidgetValues() as $k => $v) {
             $ns = 'content' . $v['id'];
             if ($w->$ns && is_callable($v['cb'])) {
                 $content .= call_user_func_array(
@@ -138,7 +138,7 @@ class enhancePostContentWidget
 
         # Filter
         $list    = [];
-        $filters = libEPC::getFilters();
+        $filters = enhancePostContent::getFilters();
 
         if (isset($filters[$w->type])) {
             $filters[$w->type]->nocase = $w->nocase;

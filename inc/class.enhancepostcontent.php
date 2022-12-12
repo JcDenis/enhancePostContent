@@ -21,7 +21,7 @@ __('search results page');
 __('atom feeds');
 __('RSS feeds');
 
-class libEPC
+class enhancePostContent
 {
     protected static $default_filters = null;
     public static $epcFilterLimit     = [];
@@ -56,15 +56,15 @@ class libEPC
         $rs = new arrayObject([
             'entry excerpt' => [
                 'id' => 'entryexcerpt',
-                'cb' => ['libEPC','widgetContentEntryExcerpt'],
+                'cb' => ['enhancePostContent','widgetContentEntryExcerpt'],
             ],
             'entry content' => [
                 'id' => 'entrycontent',
-                'cb' => ['libEPC','widgetContentEntryContent'],
+                'cb' => ['enhancePostContent','widgetContentEntryContent'],
             ],
             'comment content' => [
                 'id' => 'commentcontent',
-                'cb' => ['libEPC','widgetContentCommentContent'],
+                'cb' => ['enhancePostContent','widgetContentCommentContent'],
             ],
         ]);
 
@@ -164,7 +164,7 @@ class libEPC
             $tags = implode('|', $ignore_tags);
         }
         if (!empty($tags)) {
-            $s = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', ['libEPC', 'removeTags'], $s);
+            $s = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', ['enhancePostContent', 'removeTags'], $s);
         }
         # Remove words inside html tag (class, title, alt, href, ...)
         $s = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
