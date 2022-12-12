@@ -15,7 +15,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 }
 
 try {
-    # Version
+    // Version
     if (!dcCore::app()->newVersion(
         basename(__DIR__), 
         dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version')
@@ -23,7 +23,10 @@ try {
         return null;
     }
 
-    # Database
+    // Uppgrade
+    epcUpgrade::preUpgrade();
+
+    // Database
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $s->{initEnhancePostContent::TABLE_NAME}
         ->epc_id('bigint', 0, false)
@@ -44,7 +47,7 @@ try {
     $changes = $si->synchronize($s);
     $s       = null;
 
-    # Settings
+    // Settings
     dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
     $s = dcCore::app()->blog->settings->__get(basename(__DIR__));
 
@@ -52,13 +55,13 @@ try {
     $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
     $s->put('list_order', 'desc', 'string', 'Admin records list order', false, true);
     $s->put('list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
-    $s->put('allowedtplvalues', serialize(enhancePostContent::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
-    $s->put('allowedpubpages', serialize(enhancePostContent::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
+    $s->put('allowedtplvalues', json_encode(enhancePostContent::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
+    $s->put('allowedpubpages', json_encode(enhancePostContent::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
-    # Filters settings
+    // Filters settings
     $filters = enhancePostContent::getFilters();
     foreach ($filters as $id => $filter) {
-        # Only editable options
+        // Only editable options
         $opt = [
             'nocase'    => $filter->nocase,
             'plural'    => $filter->plural,
@@ -67,14 +70,11 @@ try {
             'tplValues' => $filter->tplValues,
             'pubPages'  => $filter->pubPages,
         ];
-        $s->put($id, serialize($opt), 'string', 'Settings for ' . $id, false, true);
+        $s->put($id, json_encode($opt), 'string', 'Settings for ' . $id, false, true);
     }
 
-    # Update old versions
-    $old_version = dcCore::app()->getVersion(basename(__DIR__));
-    if ($old_version && version_compare('2021.10.05', $old_version, '>=')) {
-        include_once dirname(__FILE__) . '/inc/lib.epc.update.php';
-    }
+    // Upgrade
+    epcUpgrade::postUpgrade();
 
     return true;
 } catch (Exception $e) {

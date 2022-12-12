@@ -108,7 +108,7 @@ abstract class epcFilter
 
     private function blogSettings()
     {
-        $opt = @unserialize(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->__get($this->id));
+        $opt = json_decode(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->__get($this->id));
 
         if (!is_array($opt)) {
             $opt = [];

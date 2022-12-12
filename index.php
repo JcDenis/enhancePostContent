@@ -61,7 +61,7 @@ try {
         ];
 
         dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
-        dcCore::app()->blog->settings->__get(basename(__DIR__))->put($filter->id(), serialize($f));
+        dcCore::app()->blog->settings->__get(basename(__DIR__))->put($filter->id(), json_encode($f));
 
         dcCore::app()->blog->triggerBlog();
 
