@@ -14,33 +14,33 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-dcCore::app()->blog->settings->addNamespace('enhancePostContent');
+dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
 
 require __DIR__ . '/_widgets.php';
 
 # Admin menu
 dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('Enhance post content'),
-    dcCore::app()->adminurl->get('admin.plugin.enhancePostContent'),
-    urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
-    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.enhancePostContent')) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+    urldecode(dcPage::getPF(basename(__DIR__) . '/icon.svg')),
+    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
     dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id)
 );
 
 # Dashboard favorites
 dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $favs) {
-    $favs->register('enhancePostContent', [
+    $favs->register(basename(__DIR__), [
         'title'       => __('Enhance post content'),
-        'url'         => dcCore::app()->adminurl->get('admin.plugin.enhancePostContent'),
-        'small-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
-        'large-icon'  => urldecode(dcPage::getPF('enhancePostContent/icon.svg')),
+        'url'         => dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+        'small-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon.svg')),
+        'large-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon.svg')),
         'permissions' => dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]),
     ]);
 });
 
 # Preference form
 dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $blog_settings) {
-    $active           = (bool) $blog_settings->enhancePostContent->enhancePostContent_active;
+    $active           = (bool) $blog_settings->__get(basename(__DIR__))->active;
     $allowedtplvalues = enhancePostContent::blogAllowedTplValues();
     $allowedpubpages  = enhancePostContent::blogAllowedPubPages();
 
@@ -54,7 +54,7 @@ dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $b
     '<p class="form-note">' .
     __('This enable public widgets and contents filter.') .
     '</p>' .
-    '<p><a href="' . dcCore::app()->adminurl->get('admin.plugin.enhancePostContent') . '">' .
+    '<p><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '">' .
     __('Set content filters') . '</a></p>' .
     '</div>' .
     '<div class="col">' .
@@ -78,9 +78,9 @@ dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', function (dcSettings
     $allowedtplvalues = enhancePostContent::explode($_POST['epc_allowedtplvalues']);
     $allowedpubpages  = enhancePostContent::explode($_POST['epc_allowedpubpages']);
 
-    $blog_settings->enhancePostContent->put('enhancePostContent_active', $active);
-    $blog_settings->enhancePostContent->put('enhancePostContent_allowedtplvalues', serialize($allowedtplvalues));
-    $blog_settings->enhancePostContent->put('enhancePostContent_allowedpubpages', serialize($allowedpubpages));
+    $blog_settings->__get(basename(__DIR__))->put('active', $active);
+    $blog_settings->__get(basename(__DIR__))->put('allowedtplvalues', json_encode($allowedtplvalues));
+    $blog_settings->__get(basename(__DIR__))->put('allowedpubpages', json_encode($allowedpubpages));
 });
 
 # List filter
