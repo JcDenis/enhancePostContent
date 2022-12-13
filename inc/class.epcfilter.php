@@ -110,29 +110,29 @@ abstract class epcFilter
     {
         $opt = json_decode((string) dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->__get($this->id));
 
-        if (!is_array($opt)) {
+        if (empty($opt)) {
             $opt = [];
         }
-        if (isset($opt['nocase'])) {
-            $this->settings['nocase'] = (bool) $opt['nocase'];
+        if (isset($opt->nocase)) {
+            $this->settings['nocase'] = (bool) $opt->nocase;
         }
-        if (isset($opt['plural'])) {
-            $this->settings['plural'] = (bool) $opt['plural'];
+        if (isset($opt->plural)) {
+            $this->settings['plural'] = (bool) $opt->plural;
         }
-        if (isset($opt['limit'])) {
-            $this->settings['limit'] = abs((int) $opt['limit']);
+        if (isset($opt->limit)) {
+            $this->settings['limit'] = abs((int) $opt->limit);
         }
-        if (isset($opt['style']) && is_array($opt['style'])) {
-            $this->settings['style'] = (array) $opt['style'];
+        if (isset($opt->style) && is_array($opt->style)) {
+            $this->settings['style'] = (array) $opt->style;
         }
-        if (isset($opt['notag'])) {
-            $this->settings['notag'] = (string) $opt['notag'];
+        if (isset($opt->notag)) {
+            $this->settings['notag'] = (string) $opt->notag;
         }
-        if (isset($opt['tplValues'])) {
-            $this->settings['tplValues'] = (array) $opt['tplValues'];
+        if (isset($opt->tplValues)) {
+            $this->settings['tplValues'] = (array) $opt->tplValues;
         }
-        if (isset($opt['pubPages'])) {
-            $this->settings['pubPages'] = (array) $opt['pubPages'];
+        if (isset($opt->pubPages)) {
+            $this->settings['pubPages'] = (array) $opt->pubPages;
         }
     }
 
