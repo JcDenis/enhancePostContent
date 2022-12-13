@@ -23,9 +23,6 @@ try {
         return null;
     }
 
-    // Uppgrade
-    epcUpgrade::preUpgrade();
-
     // Database
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $s->{initEnhancePostContent::TABLE_NAME}
@@ -46,6 +43,9 @@ try {
     $si      = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $changes = $si->synchronize($s);
     $s       = null;
+
+    // Uppgrade
+    epcUpgrade::growUp();
 
     // Settings
     dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
@@ -72,9 +72,6 @@ try {
         ];
         $s->put($id, json_encode($opt), 'string', 'Settings for ' . $id, false, true);
     }
-
-    // Upgrade
-    epcUpgrade::postUpgrade();
 
     return true;
 } catch (Exception $e) {

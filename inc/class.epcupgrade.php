@@ -16,74 +16,28 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 class epcUpgrade
 {
-    public static function preUpgrade()
+    public static function growUp()
     {
         $current = dcCore::app()->getVersion(basename(dirname('../' . __DIR__)));
-        if ($current && version_compare($current, '2022.12.10', '<')) {
-            self::preUpgrade20221210();
-        }
-    }
 
-    public static function postUpgrade()
-    {
-        $current = dcCore::app()->getVersion(basename(dirname('../' . __DIR__)));
-        if ($current && version_compare($current, '0.6.6', '<')) {
+        if ($current && version_compare($current, '0.6.6', '<=')) {
             self::postUpgrade00060607();
         }
 
-        if ($current && version_compare($current, '2021.10.06', '<')) {
+        if ($current && version_compare($current, '2021.10.06', '<=')) {
             self::postUpgrade20211006();
         }
-    }
 
-    private static function preUpgrade20221210()
-    {
-        // Rename settings
-        $setting_ids = [
-            'enhancePostContent_active'           => 'active',
-            'enhancePostContent_list_sortby'       => 'list_sortby',
-            'enhancePostContent_list_order'  => 'list_order',
-            'enhancePostContent_list_nb'      => 'list_nb',
-            'enhancePostContent_allowedtplvalues'     => 'allowedtplvalues',
-            'enhancePostContent_allowedpubpages'  => 'allowedpubpages',
-        ];
-
-        foreach ($setting_ids as $old => $new) {
-            $cur             = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME);
-            $cur->setting_id = $new;
-            $cur->setting_ns = basename(dirname('../' . __DIR__));
-            $cur->update("WHERE setting_id = '" . $old . "' and setting_ns = 'enhancePostContent' ");
-        }
-
-        // use json rather than serialise for settings array
-        $setting_values = [
-            'allowedtplvalues' => json_encode(enhancePostContent::defaultAllowedTplValues()),
-            'allowedpubpages'  =>json_encode(enhancePostContent::defaultAllowedPubPages()),
-        ];
-
-        $record = dcCore::app()->con->select(
-            'SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . ' ' .
-            "WHERE setting_ns = '" . dcCore::app()->con->escape(basename(dirname('../' . __DIR__))) . "' "
-        );
-
-        while ($record->fetch()) {
-            foreach ($setting_values as $key => $default) {
-                try {
-                    $value = @unserialize($record->__get($key));
-                } catch(Exception) {
-                    $value = $default;
-                }
-
-                $cur                = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME);
-                $cur->setting_value = json_encode(!is_array($value) ? $default : $value);
-                $cur->update(
-                    "WHERE setting_id = '" . $key . "' and setting_ns = '" . dcCore::app()->con->escape($record->setting_ns) . "' " .
-                    'AND blog_id ' . (null === $record->blog_id ? 'IS NULL ' : ("= '" . dcCore::app()->con->escape($record->blog_id) . "' "))
-                );
-            }
+        if ($current && version_compare($current, '2022.11.20', '<=')) {
+            self::preUpgrade20221120();
         }
     }
 
+    /**
+     * 0.6.6
+     * 
+     * - filters move from settings to dedicated table
+     */
     private static function postUpgrade00060607()
     {
         # Move old filters lists from settings to database
@@ -112,6 +66,11 @@ class epcUpgrade
         }
     }
 
+    /**
+     * 2021.10.06
+     * 
+     * - filters change name to id
+     */
     private static function postUpgrade20211006()
     {
         # Move old filter name to filter id
@@ -123,6 +82,46 @@ class epcUpgrade
 
             $cur->update('WHERE epc_id = ' . $rs->epc_id . ' ');
             dcCore::app()->blog->triggerBlog();
+        }
+    }
+
+    /**
+     * 2022.11.20
+     *
+     * - setting id changes to shorter one, 
+     * - setting ns changes to abstract one (no real changes),
+     * - setting value change from serialize to json_encode (if it's array)
+     */
+    private static function preUpgrade20221120()
+    {
+        // list of settings using serialize values to move to json
+        $ids = [
+            'allowedtplvalues', 
+            'allowedpubpages'
+        ];
+        foreach(enhancePostContent::getFilters() as $id => $f) {
+            $ids[] = $id;
+        }
+
+        // get all enhancePostContent settings
+        $record = dcCore::app()->con->select(
+            'SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . ' ' .
+            "WHERE setting_ns = 'enhancePostContent' "
+        );
+
+        // update settings id, ns, value
+        while ($record->fetch()) {
+            if (preg_match('/^enhancePostContent_(.*?)$/', $record->setting_id, $match)) {
+                $cur             = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME);
+                $cur->setting_id = $match[1];
+                $cur->setting_ns = basename(dirname('../' . __DIR__));
+
+                if (in_array($match[1], $ids)) {
+                    $cur->setting_value = json_encode(unserialize($record->setting_value));
+                }
+
+                $cur->update("WHERE setting_id = '" . $record->setting_id . "' and setting_ns = 'enhancePostContent' ");
+            }
         }
     }
 }
