@@ -3,6 +3,18 @@ dev
 - [ ] add auto-find categorie
 - fix remplacement limit
 
+2022.12.21
+- use svg icon
+- use anonymous functions
+- use abstract plugin name
+- use json for settings array (vs serialize)
+- change some class names
+- fix permissions
+- fix notices
+- fix autoload
+- fix table name
+- fix install
+
 2022.11.20
 - fix compatibility with Dotclear 2.24 (required)
 
