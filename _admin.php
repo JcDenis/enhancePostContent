@@ -40,7 +40,7 @@ dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $f
 
 # Preference form
 dcCore::app()->addBehavior('adminBlogPreferencesFormV2', function (dcSettings $blog_settings) {
-    $active           = (bool) $blog_settings->__get(basename(__DIR__))->active;
+    $active           = (bool) $blog_settings->get(basename(__DIR__))->get('active');
     $allowedtplvalues = enhancePostContent::blogAllowedTplValues();
     $allowedpubpages  = enhancePostContent::blogAllowedPubPages();
 
@@ -78,9 +78,9 @@ dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', function (dcSettings
     $allowedtplvalues = enhancePostContent::explode($_POST['epc_allowedtplvalues']);
     $allowedpubpages  = enhancePostContent::explode($_POST['epc_allowedpubpages']);
 
-    $blog_settings->__get(basename(__DIR__))->put('active', $active);
-    $blog_settings->__get(basename(__DIR__))->put('allowedtplvalues', json_encode($allowedtplvalues));
-    $blog_settings->__get(basename(__DIR__))->put('allowedpubpages', json_encode($allowedpubpages));
+    $blog_settings->get(basename(__DIR__))->put('active', $active);
+    $blog_settings->get(basename(__DIR__))->put('allowedtplvalues', json_encode($allowedtplvalues));
+    $blog_settings->get(basename(__DIR__))->put('allowedpubpages', json_encode($allowedpubpages));
 });
 
 # List filter

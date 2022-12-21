@@ -24,11 +24,7 @@ class adminEpcList extends adminGenericList
     public function display($filter, $pager_url, $enclose_block = '')
     {
         if ($this->rs->isEmpty()) {
-            if ($filter->show()) {
-                echo '<p><strong>' . __('No record matches the filter') . '</strong></p>';
-            } else {
-                echo '<p><strong>' . __('No record') . '</strong></p>';
-            }
+            echo '<p><strong>' . ($filter->show() ? __('No record matches the filter') : __('No record')) . '</strong></p>';
         } else {
             $pager           = new dcPager($filter->page, $this->rs_count, $filter->nb, 10);
             $pager->base_url = $pager_url;

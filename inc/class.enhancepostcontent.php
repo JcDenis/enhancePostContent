@@ -46,7 +46,7 @@ class enhancePostContent
     public static function blogAllowedTplValues()
     {
         dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
-        $rs = json_decode(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->allowedtplvalues);
+        $rs = json_decode(dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get('allowedtplvalues'));
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
@@ -54,11 +54,11 @@ class enhancePostContent
     public static function defaultAllowedWidgetValues()
     {
         $rs = new arrayObject([
-            'entry excerpt' => [
+            'entry excerpt'   => [
                 'id' => 'entryexcerpt',
                 'cb' => ['enhancePostContent','widgetContentEntryExcerpt'],
             ],
-            'entry content' => [
+            'entry content'   => [
                 'id' => 'entrycontent',
                 'cb' => ['enhancePostContent','widgetContentEntryContent'],
             ],
@@ -92,7 +92,7 @@ class enhancePostContent
     public static function blogAllowedPubPages()
     {
         dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
-        $rs = json_decode(dcCore::app()->blog->settings->__get(basename(dirname('../' . __DIR__)))->allowedpubpages);
+        $rs = json_decode(dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get('allowedpubpages'));
 
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }

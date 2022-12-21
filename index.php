@@ -61,7 +61,7 @@ try {
         ];
 
         dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
-        dcCore::app()->blog->settings->__get(basename(__DIR__))->put($filter->id(), json_encode($f));
+        dcCore::app()->blog->settings->get(basename(__DIR__))->put($filter->id(), json_encode($f));
 
         dcCore::app()->blog->triggerBlog();
 
@@ -159,7 +159,7 @@ if ($filter->has_list) {
 echo '
 <html><head><title>' . __('Enhance post content') . '</title>' .
 dcPage::jsPageTabs() .
-dcPage::jsLoad(dcPage::getPF(basename(__DIR__) . '/js/index.js')) .
+dcPage::jsModuleLoad(basename(__DIR__) . '/js/index.js') .
 $header .
 
 # --BEHAVIOR-- enhancePostContentAdminHeader

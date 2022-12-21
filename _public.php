@@ -18,7 +18,7 @@ require __DIR__ . '/_widgets.php';
 
 dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
 
-if (!dcCore::app()->blog->settings->__get(basename(__DIR__))->active) {
+if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('active')) {
     return null;
 }
 

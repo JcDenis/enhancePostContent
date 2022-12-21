@@ -17,7 +17,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 try {
     // Version
     if (!dcCore::app()->newVersion(
-        basename(__DIR__), 
+        basename(__DIR__),
         dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version')
     )) {
         return null;
@@ -48,8 +48,7 @@ try {
     epcUpgrade::growUp();
 
     // Settings
-    dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
-    $s = dcCore::app()->blog->settings->__get(basename(__DIR__));
+    $s = dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
 
     $s->put('active', false, 'boolean', 'Enable enhancePostContent', false, true);
     $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);

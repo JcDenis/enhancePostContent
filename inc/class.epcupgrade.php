@@ -21,24 +21,24 @@ class epcUpgrade
         $current = dcCore::app()->getVersion(basename(dirname('../' . __DIR__)));
 
         if ($current && version_compare($current, '0.6.6', '<=')) {
-            self::postUpgrade00060607();
+            self::upTo00060607();
         }
 
         if ($current && version_compare($current, '2021.10.06', '<=')) {
-            self::postUpgrade20211006();
+            self::upTo20211006();
         }
 
         if ($current && version_compare($current, '2022.11.20', '<=')) {
-            self::preUpgrade20221120();
+            self::upTo20221120();
         }
     }
 
     /**
      * 0.6.6
-     * 
+     *
      * - filters move from settings to dedicated table
      */
-    private static function postUpgrade00060607()
+    private static function upTo00060607()
     {
         # Move old filters lists from settings to database
         $f = dcCore::app()->con->select('SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
@@ -68,10 +68,10 @@ class epcUpgrade
 
     /**
      * 2021.10.06
-     * 
+     *
      * - filters change name to id
      */
-    private static function postUpgrade20211006()
+    private static function upTo20211006()
     {
         # Move old filter name to filter id
         $rs = dcCore::app()->con->select('SELECT epc_id, epc_filter FROM ' . dcCore::app()->prefix . initEnhancePostContent::TABLE_NAME);
@@ -88,18 +88,18 @@ class epcUpgrade
     /**
      * 2022.11.20
      *
-     * - setting id changes to shorter one, 
+     * - setting id changes to shorter one,
      * - setting ns changes to abstract one (no real changes),
      * - setting value change from serialize to json_encode (if it's array)
      */
-    private static function preUpgrade20221120()
+    private static function upTo20221120()
     {
         // list of settings using serialize values to move to json
         $ids = [
-            'allowedtplvalues', 
-            'allowedpubpages'
+            'allowedtplvalues',
+            'allowedpubpages',
         ];
-        foreach(enhancePostContent::getFilters() as $id => $f) {
+        foreach (enhancePostContent::getFilters() as $id => $f) {
             $ids[] = $id;
         }
 
