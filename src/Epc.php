@@ -10,6 +10,16 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\enhancePostContent;
+
+use ArrayObject;
+use dcCore;
+use Dotclear\Helper\Html\Html;
+use Dotclear\Plugin\widgets\WidgetsElement;
+use Exception;
+
 # l10n
 __('entry excerpt');
 __('entry content');
@@ -21,7 +31,7 @@ __('search results page');
 __('atom feeds');
 __('RSS feeds');
 
-class enhancePostContent
+class Epc
 {
     protected static $default_filters = null;
     public static $epcFilterLimit     = [];
@@ -30,9 +40,9 @@ class enhancePostContent
     # Default definition
     #
 
-    public static function defaultAllowedTplValues()
+    public static function defaultAllowedTplValues(): array
     {
-        $rs = new arrayObject([
+        $rs = new ArrayObject([
             'entry excerpt'   => 'EntryExcerpt',
             'entry content'   => 'EntryContent',
             'comment content' => 'CommentContent',
@@ -43,28 +53,27 @@ class enhancePostContent
         return iterator_to_array($rs, true);
     }
 
-    public static function blogAllowedTplValues()
+    public static function blogAllowedTplValues(): array
     {
-        dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
         $rs = json_decode(dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get('allowedtplvalues'));
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
 
-    public static function defaultAllowedWidgetValues()
+    public static function defaultAllowedWidgetValues(): array
     {
-        $rs = new arrayObject([
+        $rs = new ArrayObject([
             'entry excerpt'   => [
                 'id' => 'entryexcerpt',
-                'cb' => ['enhancePostContent','widgetContentEntryExcerpt'],
+                'cb' => [self::class,'widgetContentEntryExcerpt'],
             ],
             'entry content'   => [
                 'id' => 'entrycontent',
-                'cb' => ['enhancePostContent','widgetContentEntryContent'],
+                'cb' => [self::class,'widgetContentEntryContent'],
             ],
             'comment content' => [
                 'id' => 'commentcontent',
-                'cb' => ['enhancePostContent','widgetContentCommentContent'],
+                'cb' => [self::class,'widgetContentCommentContent'],
             ],
         ]);
 
@@ -73,9 +82,9 @@ class enhancePostContent
         return iterator_to_array($rs, true);
     }
 
-    public static function defaultAllowedPubPages()
+    public static function defaultAllowedPubPages(): array
     {
-        $rs = new arrayObject([
+        $rs = new ArrayObject([
             'home page'           => 'home.html',
             'post page'           => 'post.html',
             'category page'       => 'category.html',
@@ -89,19 +98,18 @@ class enhancePostContent
         return iterator_to_array($rs, true);
     }
 
-    public static function blogAllowedPubPages()
+    public static function blogAllowedPubPages(): array
     {
-        dcCore::app()->blog->settings->addNamespace(basename(dirname('../' . __DIR__)));
-        $rs = json_decode(dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get('allowedpubpages'));
+        $rs = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowedpubpages'));
 
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }
 
-    public static function getFilters()
+    public static function getFilters(): ?array
     {
         if (self::$default_filters === null) {
             $final   = $sort = [];
-            $filters = new arrayObject();
+            $filters = new ArrayObject();
 
             try {
                 dcCore::app()->callBehavior('enhancePostContentFilters', $filters);
@@ -122,7 +130,7 @@ class enhancePostContent
         return self::$default_filters;
     }
 
-    public static function testContext($tag, $args, $filter)
+    public static function testContext(string $tag, array $args, EpcFilter $filter): bool
     {
         return is_array($filter->pubPages)
             && in_array(dcCore::app()->ctx->current_tpl, $filter->pubPages)
@@ -136,7 +144,7 @@ class enhancePostContent
         ;
     }
 
-    public static function replaceString($p, $r, $s, $filter, $before = '\b', $after = '\b')
+    public static function replaceString(string $p, string $r, string $s, EpcFilter $filter, string $before = '\b', string $after = '\b'): string
     {
         # Limit
         if ($filter->limit > 0) {
@@ -164,7 +172,7 @@ class enhancePostContent
             $tags = implode('|', $ignore_tags);
         }
         if (!empty($tags)) {
-            $s = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', ['enhancePostContent', 'removeTags'], $s);
+            $s = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', [self::class, 'removeTags'], $s);
         }
         # Remove words inside html tag (class, title, alt, href, ...)
         $s = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
@@ -176,7 +184,7 @@ class enhancePostContent
         return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
     }
 
-    public static function matchString($p, $r, $s, $filter, $before = '\b', $after = '\b')
+    public static function matchString(string $p, string $r, string $s, EcpFilter $filter, string $before = '\b', string $after = '\b'): array
     {
         # Case sensitive
         $i = $filter->nocase ? 'i' : '';
@@ -202,22 +210,22 @@ class enhancePostContent
         return ['total' => $t, 'matches' => $m];
     }
 
-    public static function quote($s)
+    public static function quote(string $s): string
     {
         return preg_quote($s, '#');
     }
 
-    public static function removeTags($m)
+    public static function removeTags(array $m): string
     {
         return $m[1] . preg_replace('#ççççç(?!ççççç)#s', '$1', $m[3]) . $m[4];
     }
 
-    public static function decodeTags($t)
+    public static function decodeTags(string $t): array
     {
         return preg_match_all('#([A-Za-z0-9]+)#', (string) $t, $m) ? $m[1] : [];
     }
 
-    public static function implode($a)
+    public static function implode(array|string $a): string
     {
         if (is_string($a)) {
             return $a;
@@ -234,7 +242,7 @@ class enhancePostContent
         return $r;
     }
 
-    public static function explode($s)
+    public static function explode(array|string $s): array
     {
         if (is_array($s)) {
             return $s;
@@ -256,8 +264,8 @@ class enhancePostContent
                 continue;
             }
 
-            $key = html::escapeHTML(trim($cur[0]));
-            $val = html::escapeHTML(trim($cur[1]));
+            $key = Html::escapeHTML(trim($cur[0]));
+            $val = Html::escapeHTML(trim($cur[1]));
 
             if (empty($key) || empty($val)) {
                 continue;
@@ -273,7 +281,7 @@ class enhancePostContent
     # Widgets
     #
 
-    public static function widgetContentEntryExcerpt($w)
+    public static function widgetContentEntryExcerpt(?WidgetsElement $w = null): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
             return null;
@@ -281,13 +289,13 @@ class enhancePostContent
 
         $res = '';
         while (dcCore::app()->ctx->posts->fetch()) {
-            $res .= dcCore::app()->ctx->posts->post_excerpt;
+            $res .= dcCore::app()->ctx->posts->f('post_excerpt');
         }
 
         return $res;
     }
 
-    public static function widgetContentEntryContent()
+    public static function widgetContentEntryContent(): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
             return null;
@@ -295,13 +303,13 @@ class enhancePostContent
 
         $res = '';
         while (dcCore::app()->ctx->posts->fetch()) {
-            $res .= dcCore::app()->ctx->posts->post_content;
+            $res .= dcCore::app()->ctx->posts->f('post_content');
         }
 
         return $res;
     }
 
-    public static function widgetContentCommentContent()
+    public static function widgetContentCommentContent(): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
             return null;
@@ -310,7 +318,7 @@ class enhancePostContent
         $res      = '';
         $post_ids = [];
         while (dcCore::app()->ctx->posts->fetch()) {
-            $comments = dcCore::app()->blog->getComments(['post_id' => dcCore::app()->ctx->posts->post_id]);
+            $comments = dcCore::app()->blog->getComments(['post_id' => dcCore::app()->ctx->posts->f('post_id')]);
             while ($comments->fetch()) {
                 $res .= $comments->getContent();
             }

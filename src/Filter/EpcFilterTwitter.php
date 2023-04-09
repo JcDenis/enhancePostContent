@@ -10,11 +10,15 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class epcFilterTwitter extends epcFilter
+namespace Dotclear\Plugin\enhancePostContent\Filter;
+
+use Dotclear\Plugin\enhancePostContent\Epc;
+use Dotclear\Plugin\enhancePostContent\EpcFilter;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+class EpcFilterTwitter extends EpcFilter
 {
     protected function init(): string
     {
@@ -37,9 +41,9 @@ class epcFilterTwitter extends epcFilter
         return 'twitter';
     }
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
-        $args[0] = enhancePostContent::replaceString(
+        $args[0] = Epc::replaceString(
             '[A-Za-z0-9_]{2,}',
             sprintf($this->replace, 'http://twitter.com/\\1', '\\1'),
             $args[0],
@@ -47,7 +51,5 @@ class epcFilterTwitter extends epcFilter
             '[^@]@',
             '\b'
         );
-
-        return null;
     }
 }

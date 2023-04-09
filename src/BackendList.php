@@ -10,16 +10,24 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return null;
-}
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\enhancePostContent;
+
+use adminGenericListV2;
+use dcCore;
+use dcPager;
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Html;
+
+use dt;
 
 /**
  * @ingroup DC_PLUGIN_PERIODICAL
  * @brief Periodical - admin pager methods.
  * @since 2.6
  */
-class adminEpcList extends adminGenericList
+class BackendList extends adminGenericListV2
 {
     public function display($filter, $pager_url, $enclose_block = '')
     {
@@ -65,12 +73,12 @@ class adminEpcList extends adminGenericList
         }
     }
 
-    private function line($checked)
+    private function line(bool $checked): string
     {
         $cols = [
-            'check' => '<td class="nowrap">' . form::checkbox(['epc_id[]'], $this->rs->epc_id, ['checked' => $checked]) . '</td>',
-            'key'   => '<td class="nowrap">' . html::escapeHTML($this->rs->epc_key) . '</td>',
-            'value' => '<td class="maximal">' . html::escapeHTML($this->rs->epc_value) . '</td>',
+            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->epc_id)->render() . '</td>',
+            'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->epc_key) . '</td>',
+            'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->epc_value) . '</td>',
             'date'  => '<td class="nowrap count">' . dt::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>',
         ];
 

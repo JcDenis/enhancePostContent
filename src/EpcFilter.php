@@ -10,7 +10,16 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-abstract class epcFilter
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\enhancePostContent;
+
+use ArrayObject;
+use dcCore;
+use dcRecord;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+abstract class EpcFilter
 {
     private $id      = 'undefined';
     private $records = null;
@@ -42,7 +51,7 @@ abstract class epcFilter
         $this->blogSettings();
     }
 
-    public static function create(arrayObject $o)
+    public static function create(ArrayObject $o): void
     {
         $c = get_called_class();
         $o->append(new $c());
@@ -53,7 +62,7 @@ abstract class epcFilter
         return $this->id;
     }
 
-    final public function __get($k)
+    final public function __get(string $k): mixed
     {
         if (isset($this->properties[$k])) {
             return $this->properties[$k];
@@ -65,19 +74,19 @@ abstract class epcFilter
         return null;
     }
 
-    final public function __set($k, $v)
+    final public function __set(string $k, mixed $v): void
     {
         if (isset($this->settings[$k])) {
             $this->settings[$k] = $v;
         }
     }
 
-    final public function property($k)
+    final public function property(string $k): mixed
     {
         return $this->properties[$k] ?? null;
     }
 
-    final protected function setProperties($property, $value = null): bool
+    final protected function setProperties(array|string $property, mixed $value = null): bool
     {
         $properties = is_array($property) ? $property : [$property => $value];
         foreach ($properties as $k => $v) {
@@ -89,12 +98,12 @@ abstract class epcFilter
         return true;
     }
 
-    final public function setting($k)
+    final public function setting(string $k): mixed
     {
         return $this->settings[$k] ?? null;
     }
 
-    final protected function setSettings($setting, $value = null): bool
+    final protected function setSettings(array|string $setting, mixed $value = null): bool
     {
         $settings = is_array($setting) ? $setting : [$setting => $value];
         foreach ($settings as $k => $v) {
@@ -106,9 +115,9 @@ abstract class epcFilter
         return true;
     }
 
-    private function blogSettings()
+    private function blogSettings(): void
     {
-        $opt = json_decode((string) dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get($this->id));
+        $opt = json_decode((string) dcCore::app()->blog->settings->get(My::id())->get($this->id));
 
         if (empty($opt)) {
             $opt = [];
@@ -136,11 +145,10 @@ abstract class epcFilter
         }
     }
 
-    final public function records()
+    final public function records(): ?dcRecord
     {
         if ($this->records === null && $this->has_list) {
-            $records       = new epcRecords();
-            $this->records = $records->getRecords(['epc_filter' => $this->id()]);
+            $this->records = EpcRecord::getRecords(['epc_filter' => $this->id()]);
         }
 
         return $this->records;
@@ -148,13 +156,13 @@ abstract class epcFilter
 
     abstract protected function init(): string;
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
-        return null;
+        return;
     }
 
-    public function widgetList($content, $w, &$list)
+    public function widgetList(string $content, WidgetsElement $w, array &$list): void
     {
-        return null;
+        return;
     }
 }

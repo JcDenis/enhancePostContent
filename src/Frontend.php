@@ -10,30 +10,53 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-require __DIR__ . '/_widgets.php';
+namespace Dotclear\Plugin\enhancePostContent;
 
-dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
+use dcCore;
+use dcNsProcess;
+use dcUtils;
 
-if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('active')) {
-    return null;
-}
+class Frontend extends dcNsProcess
+{
+    public static function init(): bool
+    {
+        static::$init = My::phpCompliant();
 
-// Add filters CSS to page header
-dcCore::app()->addBehavior('publicHeadContent', function () {
-    echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
-});
-// Filter template blocks content
-dcCore::app()->addBehavior('publicBeforeContentFilterV2', function ($tag, $args) {
-    $filters = enhancePostContent::getFilters();
-
-    foreach ($filters as $id => $filter) {
-        if (!enhancePostContent::testContext($tag, $args, $filter)) {
-            continue;
-        }
-        $filter->publicContent($tag, $args);
+        return static::$init;
     }
-});
+
+    public static function process(): bool
+    {
+        if (!static::$init) {
+            return false;
+        }
+
+        if (!dcCore::app()->blog->settings->get(My::id())->get('active')) {
+            return null;
+        }
+
+        dcCore::app()->addBehaviors([
+            // add CSS URL to header
+            'publicHeadContent'           => function (): void {
+                echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
+            },
+            // Filter template blocks content
+            'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
+                $filters = Epc::getFilters();
+
+                foreach ($filters as $id => $filter) {
+                    if (!Epc::testContext($tag, $args, $filter)) {
+                        continue;
+                    }
+                    $filter->publicContent($tag, $args);
+                }
+            },
+            // Widgets
+            'initWidgets'                 => [Widgets::class, 'initWidgets'],
+        ]);
+
+        return true;
+    }
+}

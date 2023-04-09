@@ -10,11 +10,16 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class epcFilterTag extends epcFilter
+namespace Dotclear\Plugin\enhancePostContent\Filter;
+
+use dcCore;
+use Dotclear\Plugin\enhancePostContent\Epc;
+use Dotclear\Plugin\enhancePostContent\EpcFilter;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+class EpcFilterTag extends EpcFilter
 {
     protected function init(): string
     {
@@ -38,43 +43,39 @@ class epcFilterTag extends epcFilter
         return 'tag';
     }
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
         if (!dcCore::app()->plugins->moduleExists('tags')) {
-            return null;
+            return;
         }
 
         $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
-            $args[0] = enhancePostContent::replaceString(
+            $args[0] = Epc::replaceString(
                 $metas->meta_id,
                 sprintf($this->replace, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
                 $args[0],
                 $this
             );
         }
-
-        return null;
     }
 
-    public function widgetList($content, $w, &$list)
+    public function widgetList(string $content, WidgetsElement $w, array &$list): void
     {
         if (!dcCore::app()->plugins->moduleExists('tags')) {
-            return null;
+            return;
         }
 
         $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
-            $list[] = enhancePostContent::matchString(
+            $list[] = Epc::matchString(
                 $metas->meta_id,
                 sprintf($this->widget, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
                 $content,
                 $this
             );
         }
-
-        return null;
     }
 }

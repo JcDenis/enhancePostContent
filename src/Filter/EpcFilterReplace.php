@@ -10,11 +10,15 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class epcFilterReplace extends epcFilter
+namespace Dotclear\Plugin\enhancePostContent\Filter;
+
+use Dotclear\Plugin\enhancePostContent\Epc;
+use Dotclear\Plugin\enhancePostContent\EpcFilter;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+class EpcFilterReplace extends EpcFilter
 {
     protected function init(): string
     {
@@ -40,17 +44,15 @@ class epcFilterReplace extends epcFilter
         return 'replace';
     }
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
         while ($this->records()->fetch()) {
-            $args[0] = enhancePostContent::replaceString(
+            $args[0] = Epc::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, $this->records()->epc_value, '\\2'),
                 $args[0],
                 $this
             );
         }
-
-        return null;
     }
 }

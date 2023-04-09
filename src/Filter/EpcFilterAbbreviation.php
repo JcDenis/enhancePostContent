@@ -10,11 +10,15 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class epcFilterAbbreviation extends epcFilter
+namespace Dotclear\Plugin\enhancePostContent\Filter;
+
+use Dotclear\Plugin\enhancePostContent\Epc;
+use Dotclear\Plugin\enhancePostContent\EpcFilter;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+class EpcFilterAbbreviation extends EpcFilter
 {
     protected function init(): string
     {
@@ -39,31 +43,27 @@ class epcFilterAbbreviation extends epcFilter
         return 'abbreviation';
     }
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
         while ($this->records()->fetch()) {
-            $args[0] = enhancePostContent::replaceString(
+            $args[0] = Epc::replaceString(
                 $this->records()->epc_key,
                 sprintf($this->replace, __($this->records()->epc_value), '\\1'),
                 $args[0],
                 $this
             );
         }
-
-        return null;
     }
 
-    public function widgetList($content, $w, &$list)
+    public function widgetList(string $content, WidgetsElement $w, array &$list): void
     {
         while ($this->records()->fetch()) {
-            $list[] = enhancePostContent::matchString(
+            $list[] = Epc::matchString(
                 $this->records()->epc_key,
                 sprintf($this->widget, __($this->records()->epc_value), '\\1'),
                 $content,
                 $this
             );
         }
-
-        return null;
     }
 }

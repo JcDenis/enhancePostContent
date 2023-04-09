@@ -10,33 +10,33 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-dcCore::app()->addBehavior(
-    'initWidgets',
-    ['enhancePostContentWidget', 'adminContentList']
-);
+namespace Dotclear\Plugin\enhancePostContent;
+
+use dcCore;
+use Dotclear\Helper\Html\Html;
+use Dotclear\Plugin\widgets\WidgetsStack;
+use Dotclear\Plugin\widgets\WidgetsElement;
 
 /**
  * @ingroup DC_PLUGIN_ENHANCEPOSTCONTENT
  * @brief Filter posts content - widgets methods.
  * @since 2.6
  */
-class enhancePostContentWidget
+class Widgets
 {
     /**
      * Admin part for widget that show extracted content
      *
      * @param  dcWidgets $w dcWidgets instance
      */
-    public static function adminContentList($w)
+    public static function initWidgets(WidgetsStack $w): void
     {
         $w->create(
             'epclist',
-            __('Enhance post content'),
-            ['enhancePostContentWidget', 'publicContentList'],
+            My::name(),
+            [self::class, 'parseWidget'],
             null,
             __('List filtered contents.')
         );
@@ -50,7 +50,7 @@ class enhancePostContentWidget
             'text'
         );
         # Type
-        $filters = enhancePostContent::getFilters();
+        $filters = Epc::getFilters();
         $types   = [];
         foreach ($filters as $id => $filter) {
             $types[$filter->name] = $id;
@@ -63,7 +63,7 @@ class enhancePostContentWidget
             $types
         );
         # Content
-        $contents = enhancePostContent::defaultAllowedWidgetValues();
+        $contents = Epc::defaultAllowedWidgetValues();
         foreach ($contents as $k => $v) {
             $w->epclist->setting(
                 'content' . $v['id'],
@@ -105,24 +105,22 @@ class enhancePostContentWidget
      *
      * @param  dcWidget $w dcWidget instance
      */
-    public static function publicContentList($w)
+    public static function parseWidget(WidgetsElement $w): string
     {
         if ($w->offline) {
-            return null;
+            return '';
         }
 
-        dcCore::app()->blog->settings->addNamespace(basename(__DIR__));
-
         # Page
-        if (!dcCore::app()->blog->settings->get(basename(__DIR__))->get('active')
+        if (!dcCore::app()->blog->settings->get(My::id())->get('active')
             || !in_array(dcCore::app()->ctx->current_tpl, ['post.html', 'page.html'])
         ) {
-            return null;
+            return '';
         }
 
         # Content
         $content = '';
-        foreach (enhancePostContent::defaultAllowedWidgetValues() as $k => $v) {
+        foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
             $ns = 'content' . $v['id'];
             if ($w->$ns && is_callable($v['cb'])) {
                 $content .= call_user_func_array(
@@ -133,12 +131,12 @@ class enhancePostContentWidget
         }
 
         if (empty($content)) {
-            return null;
+            return '';
         }
 
         # Filter
         $list    = [];
-        $filters = enhancePostContent::getFilters();
+        $filters = Epc::getFilters();
 
         if (isset($filters[$w->type])) {
             $filters[$w->type]->nocase = $w->nocase;
@@ -147,7 +145,7 @@ class enhancePostContentWidget
         }
 
         if (empty($list)) {
-            return null;
+            return '';
         }
 
         # Parse result
@@ -162,16 +160,12 @@ class enhancePostContentWidget
             '</li>';
         }
 
-        if (empty($res)) {
-            return null;
-        }
-
-        return $w->renderDiv(
-            $w->content_only,
+        return empty($res) ? '' : $w->renderDiv(
+            (bool) $w->content_only,
             $w->class,
             'id="epc_' . $w->type . '"',
-            ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') .
-            ($w->text ? '<p>' . html::escapeHTML($w->text) . '</p>' : '') .
+            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') .
+            ($w->text ? '<p>' . Html::escapeHTML($w->text) . '</p>' : '') .
             '<ul>' . $res . '</ul>'
         );
     }

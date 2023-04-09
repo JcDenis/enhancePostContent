@@ -10,11 +10,16 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class epcFilterSearch extends epcFilter
+namespace Dotclear\Plugin\enhancePostContent\Filter;
+
+use dcCore;
+use Dotclear\Plugin\enhancePostContent\Epc;
+use Dotclear\Plugin\enhancePostContent\EpcFilter;
+use Dotclear\Plugin\widgets\WidgetsElement;
+
+class EpcFilterSearch extends EpcFilter
 {
     protected function init(): string
     {
@@ -39,23 +44,21 @@ class epcFilterSearch extends epcFilter
         return 'search';
     }
 
-    public function publicContent($tag, $args)
+    public function publicContent(string $tag, array $args): void
     {
         if (empty(dcCore::app()->public->search)) {
-            return null;
+            return;
         }
 
         $searchs = explode(' ', dcCore::app()->public->search);
 
         foreach ($searchs as $k => $v) {
-            $args[0] = enhancePostContent::replaceString(
+            $args[0] = Epc::replaceString(
                 $v,
                 sprintf($this->replace, '\\1'),
                 $args[0],
                 $this
             );
         }
-
-        return null;
     }
 }
