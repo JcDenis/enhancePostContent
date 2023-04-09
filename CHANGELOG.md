@@ -3,6 +3,12 @@ dev
 - [ ] add auto-find categorie
 - fix remplacement limit
 
+2023.04.09
+- require Dotclear 2.26
+- require PHP >= 8.1
+- use namespace
+- code review (readonly properties, etc...)
+
 2022.12.21
 - use svg icon
 - use anonymous functions
