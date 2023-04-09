@@ -21,8 +21,12 @@ use dcPage;
 use dcFavorites;
 use dcNsProcess;
 use dcSettings;
-
-use form;
+use Dotclear\Helper\Html\Form\{
+    Checkbox,
+    Input,
+    Label,
+    Para
+};
 
 class Backend extends dcNsProcess
 {
@@ -73,9 +77,11 @@ class Backend extends dcNsProcess
                 '<div class="fieldset"><h4 id="epc_params">' . My::name() . '</h4>' .
                 '<div class="two-cols">' .
                 '<div class="col">' .
-                '<p><label class="classic">' .
-                form::checkbox('epc_active', '1', $active) .
-                __('Enable plugin') . '</label></p>' .
+                // active
+                (new Para())->items([
+                    (new Checkbox('epc_active', $active))->value(1),
+                    (new Label(__('Enable plugin'), Label::OUTSIDE_LABEL_AFTER))->for('epc_active')->class('classic'),
+                ])->render() .
                 '<p class="form-note">' .
                 __('This enable public widgets and contents filter.') .
                 '</p>' .
@@ -85,11 +91,17 @@ class Backend extends dcNsProcess
                 '<div class="col">' .
                 '<h5>' . __('Extra') . '</h5>' .
                 '<p>' . __('This is a special feature to edit list of allowed template values and public pages where this plugin works.') . '</p>' .
-                '<p><label for="epc_allowedtplvalues">' . __('Allowed DC template values:') . '</label>' .
-                form::field('epc_allowedtplvalues', 100, 0, Epc::implode($allowedtplvalues)) . '</p>' .
+                // allowedtplvalues
+                (new Para())->items([
+                    (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
+                    (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::implode($allowedtplvalues)),
+                ])->render() .
                 '<p class="form-note">' . __('Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".') . '</p>' .
-                '<p><label for="epc_allowedpubpages">' . __('Allowed public pages:') . '</label>' .
-                form::field('epc_allowedpubpages', 100, 0, Epc::implode($allowedpubpages)) . '</p>' .
+                // allowedpubpages
+                (new Para())->items([
+                    (new Label(__('Allowed public pages:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedpubpages'),
+                    (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::implode($allowedpubpages)),
+                ])->render() .
                 '<p class="form-note">' . __('Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".') . '</p>' .
                 '</div>' .
                 '</div>' .

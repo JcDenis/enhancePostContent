@@ -19,11 +19,23 @@ use adminGenericFilterV2;
 use dcCore;
 use dcNsProcess;
 use dcPage;
+use Dotclear\Helper\Html\Form\{
+    Checkbox,
+    Div,
+    Form,
+    Hidden,
+    Input,
+    label,
+    Note,
+    Number,
+    Para,
+    Select,
+    Submit,
+    Text
+};
 use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Network\Http;
 use Exception;
-
-use form;
 
 class Manage extends dcNsProcess
 {
@@ -192,109 +204,86 @@ class Manage extends dcNsProcess
             My::name()             => '',
             $current->filter->name => '',
         ]) .
-        dcPage::notices() .
+        dcPage::notices();
 
         # Filters select menu list
-        '<form method="get" action="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '" id="filters_menu">' .
-        '<p class="anchor-nav"><label for="part" class="classic">' . __('Select filter:') . ' </label>' .
-        form::combo('part', $current->combo, $current->part) . ' ' .
-        '<input type="submit" value="' . __('Ok') . '" />' .
-        form::hidden('p', My::id()) . '</p>' .
-        '</form>';
+        echo
+        (new Form('filters_menu'))->method('get')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->fields([
+            (new Para())->class('anchor-nav')->items([
+                (new Select('part'))->items($current->combo)->default($current->part),
+                (new Submit(['do']))->value(__('Ok')),
+                (new Hidden(['p'], My::id())),
+            ]),
+        ])->render();
 
         # Filter title and description
-        echo '
-        <h3>' . $current->filter->name . '</h3>
-        <p>' . $current->filter->help . '</p>';
+        echo 
+        '<h3>' . $current->filter->name . '</h3>' .
+        '<p>' . $current->filter->help . '</p>';
 
         # Filter settings
-        echo '
-        <div class="multi-part" id="setting" title="' . __('Settings') . '">
-        <form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#setting">
-
-        <div class="two-boxes odd">
-        <h4>' . __('Pages to be filtered') . '</h4>';
-
+        $form_pages = [(new Text('h4', __('Pages to be filtered')))];
         foreach (Epc::blogAllowedPubPages() as $k => $v) {
-            echo '
-            <p><label for="filter_pubPages' . $v . '">' .
-            form::checkbox(
-                ['filter_pubPages[]', 'filter_pubPages' . $v],
-                $v,
-                in_array($v, $current->filter->pubPages)
-            ) .
-            __($k) . '</label></p>';
+            $form_pages[] = (new Para())->items([
+                (new Checkbox(['filter_pubPages[]', 'filter_pubPages' . $v], in_array($v, $current->filter->pubPages)))->value(1),
+                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_pubPages' . $v)->class('classic'),
+            ]);
         }
 
-        echo '
-        </div><div class="two-boxes even">
-        <h4>' . __('Filtering') . '</h4>
-
-        <p><label for="filter_nocase">' .
-        form::checkbox('filter_nocase', '1', $current->filter->nocase) .
-        __('Case insensitive') . '</label></p>
-
-        <p><label for="filter_plural">' .
-        form::checkbox('filter_plural', '1', $current->filter->plural) .
-        __('Also use the plural') . '</label></p>
-
-        <p><label for="filter_limit">' .
-        __('Limit the number of replacement to:') . '</label>' .
-        form::number('filter_limit', ['min' => 0, 'max' => 99, 'default' => (int) $current->filter->limit]) . '
-        </p>
-        <p class="form-note">' . __('Leave it blank or set it to 0 for no limit') . '</p>
-
-        </div><div class="two-boxes odd">
-        <h4>' . __('Contents to be filtered') . '</h4>';
-
+        $form_values = [(new Text('h4', __('Contents to be filtered')))];
         foreach (Epc::blogAllowedTplValues() as $k => $v) {
-            echo '
-            <p><label for="filter_tplValues' . $v . '">' .
-            form::checkbox(
-                ['filter_tplValues[]', 'filter_tplValues' . $v],
-                $v,
-                in_array($v, $current->filter->tplValues)
-            ) .
-            __($k) . '</label></p>';
+            $form_values[] = (new Para())->items([
+                (new Checkbox(['filter_tplValues[]', 'filter_tplValues' . $v], in_array($v, $current->filter->tplValues)))->value(1),
+                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_tplValues' . $v)->class('classic'),
+            ]);
         }
 
-        echo '
-        </div><div class="two-boxes even">
-        <h4>' . __('Style') . '</h4>';
-
+        $form_styles = [(new Text('h4', __('Style')))];
         foreach ($current->filter->class as $k => $v) {
-            echo '
-            <p><label for="filter_style' . $k . '">' .
-            sprintf(__('Class "%s":'), $v) . '</label>' .
-            form::field(
-                ['filter_style[]', 'filter_style' . $k],
-                60,
-                255,
-                Html::escapeHTML($current->filter->style[$k])
-            ) .
-            '</p>';
+            $form_styles[] = (new Para())->items([
+                (new Label(sprintf(__('Class "%s":'), $v), Label::OUTSIDE_LABEL_BEFORE))->for('filter_style' . $k),
+                (new Input(['filter_style[]', 'filter_style' . $k]))->size(60)->maxlenght(255)->value(Html::escapeHTML($current->filter->style[$k])),
+            ]);
         }
 
-        echo '
-        <p class="form-note">' . sprintf(__('The inserted HTML tag looks like: %s'), Html::escapeHTML(str_replace('%s', '...', $current->filter->replace))) . '</p>
+        echo 
+        (new Div('setting'))->class('multi-part')->title(__('Settings'))->items([
+            (new Form('setting_form'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#setting')->separator('')->fields([
+                (new Div())->class('two-boxes even')->items($form_pages),
+                (new Div())->class('two-boxes odd')->items([
+                    (new Text('h4', __('Filtering'))),
+                    (new Para())->items([
+                        (new Checkbox('filter_nocase', $current->filter->nocase))->value(1),
+                        (new Label(__('Case insensitive'), Label::OUTSIDE_LABEL_AFTER))->for('filter_nocase')->class('classic'),
+                    ]),
+                    (new Para())->items([
+                        (new Checkbox('filter_plural', $current->filter->plural))->value(1),
+                        (new Label(__('Also use the plural'), Label::OUTSIDE_LABEL_AFTER))->for('filter_plural')->class('classic'),
+                    ]),
+                    (new Para())->items([
+                        (new Label(__('Limit the number of replacement to:'), Label::OUTSIDE_LABEL_BEFORE))->for('filter_limit'),
+                        (new Number('filter_limit'))->min(0)->max(99)->value((int) $current->filter->limit),
+                    ]),
+                    (new Note())->class('form-note')->text(__('Leave it blank or set it to 0 for no limit')),
+                ]),
+                (new Div())->class('two-boxes even')->items($form_values),
+                (new Div())->class('two-boxes odd')->items(array_merge($form_styles, [
+                    (new Note())->class('form-note')->text(sprintf(__('The inserted HTML tag looks like: %s'), Html::escapeHTML(str_replace('%s', '...', $current->filter->replace)))),
+                    (new Para())->items([
+                        (new Label(__('Ignore HTML tags:'), Label::OUTSIDE_LABEL_BEFORE))->for('filter_notag'),
+                        (new Input('filter_notag'))->size(60)->maxlenght(255)->value(Html::escapeHTML($current->filter->notag)),
+                    ]),
+                    (new Note())->class('form-note')->text(__('This is the list of HTML tags where content will be ignored.') . ' ' . ('' != $current->filter->htmltag ? '' : sprintf(__('Tag "%s" always be ignored.'), $current->filter->htmltag))),
 
-        <p><label for="filter_notag">' . __('Ignore HTML tags:') . '</label>' .
-        form::field('filter_notag', 60, 255, Html::escapeHTML($current->filter->notag)) . '
-        </p>
-        <p class="form-note">' . __('This is the list of HTML tags where content will be ignored.') . ' ' .
-        ('' != $current->filter->htmltag ? '' : sprintf(__('Tag "%s" always be ignored.'), $current->filter->htmltag)) . '</p>
-        </div>
-        <div class="clear">
-        <p>' .
-        dcCore::app()->formNonce() .
-        form::hidden(['action'], 'savefiltersetting') .
-        form::hidden(['part'], $current->part) . '
-        <input type="submit" name="save" value="' . __('Save') . '" />
-        </p>
-        </div>
-
-        </form>
-        </div>';
+                ])),
+                (new Div())->class('clear')->items([
+                    dcCore::app()->formNonce(false),
+                    (new Hidden(['action'], 'savefiltersetting')),
+                    (new Hidden(['part'], $current->part)),
+                    (new Submit(['save']))->value(__('Save')),
+                ]),
+            ]),
+        ])->render();
 
         # Filter records list
         if ($current->filter->has_list && isset($sorts) && isset($pager)) {
@@ -303,7 +292,7 @@ class Manage extends dcNsProcess
             echo '
             <div class="multi-part" id="record" title="' . __('Records') . '">';
 
-            $sorts->display(['admin.plugin.' . My::id(), '#record'], form::hidden('p', My::id()) . form::hidden('part', $current->part));
+            $sorts->display(['admin.plugin.' . My::id(), '#record'], (new Hidden('p', My::id()))->render() . (new Hidden('part', $current->part))->render());
 
             $pager->display(
                 $sorts,
@@ -314,12 +303,15 @@ class Manage extends dcNsProcess
                 '<div class="two-cols">' .
                 '<p class="col checkboxes-helpers"></p>' .
 
-                '<p class="col right">' .
-                form::hidden('action', 'deleterecords') .
-                '<input id="del-action" type="submit" name="save" value="' . __('Delete selected records') . '" /></p>' .
-                dcCore::app()->adminurl->getHiddenFormFields('admin.plugin.' . My::id(), array_merge(['p' => My::id()], $sorts->values(true))) .
-                form::hidden('redir', dcCore::app()->adminurl->get('admin.plugin.' . My::id(), $sorts->values(true))) .
-                dcCore::app()->formNonce() .
+                (new Para())->class('col right')->items(array_merge(
+                    dcCore::app()->adminurl->hiddenFormFields('admin.plugin.' . My::id(), array_merge(['p' => My::id()], $sorts->values(true))),
+                    [
+                        dcCore::app()->formNonce(false),
+                        (new Hidden('redir', dcCore::app()->adminurl->get('admin.plugin.' . My::id(), $sorts->values(true)))),
+                        (new Hidden('action', 'deleterecords')),
+                        (new Submit(['save', 'del-action']))->value(__('Delete selected records')),
+                    ]
+                ))->render() .
                 '</div>' .
                 '</form>'
             );
@@ -327,26 +319,25 @@ class Manage extends dcNsProcess
             echo '</div>';
 
             # New record
-            echo '
-            <div class="multi-part" id="newrecord" title="' . __('New record') . '">
-            <form action="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#record" method="post" id="form-create">' .
-
-            '<p><label for="new_key">' . __('Key:') . '</label>' .
-            form::field('new_key', 60, 255, ['extra_html' => 'required']) .
-            '</p>' .
-
-            '<p><label for="new_value">' . __('Value:') . '</label>' .
-            form::field('new_value', 60, 255, ['extra_html' => 'required']) .
-            '</p>
-
-            <p class="clear">' .
-            form::hidden(['action'], 'savenewrecord') .
-            form::hidden(['part'], $current->part) .
-            dcCore::app()->formNonce() . '
-            <input id="new-action" type="submit" name="save" value="' . __('Save') . '" />
-            </p>
-            </form>
-            </div>';
+            echo 
+            (new Div('newrecord'))->class('multi-part')->title(__('New record'))->items([
+                (new Form('form-create'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#record')->fields([
+                    (new Para())->items([
+                        (new Label(__('Key:'), Label::OUTSIDE_LABEL_BEFORE))->for('new_key'),
+                        (new Input('new_key'))->size(60)->maxlenght(255)->required(true),
+                    ]),
+                    (new Para())->items([
+                        (new Label(__('Value:'), Label::OUTSIDE_LABEL_BEFORE))->for('new_value'),
+                        (new Input('new_value'))->size(60)->maxlenght(255)->required(true),
+                    ]),
+                    (new Para())->class('clear')->items([
+                        dcCore::app()->formNonce(false),
+                        (new Hidden(['action'], 'savenewrecord')),
+                        (new Hidden(['part'], $current->part)),
+                        (new Submit(['save', 'new-action']))->value(__('Save')),
+                    ]),
+                ]),
+            ])->render();
         }
 
         # --BEHAVIOR-- enhancePostContentAdminPage
