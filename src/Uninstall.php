@@ -116,7 +116,7 @@ class Uninstall
             /* ns */
             My::id(),
             /* description */
-            sprintf(__('delete %s version number'),My::id())
+            sprintf(__('delete %s version number'), My::id())
         );
 
         return true;

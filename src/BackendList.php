@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
+use adminGenericFilterV2;
 use adminGenericListV2;
-use dcCore;
 use dcPager;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
@@ -29,12 +29,12 @@ use dt;
  */
 class BackendList extends adminGenericListV2
 {
-    public function display($filter, $pager_url, $enclose_block = '')
+    public function display(adminGenericFilterV2 $filter, string $pager_url, string $enclose_block): void
     {
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . ($filter->show() ? __('No record matches the filter') : __('No record')) . '</strong></p>';
         } else {
-            $pager           = new dcPager($filter->page, $this->rs_count, $filter->nb, 10);
+            $pager           = new dcPager($filter->value('page'), $this->rs_count, $filter->value('nb'), 10);
             $pager->base_url = $pager_url;
 
             $epc_id = [];

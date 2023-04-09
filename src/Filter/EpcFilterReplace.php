@@ -16,13 +16,14 @@ namespace Dotclear\Plugin\enhancePostContent\Filter;
 
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
-use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterReplace extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'replace';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 200,
             'name'     => __('Replace'),
             'help'     => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
@@ -30,26 +31,27 @@ class EpcFilterReplace extends EpcFilter
             'htmltag'  => '',
             'class'    => ['span.epc-replace'],
             'replace'  => '<span class="epc-replace">%s</span>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'nocase'    => true,
             'plural'    => true,
             'style'     => ['font-style: italic;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
-        ]);
-
-        return 'replace';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void
     {
         while ($this->records()->fetch()) {
             $args[0] = Epc::replaceString(
-                $this->records()->epc_key,
-                sprintf($this->replace, $this->records()->epc_value, '\\2'),
+                $this->records()->f('epc_key'),
+                sprintf($this->replace, $this->records()->f('epc_value'), '\\2'),
                 $args[0],
                 $this
             );

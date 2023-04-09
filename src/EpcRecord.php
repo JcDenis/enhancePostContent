@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\enhancePostContent;
 use cursor;
 use dcCore;
 use dcRecord;
+use Exception;
 
 class EpcRecord
 {
@@ -118,7 +119,7 @@ class EpcRecord
         }
         self::trigger();
 
-        # --BEHAVIOR-- enhancePostContentAfterAddRecord
+        # --BEHAVIOR-- enhancePostContentAfterAddRecord : cursor
         dcCore::app()->callBehavior('enhancePostContentAfterAddRecord', $cur);
 
         return (int) $cur->getField('epc_id');
@@ -135,11 +136,11 @@ class EpcRecord
         $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog->id) . "' ");
         self::trigger();
 
-        # --BEHAVIOR-- enhancePostContentAfterUpdRecord
+        # --BEHAVIOR-- enhancePostContentAfterUpdRecord : cursor, int
         dcCore::app()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
     }
 
-    public static function isRecord(string $filter, string $key, int $not_id = null): bool
+    public static function isRecord(?string $filter, ?string $key, ?int $not_id = null): bool
     {
         return 0 < self::getRecords([
             'epc_filter' => $filter,
@@ -154,7 +155,7 @@ class EpcRecord
             throw new Exception(__('No such record ID'));
         }
 
-        # --BEHAVIOR-- enhancePostContentBeforeDelRecord
+        # --BEHAVIOR-- enhancePostContentBeforeDelRecord, int
         dcCore::app()->callBehavior('enhancePostContentbeforeDelRecord', $id);
 
         dcCore::app()->con->execute(

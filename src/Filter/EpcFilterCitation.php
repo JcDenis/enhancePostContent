@@ -14,15 +14,18 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent\Filter;
 
+use ArrayObject;
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
 use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterCitation extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'citation';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 600,
             'name'     => __('Citation'),
             'help'     => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
@@ -31,37 +34,38 @@ class EpcFilterCitation extends EpcFilter
             'class'    => ['cite.epc-cite'],
             'replace'  => '<cite class="epc-cite" title="%s">%s</cite>',
             'widget'   => '<cite title="%s">%s</cite>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'nocase'    => true,
             'style'     => ['font-style: italic;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
-        ]);
-
-        return 'citation';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void
     {
         while ($this->records()->fetch()) {
             $args[0] = Epc::replaceString(
-                $this->records()->epc_key,
-                sprintf($this->replace, __($this->records()->epc_value), '\\1'),
+                $this->records()->f('epc_key'),
+                sprintf($this->replace, __($this->records()->f('epc_value')), '\\1'),
                 $args[0],
                 $this
             );
         }
     }
 
-    public function widgetList(string $content, WidgetsElement $w, array &$list): void
+    public function widgetList(string $content, WidgetsElement $w, ArrayObject $list): void
     {
         while ($this->records()->fetch()) {
             $list[] = Epc::matchString(
-                $this->records()->epc_key,
-                sprintf($this->widget, __($this->records()->epc_value), '\\1'),
+                $this->records()->f('epc_key'),
+                sprintf($this->widget, __($this->records()->f('epc_value')), '\\1'),
                 $content,
                 $this
             );

@@ -34,12 +34,12 @@ class Frontend extends dcNsProcess
         }
 
         if (!dcCore::app()->blog->settings->get(My::id())->get('active')) {
-            return null;
+            return false;
         }
 
         dcCore::app()->addBehaviors([
             // add CSS URL to header
-            'publicHeadContent'           => function (): void {
+            'publicHeadContent' => function (): void {
                 echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
             },
             // Filter template blocks content
@@ -54,7 +54,7 @@ class Frontend extends dcNsProcess
                 }
             },
             // Widgets
-            'initWidgets'                 => [Widgets::class, 'initWidgets'],
+            'initWidgets' => [Widgets::class, 'initWidgets'],
         ]);
 
         return true;

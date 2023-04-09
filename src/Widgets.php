@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
+use ArrayObject;
 use dcCore;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsStack;
@@ -29,7 +30,7 @@ class Widgets
     /**
      * Admin part for widget that show extracted content
      *
-     * @param  dcWidgets $w dcWidgets instance
+     * @param  WidgetsStack $w WidgetsStack instance
      */
     public static function initWidgets(WidgetsStack $w): void
     {
@@ -53,7 +54,9 @@ class Widgets
         $filters = Epc::getFilters();
         $types   = [];
         foreach ($filters as $id => $filter) {
-            $types[$filter->name] = $id;
+            if ($filter->widget != '') {
+                $types[$filter->name] = $id;
+            }
         }
         $w->epclist->setting(
             'type',
@@ -72,20 +75,6 @@ class Widgets
                 'check'
             );
         }
-        # Case sensitive
-        $w->epclist->setting(
-            'nocase',
-            __('Search case insensitive'),
-            0,
-            'check'
-        );
-        # Plural
-        $w->epclist->setting(
-            'plural',
-            __('Search also plural'),
-            0,
-            'check'
-        );
         # Show count
         $w->epclist->setting(
             'show_total',
@@ -103,7 +92,7 @@ class Widgets
     /**
      * Public part for widget that show extracted content
      *
-     * @param  dcWidget $w dcWidget instance
+     * @param  WidgetsElement $w WidgetsElement instance
      */
     public static function parseWidget(WidgetsElement $w): string
     {
@@ -123,9 +112,9 @@ class Widgets
         foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
             $ns = 'content' . $v['id'];
             if ($w->$ns && is_callable($v['cb'])) {
-                $content .= call_user_func_array(
+                $content .= call_user_func(
                     $v['cb'],
-                    [dcCore::app(), $w]
+                    $w
                 );
             }
         }
@@ -135,16 +124,14 @@ class Widgets
         }
 
         # Filter
-        $list    = [];
+        $list    = new ArrayObject();
         $filters = Epc::getFilters();
 
         if (isset($filters[$w->type])) {
-            $filters[$w->type]->nocase = $w->nocase;
-            $filters[$w->type]->plural = $w->plural;
             $filters[$w->type]->widgetList($content, $w, $list);
         }
 
-        if (empty($list)) {
+        if (!count($list)) {
             return '';
         }
 

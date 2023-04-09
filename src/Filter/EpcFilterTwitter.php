@@ -16,29 +16,31 @@ namespace Dotclear\Plugin\enhancePostContent\Filter;
 
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
-use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterTwitter extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'twitter';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 1000,
             'name'     => __('Twitter'),
             'help'     => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
             'htmltag'  => 'a',
             'class'    => ['a.epc-twitter'],
             'replace'  => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'style'     => ['text-decoration: none; font-weight: bold; font-style: italic; color: #0000FF;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
-        ]);
-
-        return 'twitter';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void

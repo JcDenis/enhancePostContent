@@ -18,131 +18,96 @@ use ArrayObject;
 use dcCore;
 use dcRecord;
 use Dotclear\Plugin\widgets\WidgetsElement;
+use Exception;
 
 abstract class EpcFilter
 {
-    private $id      = 'undefined';
-    private $records = null;
+    protected string $id = 'undefined';
 
-    private $properties = [
-        'priority' => 500,
-        'name'     => 'undefined',
-        'help'     => 'undefined',
-        'has_list' => false,
-        'htmltag'  => '',
-        'class'    => [],
-        'replace'  => '',
-        'widget'   => '',
-    ];
-    private $settings = [
-        'nocase'    => false,
-        'plural'    => false,
-        'limit'     => 0,
-        'style'     => [],
-        'notag'     => '',
-        'tplValues' => [],
-        'pubPages'  => [],
-    ];
+    private ?dcRecord $records = null;
+
+    // properties
+    public readonly int $priority;
+    public readonly string $name;
+    public readonly string $help;
+    public readonly bool $has_list;
+    public readonly string $htmltag;
+    public readonly array $class;
+    public readonly string $replace;
+    public readonly string $widget;
+
+    // settings
+    public readonly bool $nocase;
+    public readonly bool $plural;
+    public readonly int $limit;
+    public readonly array $style;
+    public readonly string $notag;
+    public readonly array $tplValues;
+    public readonly array $pubPages;
 
     final public function __construct()
     {
-        $this->id = $this->init();
+        if ($this->id == 'undefined') {
+            throw new Exception('Undefined Filter id');
+        }
 
-        $this->blogSettings();
+        // get blog settings
+        $s = json_decode((string) dcCore::app()->blog->settings->get(My::id())->get($this->id), true);
+        if (empty($s)) {
+            $s = [];
+        }
+
+        $properties = $this->initProperties();
+        $settings   = $this->initSettings();
+
+        // from filter defautl properties
+        $this->priority = isset($properties['priority']) ? abs((int) $properties['priority']) : 500;
+        $this->name     = isset($properties['name']) ? (string) $properties['name'] : 'undefined';
+        $this->help     = isset($properties['help']) ? (string) $properties['help'] : 'undefined';
+        $this->has_list = isset($properties['has_list']) ? (bool) $properties['has_list'] : false;
+        $this->htmltag  = isset($properties['htmltag']) ? (string) $properties['htmltag'] : '';
+        $this->class    = isset($properties['class']) && is_array($properties['class']) ? $properties['class'] : [];
+        $this->replace  = isset($properties['replace']) ? (string) $properties['replace'] : '';
+        $this->widget   = isset($properties['widget']) ? (string) $properties['widget'] : '';
+
+        // from filter defautl settings
+        $nocase    = isset($settings['nocase']) ? (bool) $settings['nocase'] : false;
+        $plural    = isset($settings['plural']) ? (bool) $settings['plural'] : false;
+        $limit     = isset($settings['limit']) ? abs((int) $settings['limit']) : 0;
+        $style     = isset($settings['style']) && is_array($settings['style']) ? $settings['style'] : [];
+        $notag     = isset($settings['notag']) ? (string) $settings['notag'] : '';
+        $tplValues = isset($settings['tplValues']) && is_array($settings['tplValues']) ? $settings['tplValues'] : [];
+        $pubPages  = isset($settings['pubPages'])  && is_array($settings['pubPages']) ? $settings['pubPages'] : [];
+
+        // from blog settings
+        $this->nocase    = isset($s['nocase']) ? (bool) $s['nocase'] : $nocase;
+        $this->plural    = isset($s['plural']) ? (bool) $s['plural'] : $plural;
+        $this->limit     = isset($s['limit']) ? abs((int) $s['limit']) : $limit;
+        $this->style     = isset($s['style']) && is_array($s['style']) ? $s['style'] : $style;
+        $this->notag     = isset($s['notag']) ? (string) $s['notag'] : $notag;
+        $this->tplValues = isset($s['tplValues']) && is_array($s['tplValues']) ? $s['tplValues'] : $tplValues;
+        $this->pubPages  = isset($s['pubPages'])  && is_array($s['pubPages']) ? $s['pubPages'] : $pubPages;
+    }
+
+    protected function initProperties(): array
+    {
+        return [];
+    }
+
+    protected function initSettings(): array
+    {
+        return [];
     }
 
     public static function create(ArrayObject $o): void
     {
-        $c = get_called_class();
+        $c = static::class;
         $o->append(new $c());
     }
 
-    final public function id()
+    final public function id(): string
     {
         return $this->id;
-    }
-
-    final public function __get(string $k): mixed
-    {
-        if (isset($this->properties[$k])) {
-            return $this->properties[$k];
-        }
-        if (isset($this->settings[$k])) {
-            return $this->settings[$k];
-        }
-
-        return null;
-    }
-
-    final public function __set(string $k, mixed $v): void
-    {
-        if (isset($this->settings[$k])) {
-            $this->settings[$k] = $v;
-        }
-    }
-
-    final public function property(string $k): mixed
-    {
-        return $this->properties[$k] ?? null;
-    }
-
-    final protected function setProperties(array|string $property, mixed $value = null): bool
-    {
-        $properties = is_array($property) ? $property : [$property => $value];
-        foreach ($properties as $k => $v) {
-            if (isset($this->properties[$k])) {
-                $this->properties[$k] = $v;
-            }
-        }
-
-        return true;
-    }
-
-    final public function setting(string $k): mixed
-    {
-        return $this->settings[$k] ?? null;
-    }
-
-    final protected function setSettings(array|string $setting, mixed $value = null): bool
-    {
-        $settings = is_array($setting) ? $setting : [$setting => $value];
-        foreach ($settings as $k => $v) {
-            if (isset($this->settings[$k])) {
-                $this->settings[$k] = $v;
-            }
-        }
-
-        return true;
-    }
-
-    private function blogSettings(): void
-    {
-        $opt = json_decode((string) dcCore::app()->blog->settings->get(My::id())->get($this->id));
-
-        if (empty($opt)) {
-            $opt = [];
-        }
-        if (isset($opt->nocase)) {
-            $this->settings['nocase'] = (bool) $opt->nocase;
-        }
-        if (isset($opt->plural)) {
-            $this->settings['plural'] = (bool) $opt->plural;
-        }
-        if (isset($opt->limit)) {
-            $this->settings['limit'] = abs((int) $opt->limit);
-        }
-        if (isset($opt->style) && is_array($opt->style)) {
-            $this->settings['style'] = (array) $opt->style;
-        }
-        if (isset($opt->notag)) {
-            $this->settings['notag'] = (string) $opt->notag;
-        }
-        if (isset($opt->tplValues)) {
-            $this->settings['tplValues'] = (array) $opt->tplValues;
-        }
-        if (isset($opt->pubPages)) {
-            $this->settings['pubPages'] = (array) $opt->pubPages;
-        }
     }
 
     final public function records(): ?dcRecord
@@ -154,15 +119,11 @@ abstract class EpcFilter
         return $this->records;
     }
 
-    abstract protected function init(): string;
-
     public function publicContent(string $tag, array $args): void
     {
-        return;
     }
 
-    public function widgetList(string $content, WidgetsElement $w, array &$list): void
+    public function widgetList(string $content, WidgetsElement $w, ArrayObject $list): void
     {
-        return;
     }
 }

@@ -33,8 +33,8 @@ __('RSS feeds');
 
 class Epc
 {
-    protected static $default_filters = null;
-    public static $epcFilterLimit     = [];
+    protected static array $default_filters = [];
+    public static array $epcFilterLimit     = [];
 
     #
     # Default definition
@@ -48,6 +48,7 @@ class Epc
             'comment content' => 'CommentContent',
         ]);
 
+        # --BEHAVIOR-- enhancePostContentAllowedTplValues : ArrayObject
         dcCore::app()->callBehavior('enhancePostContentAllowedTplValues', $rs);
 
         return iterator_to_array($rs, true);
@@ -55,7 +56,7 @@ class Epc
 
     public static function blogAllowedTplValues(): array
     {
-        $rs = json_decode(dcCore::app()->blog->settings->get(basename(dirname('../' . __DIR__)))->get('allowedtplvalues'));
+        $rs = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowedtplvalues'));
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
@@ -63,20 +64,21 @@ class Epc
     public static function defaultAllowedWidgetValues(): array
     {
         $rs = new ArrayObject([
-            'entry excerpt'   => [
+            'entry excerpt' => [
                 'id' => 'entryexcerpt',
-                'cb' => [self::class,'widgetContentEntryExcerpt'],
+                'cb' => [self::class, 'widgetContentEntryExcerpt'],
             ],
-            'entry content'   => [
+            'entry content' => [
                 'id' => 'entrycontent',
-                'cb' => [self::class,'widgetContentEntryContent'],
+                'cb' => [self::class, 'widgetContentEntryContent'],
             ],
             'comment content' => [
                 'id' => 'commentcontent',
-                'cb' => [self::class,'widgetContentCommentContent'],
+                'cb' => [self::class, 'widgetContentCommentContent'],
             ],
         ]);
 
+        # --BEHAVIOR-- enhancePostContentAllowedWidgetValues : ArrayObject
         dcCore::app()->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
 
         return iterator_to_array($rs, true);
@@ -93,6 +95,7 @@ class Epc
             'RSS feeds'           => 'rss2.xml',
         ]);
 
+        # --BEHAVIOR-- enhancePostContentAllowedPubPages : ArrayObject
         dcCore::app()->callBehavior('enhancePostContentAllowedPubPages', $rs);
 
         return iterator_to_array($rs, true);
@@ -107,15 +110,17 @@ class Epc
 
     public static function getFilters(): ?array
     {
-        if (self::$default_filters === null) {
-            $final   = $sort = [];
+        if (empty(self::$default_filters)) {
+            $final = $sort = [];
+            /** @var ArrayObject<string,EpcFilter> $filters The filters stack */
             $filters = new ArrayObject();
 
             try {
+                # --BEHAVIOR-- enhancePostContentFilters : ArrayObject
                 dcCore::app()->callBehavior('enhancePostContentFilters', $filters);
 
                 foreach ($filters as $filter) {
-                    if ($filter instanceof epcFilter && !isset($final[$filter->id()])) {
+                    if (!isset($final[$filter->id()]) && ($filter instanceof EpcFilter)) {
                         $sort[$filter->id()]  = $filter->priority;
                         $final[$filter->id()] = $filter;
                     }
@@ -132,9 +137,7 @@ class Epc
 
     public static function testContext(string $tag, array $args, EpcFilter $filter): bool
     {
-        return is_array($filter->pubPages)
-            && in_array(dcCore::app()->ctx->current_tpl, $filter->pubPages)
-            && is_array($filter->tplValues)
+        return in_array(dcCore::app()->ctx->current_tpl, $filter->pubPages)
             && in_array($tag, $filter->tplValues)
             && $args[0] != '' //content
             && empty($args['encode_xml'])
@@ -184,7 +187,7 @@ class Epc
         return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
     }
 
-    public static function matchString(string $p, string $r, string $s, EcpFilter $filter, string $before = '\b', string $after = '\b'): array
+    public static function matchString(string $p, string $r, string $s, EpcFilter $filter, string $before = '\b', string $after = '\b'): array
     {
         # Case sensitive
         $i = $filter->nocase ? 'i' : '';
@@ -231,7 +234,7 @@ class Epc
             return $a;
         }
         if (!is_array($a)) {
-            return [];
+            return '';
         }
 
         $r = '';
@@ -248,7 +251,7 @@ class Epc
             return $s;
         }
         if (!is_string($s)) {
-            return '';
+            return [];
         }
 
         $r = [];
@@ -284,7 +287,7 @@ class Epc
     public static function widgetContentEntryExcerpt(?WidgetsElement $w = null): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
-            return null;
+            return '';
         }
 
         $res = '';
@@ -298,7 +301,7 @@ class Epc
     public static function widgetContentEntryContent(): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
-            return null;
+            return '';
         }
 
         $res = '';
@@ -312,7 +315,7 @@ class Epc
     public static function widgetContentCommentContent(): string
     {
         if (!dcCore::app()->ctx->exists('posts')) {
-            return null;
+            return '';
         }
 
         $res      = '';

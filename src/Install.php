@@ -38,7 +38,6 @@ class Install extends dcNsProcess
         }
 
         try {
-
             // Database
             $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
             $s->{My::TABLE_NAME}
@@ -98,7 +97,7 @@ class Install extends dcNsProcess
     /**
      * Check upgrade to apply
      */
-    public static function growUp()
+    public static function growUp(): void
     {
         $current = dcCore::app()->getVersion(My::id());
 
@@ -120,7 +119,7 @@ class Install extends dcNsProcess
      *
      * - filters move from settings to dedicated table
      */
-    private static function upTo00060607()
+    private static function upTo00060607(): void
     {
         # Move old filters lists from settings to database
         $record = dcCore::app()->con->select('SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
@@ -153,7 +152,7 @@ class Install extends dcNsProcess
      *
      * - filters change name to id
      */
-    private static function upTo20211006()
+    private static function upTo20211006(): void
     {
         # Move old filter name to filter id
         $record = dcCore::app()->con->select('SELECT epc_id, epc_filter FROM ' . dcCore::app()->prefix . My::TABLE_NAME);
@@ -174,7 +173,7 @@ class Install extends dcNsProcess
      * - setting ns changes to abstract one (no real changes),
      * - setting value change from serialize to json_encode (if it's array)
      */
-    private static function upTo20221120()
+    private static function upTo20221120(): void
     {
         // list of settings using serialize values to move to json
         $ids = [
@@ -202,7 +201,7 @@ class Install extends dcNsProcess
                     $cur->setfield('setting_value', json_encode(unserialize($record->f('setting_value'))));
                 }
 
-                $cur->update("WHERE setting_id = '" . $record->setting_id . "' and setting_ns = 'enhancePostContent' ");
+                $cur->update("WHERE setting_id = '" . $record->f('setting_id') . "' and setting_ns = 'enhancePostContent' ");
             }
         }
     }

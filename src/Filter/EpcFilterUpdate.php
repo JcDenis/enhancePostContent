@@ -16,13 +16,14 @@ namespace Dotclear\Plugin\enhancePostContent\Filter;
 
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
-use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterUpdate extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'update';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 300,
             'name'     => __('Update'),
             'help'     => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
@@ -30,26 +31,27 @@ class EpcFilterUpdate extends EpcFilter
             'htmltag'  => 'del,ins',
             'class'    => ['del.epc-update', 'ins.epc-update'],
             'replace'  => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'nocase'    => true,
             'plural'    => true,
             'style'     => ['text-decoration: line-through;', 'font-style: italic;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
-        ]);
-
-        return 'update';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void
     {
         while ($this->records()->fetch()) {
             $args[0] = Epc::replaceString(
-                $this->records()->epc_key,
-                sprintf($this->replace, '\\1', $this->records()->epc_value),
+                $this->records()->f('epc_key'),
+                sprintf($this->replace, '\\1', $this->records()->f('epc_value')),
                 $args[0],
                 $this
             );

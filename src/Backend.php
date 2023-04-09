@@ -58,7 +58,7 @@ class Backend extends dcNsProcess
 
         dcCore::app()->addBehaviors([
             # Dashboard favorites
-            'adminDashboardFavoritesV2'     => function (dcFavorites $favs): void {
+            'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
                 $favs->register(My::id(), [
                     'title'       => My::name(),
                     'url'         => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
@@ -68,7 +68,7 @@ class Backend extends dcNsProcess
                 ]);
             },
             # Preference form
-            'adminBlogPreferencesFormV2'    => function (dcSettings $blog_settings):void {
+            'adminBlogPreferencesFormV2' => function (dcSettings $blog_settings): void {
                 $active           = (bool) $blog_settings->get(My::id())->get('active');
                 $allowedtplvalues = Epc::blogAllowedTplValues();
                 $allowedpubpages  = Epc::blogAllowedPubPages();
@@ -119,7 +119,7 @@ class Backend extends dcNsProcess
                 $blog_settings->get(My::id())->put('allowedpubpages', json_encode($allowedpubpages));
             },
             # List filter
-            'adminFiltersListsV2'           => function (ArrayObject $sorts): void {
+            'adminFiltersListsV2' => function (ArrayObject $sorts): void {
                 $sorts['epc'] = [
                     My::name(),
                     [
@@ -134,7 +134,7 @@ class Backend extends dcNsProcess
                 ];
             },
             # Widgets
-            'initWidgets'                   => [Widgets::class, 'initWidgets'],
+            'initWidgets' => [Widgets::class, 'initWidgets'],
         ]);
 
         return true;

@@ -17,31 +17,33 @@ namespace Dotclear\Plugin\enhancePostContent\Filter;
 use dcCore;
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
-use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterSearch extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'search';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 100,
             'name'     => __('Search'),
             'help'     => __('Highlight searched words.'),
             'htmltag'  => '',
             'class'    => ['span.epc-search'],
             'replace'  => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'nocase'    => true,
             'plural'    => true,
             'style'     => ['color: #FFCC66;'],
             'notag'     => 'h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['search.html'],
-        ]);
-
-        return 'search';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
 use Exception;
 
 class ManageVars
@@ -45,10 +44,10 @@ class ManageVars
             throw new Exception(__('no filters'));
         }
 
-        $this->action  = $_POST['action']  ?? '';
-        $this->part    = $part;
-        $this->filter  = $_filters[$part];
-        $this->combo   = $filters_combo;
+        $this->action = $_POST['action'] ?? '';
+        $this->part   = $part;
+        $this->filter = $_filters[$part];
+        $this->combo  = $filters_combo;
     }
 
     public static function init(): ManageVars

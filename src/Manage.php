@@ -25,7 +25,7 @@ use Dotclear\Helper\Html\Form\{
     Form,
     Hidden,
     Input,
-    label,
+    Label,
     Note,
     Number,
     Para,
@@ -125,9 +125,9 @@ class Manage extends dcNsProcess
             }
 
             # Update filter records
-            if ($current->action == 'deleterecords' 
+            if ($current->action == 'deleterecords'
                 && $current->filter->has_list
-                && !empty($_POST['epc_id']) 
+                && !empty($_POST['epc_id'])
                 && is_array($_POST['epc_id'])
             ) {
                 foreach ($_POST['epc_id'] as $id) {
@@ -198,7 +198,7 @@ class Manage extends dcNsProcess
         );
 
         # Page title
-        echo 
+        echo
         dcPage::breadcrumb([
             __('Plugins')          => '',
             My::name()             => '',
@@ -217,7 +217,7 @@ class Manage extends dcNsProcess
         ])->render();
 
         # Filter title and description
-        echo 
+        echo
         '<h3>' . $current->filter->name . '</h3>' .
         '<p>' . $current->filter->help . '</p>';
 
@@ -225,7 +225,7 @@ class Manage extends dcNsProcess
         $form_pages = [(new Text('h4', __('Pages to be filtered')))];
         foreach (Epc::blogAllowedPubPages() as $k => $v) {
             $form_pages[] = (new Para())->items([
-                (new Checkbox(['filter_pubPages[]', 'filter_pubPages' . $v], in_array($v, $current->filter->pubPages)))->value(1),
+                (new Checkbox(['filter_pubPages[]', 'filter_pubPages' . $v], in_array($v, $current->filter->pubPages)))->value($v),
                 (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_pubPages' . $v)->class('classic'),
             ]);
         }
@@ -233,7 +233,7 @@ class Manage extends dcNsProcess
         $form_values = [(new Text('h4', __('Contents to be filtered')))];
         foreach (Epc::blogAllowedTplValues() as $k => $v) {
             $form_values[] = (new Para())->items([
-                (new Checkbox(['filter_tplValues[]', 'filter_tplValues' . $v], in_array($v, $current->filter->tplValues)))->value(1),
+                (new Checkbox(['filter_tplValues[]', 'filter_tplValues' . $v], in_array($v, $current->filter->tplValues)))->value($v),
                 (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_tplValues' . $v)->class('classic'),
             ]);
         }
@@ -246,7 +246,7 @@ class Manage extends dcNsProcess
             ]);
         }
 
-        echo 
+        echo
         (new Div('setting'))->class('multi-part')->title(__('Settings'))->items([
             (new Form('setting_form'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#setting')->separator('')->fields([
                 (new Div())->class('two-boxes even')->items($form_pages),
@@ -286,7 +286,7 @@ class Manage extends dcNsProcess
         ])->render();
 
         # Filter records list
-        if ($current->filter->has_list && isset($sorts) && isset($pager)) {
+        if ($current->filter->has_list && isset($pager)) {
             $pager_url = dcCore::app()->adminurl->get('admin.plugin.' . My::id(), array_diff_key($sorts->values(true), ['page' => ''])) . '&page=%s#record';
 
             echo '
@@ -319,7 +319,7 @@ class Manage extends dcNsProcess
             echo '</div>';
 
             # New record
-            echo 
+            echo
             (new Div('newrecord'))->class('multi-part')->title(__('New record'))->items([
                 (new Form('form-create'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#record')->fields([
                     (new Para())->items([

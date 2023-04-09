@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent\Filter;
 
+use ArrayObject;
 use dcCore;
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
@@ -21,9 +22,11 @@ use Dotclear\Plugin\widgets\WidgetsElement;
 
 class EpcFilterTag extends EpcFilter
 {
-    protected function init(): string
+    protected string $id = 'tag';
+
+    protected function initProperties(): array
     {
-        $this->setProperties([
+        return [
             'priority' => 900,
             'name'     => __('Tag'),
             'help'     => __('Highlight tags of your blog.'),
@@ -31,16 +34,17 @@ class EpcFilterTag extends EpcFilter
             'class'    => ['a.epc-tag'],
             'replace'  => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
             'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>',
-        ]);
+        ];
+    }
 
-        $this->setSettings([
+    protected function initSettings(): array
+    {
+        return [
             'style'     => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
             'notag'     => 'a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
-        ]);
-
-        return 'tag';
+        ];
     }
 
     public function publicContent(string $tag, array $args): void
@@ -53,15 +57,15 @@ class EpcFilterTag extends EpcFilter
 
         while ($metas->fetch()) {
             $args[0] = Epc::replaceString(
-                $metas->meta_id,
-                sprintf($this->replace, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
+                $metas->f('meta_id'),
+                sprintf($this->replace, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $args[0],
                 $this
             );
         }
     }
 
-    public function widgetList(string $content, WidgetsElement $w, array &$list): void
+    public function widgetList(string $content, WidgetsElement $w, ArrayObject $list): void
     {
         if (!dcCore::app()->plugins->moduleExists('tags')) {
             return;
@@ -71,8 +75,8 @@ class EpcFilterTag extends EpcFilter
 
         while ($metas->fetch()) {
             $list[] = Epc::matchString(
-                $metas->meta_id,
-                sprintf($this->widget, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->meta_id, '\\1'),
+                $metas->f('meta_id'),
+                sprintf($this->widget, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $content,
                 $this
             );
