@@ -14,110 +14,67 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-class Uninstall
-{
-    protected static bool $init = false;
+use dcCore;
+use dcNsProcess;
+use Dotclear\Plugin\Uninstaller\Uninstaller;
 
+class Uninstall extends dcNsProcess
+{
     public static function init(): bool
     {
-        self::$init = defined('DC_RC_PATH');
+        static::$init = defined('DC_RC_PATH');
 
-        return self::$init;
+        return static::$init;
     }
 
-    public static function process($uninstaller): ?bool
+    public static function process(): bool
     {
-        if (!self::$init) {
+        if (!static::$init || !dcCore::app()->plugins->moduleExists('Uninstaller')) {
             return false;
         }
 
-        $uninstaller->addUserAction(
-            /* type */
-            'settings',
-            /* action */
-            'delete_all',
-            /* ns */
-            My::id(),
-            /* description */
-            __('delete all settings')
-        );
-
-        $uninstaller->addUserAction(
-            /* type */
-            'tables',
-            /* action */
-            'delete',
-            /* ns */
-            My::TABLE_NAME,
-            /* desc */
-            __('delete table')
-        );
-
-        $uninstaller->addUserAction(
-            /* type */
-            'plugins',
-            /* action */
-            'delete',
-            /* ns */
-            My::id(),
-            /* description */
-            __('delete plugin files')
-        );
-
-        $uninstaller->addUserAction(
-            /* type */
-            'versions',
-            /* action */
-            'delete',
-            /* ns */
-            My::id(),
-            /* description */
-            __('delete the version number')
-        );
-
-        $uninstaller->addDirectAction(
-            /* type */
-            'settings',
-            /* action */
-            'delete_all',
-            /* ns */
-            My::id(),
-            /* description */
-            sprintf(__('delete all %s settings'), My::id())
-        );
-
-        $uninstaller->addDirectAction(
-            /* type */
-            'tables',
-            /* action */
-            'delete',
-            /* ns */
-            My::TABLE_NAME,
-            /* desc */
-            sprintf(__('delete %s table'), My::id())
-        );
-
-        $uninstaller->addDirectAction(
-            /* type */
-            'plugins',
-            /* action */
-            'delete',
-            /* ns */
-            My::id(),
-            /* description */
-            sprintf(__('delete %s plugin files'), My::id())
-        );
-
-        $uninstaller->addDirectAction(
-            /* type */
-            'versions',
-            /* action */
-            'delete',
-            /* ns */
-            My::id(),
-            /* description */
-            sprintf(__('delete %s version number'), My::id())
-        );
+        Uninstaller::instance()
+            ->addUserAction(
+                'settings',
+                'delete_all',
+                My::id()
+            )
+            ->addUserAction(
+                'tables',
+                'delete',
+                My::TABLE_NAME
+            )
+            ->addUserAction(
+                'plugins',
+                'delete',
+                My::id()
+            )
+            ->addUserAction(
+                'versions',
+                'delete',
+                My::id()
+            )
+            ->addDirectAction(
+                'settings',
+                'delete_all',
+                My::id()
+            )
+            ->addDirectAction(
+                'tables',
+                'delete',
+                My::TABLE_NAME
+            )
+            ->addDirectAction(
+                'plugins',
+                'delete',
+                My::id()
+            )
+            ->addDirectAction(
+                'versions',
+                'delete',
+                My::id()
+            )
+        ;
 
         return true;
     }
