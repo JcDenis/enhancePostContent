@@ -76,6 +76,7 @@ class Uninstall extends dcNsProcess
             )
         ;
 
-        return true;
+        // no custom action
+        return false;
     }
 }
