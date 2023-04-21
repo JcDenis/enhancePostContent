@@ -33,27 +33,21 @@ class Prepend extends dcNsProcess
             return false;
         }
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'Filter' . DIRECTORY_SEPARATOR;
-        $ns  = __NAMESPACE__ . '\\Filter\\';
+        // register epc filters
+        dcCore::app()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
+            foreach (My::DEFAULT_FILTERS as $class) {
+                $stack->add(new $class());
+            }
+        });
 
-        dcCore::app()->autoload->addNamespace($ns, $dir);
-
-        foreach (My::DEFAULT_FILTERS as $f) {
-            dcCore::app()->addBehavior('enhancePostContentFilters', [$ns . 'EpcFilter' . $f, 'create']);
-        }
-
+        // register epc filters frontend css
         dcCore::app()->url->register(
             'epccss',
             'epc.css',
             '^epc\.css',
             function (string $args): void {
-                $css     = [];
-                $filters = Epc::getFilters();
-                if (empty($filters)) {
-                    return;
-                }
-
-                foreach ($filters as $id => $filter) {
+                $css = [];
+                foreach (Epc::getFilters()->dump() as $filter) {
                     if ('' == $filter->class || '' == $filter->style) {
                         continue;
                     }
@@ -68,7 +62,7 @@ class Prepend extends dcNsProcess
                     }
 
                     if (!empty($res)) {
-                        $css[] = '/* CSS for enhancePostContent ' . $id . " */ \n" . $res . "\n";
+                        $css[] = '/* CSS for enhancePostContent ' . $filter->id() . " */ \n" . $res . "\n";
                     }
                 }
 

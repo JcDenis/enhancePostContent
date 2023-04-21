@@ -35,8 +35,8 @@ class Epc
 {
     public const FLAGGER = 'ççççç%sççççç';
 
-    protected static array $default_filters = [];
-    public static array $epcFilterLimit     = [];
+    private static EpcFilters $filters;
+    public static array $epcFilterLimit = [];
 
     #
     # Default definition
@@ -110,31 +110,29 @@ class Epc
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }
 
-    public static function getFilters(): array
+    /**
+     * Get filters.
+     *
+     * On first call, we load once filters from behavior.
+     *
+     * @return  EpcFilters  The fitlers instacne
+     */
+    public static function getFilters(): EpcFilters
     {
-        if (empty(self::$default_filters)) {
-            $final = $sort = [];
-            /** @var ArrayObject<string,EpcFilter> $filters The filters stack */
-            $filters = new ArrayObject();
+        if (empty(self::$filters)) {
+            $filters = new EpcFilters();
 
             try {
-                # --BEHAVIOR-- enhancePostContentFilters : ArrayObject
+                # --BEHAVIOR-- enhancePostContentFilters : EpcFilters
                 dcCore::app()->callBehavior('enhancePostContentFilters', $filters);
-
-                foreach ($filters as $filter) {
-                    if (!isset($final[$filter->id()]) && ($filter instanceof EpcFilter)) {
-                        $sort[$filter->id()]  = $filter->priority;
-                        $final[$filter->id()] = $filter;
-                    }
-                }
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
-            array_multisort($sort, $final);
-            self::$default_filters = $final;
+
+            self::$filters = $filters->sort();
         }
 
-        return self::$default_filters;
+        return self::$filters;
     }
 
     public static function testContext(string $tag, array $args, EpcFilter $filter): bool
@@ -243,7 +241,7 @@ class Epc
 
     public static function removeTags(array $m): string
     {
-        return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') .')#s', '$1', $m[3]) . $m[4];
+        return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') . ')#s', '$1', $m[3]) . $m[4];
     }
 
     public static function decodeTags(string $t): array

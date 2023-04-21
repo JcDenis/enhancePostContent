@@ -75,7 +75,7 @@ class Install extends dcNsProcess
             $s->put('allowedpubpages', json_encode(Epc::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
             // Filters settings
-            foreach (Epc::getFilters() as $id => $filter) {
+            foreach (Epc::getFilters()->dump() as $filter) {
                 // Only editable options
                 $opt = [
                     'nocase'    => $filter->nocase,
@@ -85,7 +85,7 @@ class Install extends dcNsProcess
                     'tplValues' => $filter->tplValues,
                     'pubPages'  => $filter->pubPages,
                 ];
-                $s->put($id, json_encode($opt), 'string', 'Settings for ' . $id, false, true);
+                $s->put($filter->id(), json_encode($opt), 'string', 'Settings for ' . $filter->id(), false, true);
             }
 
             return true;
@@ -178,13 +178,13 @@ class Install extends dcNsProcess
     private static function upTo20221120(): void
     {
         // list of settings using serialize values to move to json
-        $ids = [
-            'allowedtplvalues',
-            'allowedpubpages',
-        ];
-        foreach (Epc::getFilters() as $id => $f) {
-            $ids[] = $id;
-        }
+        $ids = array_merge(
+            [
+                'allowedtplvalues',
+                'allowedpubpages',
+            ],
+            array_values(Epc::getFilters()->nid())
+        );
 
         // get all enhancePostContent settings
         $record = dcCore::app()->con->select(

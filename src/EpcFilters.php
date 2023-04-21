@@ -1,0 +1,89 @@
+<?php
+/**
+ * @brief enhancePostContent, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Jean-Christian Denis and Contributors
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\enhancePostContent;
+
+/**
+ * Filters stack.
+ *
+ * Use Epc::getFilters() to get loaded stack
+ */
+class EpcFilters
+{
+    /** @var 	array<int,EpcFilter> 	$satck 	The filters stack */
+    private array $stack = [];
+
+    /**
+     * Add a filter to the stack.
+     *
+     * @return 	EpcFilters 	The filters instance
+     */
+    public function add(EpcFilter $filter): EpcFilters
+    {
+        $this->stack[$filter->id()] = $filter;
+
+        return $this;
+    }
+
+    /**
+     * Get all filters.
+     *
+     * @return 	array<string,EpcFilter> 	The filters stack
+     */
+    public function dump(): array
+    {
+        return $this->stack;
+    }
+
+    /**
+     * Get a filter.
+     *
+     * @param 	string 	$id 	The filter ID
+     *
+     * @return null|EpcFilter 	The filter
+     */
+    public function get(string $id): ?EpcFilter
+    {
+        return $this->stack[$id] ?? null;
+    }
+
+    /**
+     * Get filters name / id pair.
+     *
+     * @return 	array 	The nid pairs
+     */
+    public function nid(bool $exclude_widget = false): array
+    {
+        $nid = [];
+        foreach ($this->stack as $filter) {
+            if ($filter->widget != '') {
+                $nid[$filter->name] = $filter->id();
+            }
+        }
+
+        return $nid;
+    }
+
+    /**
+     * Sort filters stack by filter name.
+     *
+     * @return 	EpcFilters 	The filters instance
+     */
+    public function sort(): EpcFilters
+    {
+        uasort($this->stack, fn ($a, $b) => $a->name <=> $b->name);
+
+        return $this;
+    }
+}

@@ -44,7 +44,7 @@ class Frontend extends dcNsProcess
             },
             // Filter template blocks content
             'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
-                foreach (Epc::getFilters() as $id => $filter) {
+                foreach (Epc::getFilters()->dump() as $filter) {
                     if (!Epc::testContext($tag, $args, $filter)) {
                         continue;
                     }

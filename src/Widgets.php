@@ -51,18 +51,12 @@ class Widgets
             'text'
         );
         # Type
-        $types = [];
-        foreach (Epc::getFilters() as $id => $filter) {
-            if ($filter->widget != '') {
-                $types[$filter->name] = $id;
-            }
-        }
         $w->epclist->setting(
             'type',
             __('Type:'),
             'Definition',
             'combo',
-            $types
+            Epc::getFilters()->nid(true)
         );
         # Content
         foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
@@ -122,11 +116,11 @@ class Widgets
         }
 
         # Filter
-        $list    = new ArrayObject();
-        $filters = Epc::getFilters();
+        $list   = new ArrayObject();
+        $filter = Epc::getFilters()->get($w->type);
 
-        if (isset($filters[$w->type])) {
-            $filters[$w->type]->widgetList($content, $w, $list);
+        if (!is_null($filter)) {
+            $filter->widgetList($content, $w, $list);
         }
 
         if (!count($list)) {

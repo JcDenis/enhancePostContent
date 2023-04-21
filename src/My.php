@@ -29,16 +29,16 @@ class My
 
     /** @var array Distributed filters */
     public const DEFAULT_FILTERS = [
-        'Tag',
-        'Search',
-        'Acronym',
-        'Abbreviation',
-        'Definition',
-        'Citation',
-        'Link',
-        'Replace',
-        'Update',
-        'Twitter',
+        Filter\EpcFilterTag::class,
+        Filter\EpcFilterSearch::class,
+        Filter\EpcFilterAcronym::class,
+        Filter\EpcFilterAbbreviation::class,
+        Filter\EpcFilterDefinition::class,
+        Filter\EpcFilterCitation::class,
+        Filter\EpcFilterLink::class,
+        Filter\EpcFilterReplace::class,
+        Filter\EpcFilterUpdate::class,
+        Filter\EpcFilterTwitter::class,
     ];
 
     /**
