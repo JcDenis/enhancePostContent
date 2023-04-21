@@ -27,7 +27,7 @@ class EpcFilterTwitter extends EpcFilter
             'priority' => 1000,
             'name'     => __('Twitter'),
             'help'     => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
-            'htmltag'  => 'a',
+            'htmltag'  => 'pre,code,a',
             'class'    => ['a.epc-twitter'],
             'replace'  => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
         ];

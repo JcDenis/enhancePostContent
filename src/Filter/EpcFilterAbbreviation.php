@@ -30,7 +30,7 @@ class EpcFilterAbbreviation extends EpcFilter
             'name'     => __('Abbreviation'),
             'help'     => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
             'has_list' => true,
-            'htmltag'  => 'a',
+            'htmltag'  => 'pre,code,a',
             'class'    => ['abbr.epc-abbr'],
             'replace'  => '<abbr class="epc-abbr" title="%s">%s</abbr>',
             'widget'   => '<abbr title="%s">%s</abbr>',

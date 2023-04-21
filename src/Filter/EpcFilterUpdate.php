@@ -28,7 +28,7 @@ class EpcFilterUpdate extends EpcFilter
             'name'     => __('Update'),
             'help'     => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
             'has_list' => true,
-            'htmltag'  => 'del,ins',
+            'htmltag'  => 'pre,code,del,ins',
             'class'    => ['del.epc-update', 'ins.epc-update'],
             'replace'  => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
         ];

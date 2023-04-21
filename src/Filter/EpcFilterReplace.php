@@ -28,7 +28,7 @@ class EpcFilterReplace extends EpcFilter
             'name'     => __('Replace'),
             'help'     => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
             'has_list' => true,
-            'htmltag'  => '',
+            'htmltag'  => 'pre,code',
             'class'    => ['span.epc-replace'],
             'replace'  => '<span class="epc-replace">%s</span>',
         ];

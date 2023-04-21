@@ -30,7 +30,7 @@ class EpcFilterLink extends EpcFilter
             'name'     => __('Link'),
             'help'     => __('Link some words. First term of the list is the term to link and second term the link.'),
             'has_list' => true,
-            'htmltag'  => 'a',
+            'htmltag'  => 'pre,code,a',
             'class'    => ['a.epc-link'],
             'replace'  => '<a class="epc-link" title="%s" href="%s">%s</a>',
             'widget'   => '<a title="%s" href="%s">%s</a>',

@@ -30,7 +30,7 @@ class EpcFilterCitation extends EpcFilter
             'name'     => __('Citation'),
             'help'     => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
             'has_list' => true,
-            'htmltag'  => 'cite',
+            'htmltag'  => 'pre,code,cite',
             'class'    => ['cite.epc-cite'],
             'replace'  => '<cite class="epc-cite" title="%s">%s</cite>',
             'widget'   => '<cite title="%s">%s</cite>',

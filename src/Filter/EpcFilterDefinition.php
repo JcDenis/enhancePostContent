@@ -30,7 +30,7 @@ class EpcFilterDefinition extends EpcFilter
             'name'     => __('Definition'),
             'help'     => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
             'has_list' => true,
-            'htmltag'  => 'dfn',
+            'htmltag'  => 'pre,code,dfn',
             'class'    => ['dfn.epc-dfn'],
             'replace'  => '<dfn class="epc-dfn" title="%s">%s</dfn>',
             'widget'   => '<dfn class="epc-dfn" title="%s">%s</dfn>',

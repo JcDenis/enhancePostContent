@@ -30,7 +30,7 @@ class EpcFilterAcronym extends EpcFilter
             'name'     => __('Acronym'),
             'help'     => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
             'has_list' => true,
-            'htmltag'  => 'acronym',
+            'htmltag'  => 'pre,code,acronym',
             'class'    => ['acronym.epc-acronym'],
             'replace'  => '<acronym class="epc-acronym" title="%s">%s</acronym>',
             'widget'   => '<acronym title="%s">%s</acronym>',

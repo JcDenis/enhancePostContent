@@ -30,7 +30,7 @@ class EpcFilterTag extends EpcFilter
             'priority' => 900,
             'name'     => __('Tag'),
             'help'     => __('Highlight tags of your blog.'),
-            'htmltag'  => 'a',
+            'htmltag'  => 'pre,code,a',
             'class'    => ['a.epc-tag'],
             'replace'  => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
             'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>',
@@ -41,7 +41,7 @@ class EpcFilterTag extends EpcFilter
     {
         return [
             'style'     => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
-            'notag'     => 'a,h1,h2,h3',
+            'notag'     => 'pre,code,a,h1,h2,h3',
             'tplValues' => ['EntryContent'],
             'pubPages'  => ['post.html'],
         ];
