@@ -33,14 +33,15 @@ class ManageVars
         $_filters = Epc::getFilters();
 
         $filters_id = $filters_combo = [];
-        foreach ($_filters as $id => $filter) {
-            $filters_id[$id]              = $filter->name;
-            $filters_combo[$filter->name] = $id;
+        if (!empty($_filters)) {
+            foreach ($_filters as $id => $filter) {
+                $filters_id[$id]              = $filter->name;
+                $filters_combo[$filter->name] = $id;
+            }
         }
-
         $part = $_REQUEST['part'] ?? key($filters_id);
 
-        if (!isset($filters_id[$part])) {
+        if (!isset($_filters[$part])) {
             throw new Exception(__('no filters'));
         }
 

@@ -51,9 +51,8 @@ class Widgets
             'text'
         );
         # Type
-        $filters = Epc::getFilters();
-        $types   = [];
-        foreach ($filters as $id => $filter) {
+        $types = [];
+        foreach (Epc::getFilters() as $id => $filter) {
             if ($filter->widget != '') {
                 $types[$filter->name] = $id;
             }
@@ -66,8 +65,7 @@ class Widgets
             $types
         );
         # Content
-        $contents = Epc::defaultAllowedWidgetValues();
-        foreach ($contents as $k => $v) {
+        foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
             $w->epclist->setting(
                 'content' . $v['id'],
                 sprintf(__('Enable filter on %s'), __($k)),
@@ -101,8 +99,8 @@ class Widgets
         }
 
         # Page
-        if (!dcCore::app()->blog->settings->get(My::id())->get('active')
-            || !in_array(dcCore::app()->ctx->current_tpl, ['post.html', 'page.html'])
+        if (!dcCore::app()->blog?->settings->get(My::id())->get('active')
+            || !in_array(dcCore::app()->ctx?->__get('current_tpl'), ['post.html', 'page.html'])
         ) {
             return '';
         }

@@ -49,6 +49,9 @@ class Prepend extends dcNsProcess
             function (string $args): void {
                 $css     = [];
                 $filters = Epc::getFilters();
+                if (empty($filters)) {
+                    return;
+                }
 
                 foreach ($filters as $id => $filter) {
                     if ('' == $filter->class || '' == $filter->style) {

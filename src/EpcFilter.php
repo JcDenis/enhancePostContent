@@ -52,7 +52,7 @@ abstract class EpcFilter
         }
 
         // get blog settings
-        $s = json_decode((string) dcCore::app()->blog->settings->get(My::id())->get($this->id), true);
+        $s = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get($this->id), true);
         if (empty($s)) {
             $s = [];
         }
@@ -110,13 +110,13 @@ abstract class EpcFilter
         return $this->id;
     }
 
-    final public function records(): ?dcRecord
+    final public function records(): dcRecord
     {
         if ($this->records === null && $this->has_list) {
             $this->records = EpcRecord::getRecords(['epc_filter' => $this->id()]);
         }
 
-        return $this->records;
+        return $this->records ?? dcRecord::newFromArray([]);
     }
 
     public function publicContent(string $tag, array $args): void

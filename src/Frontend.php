@@ -33,20 +33,18 @@ class Frontend extends dcNsProcess
             return false;
         }
 
-        if (!dcCore::app()->blog->settings->get(My::id())->get('active')) {
+        if (!dcCore::app()->blog?->settings->get(My::id())->get('active')) {
             return false;
         }
 
         dcCore::app()->addBehaviors([
             // add CSS URL to header
             'publicHeadContent' => function (): void {
-                echo dcUtils::cssLoad(dcCore::app()->blog->url . dcCore::app()->url->getURLFor('epccss'));
+                echo dcUtils::cssLoad(dcCore::app()->blog?->url . dcCore::app()->url->getURLFor('epccss'));
             },
             // Filter template blocks content
             'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
-                $filters = Epc::getFilters();
-
-                foreach ($filters as $id => $filter) {
+                foreach (Epc::getFilters() as $id => $filter) {
                     if (!Epc::testContext($tag, $args, $filter)) {
                         continue;
                     }

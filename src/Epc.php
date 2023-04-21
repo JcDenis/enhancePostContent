@@ -56,7 +56,7 @@ class Epc
 
     public static function blogAllowedTplValues(): array
     {
-        $rs = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowedtplvalues'));
+        $rs = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedtplvalues'), true);
 
         return is_array($rs) ? $rs : self::defaultAllowedTplValues();
     }
@@ -103,12 +103,12 @@ class Epc
 
     public static function blogAllowedPubPages(): array
     {
-        $rs = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowedpubpages'));
+        $rs = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedpubpages'), true);
 
         return is_array($rs) ? $rs : self::defaultAllowedPubPages();
     }
 
-    public static function getFilters(): ?array
+    public static function getFilters(): array
     {
         if (empty(self::$default_filters)) {
             $final = $sort = [];
@@ -137,7 +137,7 @@ class Epc
 
     public static function testContext(string $tag, array $args, EpcFilter $filter): bool
     {
-        return in_array(dcCore::app()->ctx->current_tpl, $filter->pubPages)
+        return in_array((string) dcCore::app()->ctx?->__get('current_tpl'), $filter->pubPages)
             && in_array($tag, $filter->tplValues)
             && $args[0] != '' //content
             && empty($args['encode_xml'])
@@ -163,11 +163,12 @@ class Epc
         # Plural
         $x = $filter->plural ? $p . 's|' . $p : $p;
         # Mark words
-        $s = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
+        $ret = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
         # Nothing to parse
-        if (!$count) {
+        if (!is_string($ret) || !$count) {
             return $s;
         }
+        $s = $ret;
         # Remove words that are into unwanted html tags
         $tags        = '';
         $ignore_tags = array_merge(self::decodeTags($filter->htmltag), self::decodeTags($filter->notag));
@@ -175,16 +176,30 @@ class Epc
             $tags = implode('|', $ignore_tags);
         }
         if (!empty($tags)) {
-            $s = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', [self::class, 'removeTags'], $s);
+            $ret = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', [self::class, 'removeTags'], $s);
+            if (is_string($ret)) {
+                $s = $ret;
+            }
         }
         # Remove words inside html tag (class, title, alt, href, ...)
-        $s = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
+        $ret = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
+        if (is_string($ret)) {
+            $s = $ret;
+        }
         # Replace words by what you want (with limit)
-        $s = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $limit, $count);
+        $ret = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $limit, $count);
+        if (is_string($ret)) {
+            $s = $ret;
+        }
         # update limit
         self::$epcFilterLimit[$filter->id() . '_' . $p] = $limit - $count;
         # Clean rest
-        return $s = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
+        $ret = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
+        if (is_string($ret)) {
+            $s = $ret;
+        }
+
+        return $s;
     }
 
     public static function matchString(string $p, string $r, string $s, EpcFilter $filter, string $before = '\b', string $after = '\b'): array
@@ -286,13 +301,13 @@ class Epc
 
     public static function widgetContentEntryExcerpt(?WidgetsElement $w = null): string
     {
-        if (!dcCore::app()->ctx->exists('posts')) {
+        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
         $res = '';
-        while (dcCore::app()->ctx->posts->fetch()) {
-            $res .= dcCore::app()->ctx->posts->f('post_excerpt');
+        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
+            $res .= dcCore::app()->ctx->__get('posts')->f('post_excerpt');
         }
 
         return $res;
@@ -300,13 +315,13 @@ class Epc
 
     public static function widgetContentEntryContent(): string
     {
-        if (!dcCore::app()->ctx->exists('posts')) {
+        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
         $res = '';
-        while (dcCore::app()->ctx->posts->fetch()) {
-            $res .= dcCore::app()->ctx->posts->f('post_content');
+        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
+            $res .= dcCore::app()->ctx->__get('posts')->f('post_content');
         }
 
         return $res;
@@ -314,15 +329,15 @@ class Epc
 
     public static function widgetContentCommentContent(): string
     {
-        if (!dcCore::app()->ctx->exists('posts')) {
+        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
         $res      = '';
         $post_ids = [];
-        while (dcCore::app()->ctx->posts->fetch()) {
-            $comments = dcCore::app()->blog->getComments(['post_id' => dcCore::app()->ctx->posts->f('post_id')]);
-            while ($comments->fetch()) {
+        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
+            $comments = dcCore::app()->blog?->getComments(['post_id' => dcCore::app()->ctx->__get('posts')->f('post_id')]);
+            while ($comments?->fetch()) {
                 $res .= $comments->getContent();
             }
         }

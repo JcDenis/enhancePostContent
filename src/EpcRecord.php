@@ -41,7 +41,7 @@ class EpcRecord
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE E.blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog->id) . "' ";
+        $strReq .= "WHERE E.blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ";
 
         if (isset($params['epc_type'])) {
             if (is_array($params['epc_type']) && !empty($params['epc_type'])) {
@@ -105,7 +105,7 @@ class EpcRecord
 
         try {
             $cur->setField('epc_id', self::getNextId());
-            $cur->setField('blog_id', dcCore::app()->blog->id);
+            $cur->setField('blog_id', (string) dcCore::app()->blog?->id);
             $cur->setField('epc_upddt', date('Y-m-d H:i:s'));
 
             self::getCursor($cur);
@@ -133,7 +133,7 @@ class EpcRecord
 
         $cur->setField('epc_upddt', date('Y-m-d H:i:s'));
 
-        $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog->id) . "' ");
+        $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ");
         self::trigger();
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord : cursor, int
@@ -161,7 +161,7 @@ class EpcRecord
         dcCore::app()->con->execute(
             'DELETE FROM ' . dcCore::app()->prefix . My::TABLE_NAME . ' ' .
             'WHERE epc_id = ' . $id . ' ' .
-            "AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog->id) . "' "
+            "AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' "
         );
 
         self::trigger();
@@ -194,6 +194,6 @@ class EpcRecord
 
     private static function trigger(): void
     {
-        dcCore::app()->blog->triggerBlog();
+        dcCore::app()->blog?->triggerBlog();
     }
 }

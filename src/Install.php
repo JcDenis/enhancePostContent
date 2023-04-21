@@ -62,7 +62,10 @@ class Install extends dcNsProcess
             self::growUp();
 
             // Settings
-            $s = dcCore::app()->blog->settings->get(My::id());
+            $s = dcCore::app()->blog?->settings->get(My::id());
+            if (is_null($s)) {
+                return false;
+            }
 
             $s->put('active', false, 'boolean', 'Enable enhancePostContent', false, true);
             $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
@@ -72,8 +75,7 @@ class Install extends dcNsProcess
             $s->put('allowedpubpages', json_encode(Epc::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
 
             // Filters settings
-            $filters = Epc::getFilters();
-            foreach ($filters as $id => $filter) {
+            foreach (Epc::getFilters() as $id => $filter) {
                 // Only editable options
                 $opt = [
                     'nocase'    => $filter->nocase,
@@ -162,7 +164,7 @@ class Install extends dcNsProcess
             $cur->setField('epc_filter', strtolower($record->f('epc_filter')));
 
             $cur->update('WHERE epc_id = ' . $record->f('epc_id') . ' ');
-            dcCore::app()->blog->triggerBlog();
+            dcCore::app()->blog?->triggerBlog();
         }
     }
 

@@ -17,10 +17,9 @@ namespace Dotclear\Plugin\enhancePostContent;
 use adminGenericFilterV2;
 use adminGenericListV2;
 use dcPager;
+use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
-
-use dt;
 
 /**
  * @ingroup DC_PLUGIN_PERIODICAL
@@ -79,7 +78,7 @@ class BackendList extends adminGenericListV2
             'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->epc_id)->render() . '</td>',
             'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->epc_key) . '</td>',
             'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->epc_value) . '</td>',
-            'date'  => '<td class="nowrap count">' . dt::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>',
+            'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>',
         ];
 
         return

@@ -58,7 +58,7 @@ class EpcFilterTag extends EpcFilter
         while ($metas->fetch()) {
             $args[0] = Epc::replaceString(
                 $metas->f('meta_id'),
-                sprintf($this->replace, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
+                sprintf($this->replace, dcCore::app()->blog?->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $args[0],
                 $this
             );
@@ -76,7 +76,7 @@ class EpcFilterTag extends EpcFilter
         while ($metas->fetch()) {
             $list[] = Epc::matchString(
                 $metas->f('meta_id'),
-                sprintf($this->widget, dcCore::app()->blog->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
+                sprintf($this->widget, dcCore::app()->blog?->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $content,
                 $this
             );

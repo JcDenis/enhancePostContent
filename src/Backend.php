@@ -34,6 +34,7 @@ class Backend extends dcNsProcess
     {
         static::$init = defined('DC_CONTEXT_ADMIN')
             && My::phpCompliant()
+            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog)
             && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
                 dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
             ]), dcCore::app()->blog->id);
@@ -50,10 +51,10 @@ class Backend extends dcNsProcess
         # Admin menu
         dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
             My::name(),
-            dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+            dcCore::app()->adminurl?->get('admin.plugin.' . My::id()),
             dcPage::getPF(My::id() . '/icon.svg'),
-            preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-            dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog->id)
+            preg_match('/' . preg_quote((string) dcCore::app()->adminurl?->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+            dcCore::app()->auth?->check(dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog?->id)
         );
 
         dcCore::app()->addBehaviors([
@@ -61,10 +62,10 @@ class Backend extends dcNsProcess
             'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
                 $favs->register(My::id(), [
                     'title'       => My::name(),
-                    'url'         => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+                    'url'         => dcCore::app()->adminurl?->get('admin.plugin.' . My::id()),
                     'small-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
                     'large-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
-                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
+                    'permissions' => dcCore::app()->auth?->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
                 ]);
             },
             # Preference form
@@ -85,7 +86,7 @@ class Backend extends dcNsProcess
                 '<p class="form-note">' .
                 __('This enable public widgets and contents filter.') .
                 '</p>' .
-                '<p><a href="' . dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '">' .
+                '<p><a href="' . dcCore::app()->adminurl?->get('admin.plugin.' . My::id()) . '">' .
                 __('Set content filters') . '</a></p>' .
                 '</div>' .
                 '<div class="col">' .
