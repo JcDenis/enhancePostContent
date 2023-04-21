@@ -25,12 +25,12 @@ class EpcFilterSearch extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 100,
-            'name'     => __('Search'),
-            'help'     => __('Highlight searched words.'),
-            'htmltag'  => '',
-            'class'    => ['span.epc-search'],
-            'replace'  => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
+            'priority'    => 100,
+            'name'        => __('Search'),
+            'description' => __('Highlight searched words.'),
+            'ignore'      => [],
+            'class'       => ['span.epc-search'],
+            'replace'     => '<span class="epc-search" title="' . __('Search') . '">%s</span>',
         ];
     }
 
@@ -40,9 +40,9 @@ class EpcFilterSearch extends EpcFilter
             'nocase'    => true,
             'plural'    => true,
             'style'     => ['color: #FFCC66;'],
-            'notag'     => 'h1,h2,h3',
+            'notag'     => ['h1','h2','h3'],
             'tplValues' => ['EntryContent'],
-            'pubPages'  => ['search.html'],
+            'page'      => ['search.html'],
         ];
     }
 

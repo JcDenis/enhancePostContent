@@ -26,25 +26,25 @@ class EpcFilterCitation extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 600,
-            'name'     => __('Citation'),
-            'help'     => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,cite',
-            'class'    => ['cite.epc-cite'],
-            'replace'  => '<cite class="epc-cite" title="%s">%s</cite>',
-            'widget'   => '<cite title="%s">%s</cite>',
+            'priority'    => 600,
+            'name'        => __('Citation'),
+            'description' => __('Highlight citation of people. First term of the list is the citation and second term the author.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','cite'],
+            'class'       => ['cite.epc-cite'],
+            'replace'     => '<cite class="epc-cite" title="%s">%s</cite>',
+            'widget'      => '<cite title="%s">%s</cite>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'nocase'    => true,
-            'style'     => ['font-style: italic;'],
-            'notag'     => 'a,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'nocase'   => true,
+            'style'    => ['font-style: italic;'],
+            'notag'    => ['a','h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

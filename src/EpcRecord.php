@@ -19,8 +19,19 @@ use dcCore;
 use dcRecord;
 use Exception;
 
+/**
+ * Filter records.
+ */
 class EpcRecord
 {
+    /**
+     * Get records.
+     *
+     * @param   array   $params         The query params
+     * @param   bool    $count_only     Count only
+     *
+     * @return  dcRecord    The records instance
+     */
     public static function getRecords(array $params, bool $count_only = false): dcRecord
     {
         if ($count_only) {
@@ -99,6 +110,13 @@ class EpcRecord
         return new dcRecord(dcCore::app()->con->select($strReq));
     }
 
+    /**
+     * Add record.
+     *
+     * @param   cursor  $cur    The cursor
+     *
+     * @return  int     The record ID
+     */
     public static function addRecord(cursor $cur): int
     {
         dcCore::app()->con->writeLock(dcCore::app()->prefix . My::TABLE_NAME);
@@ -117,7 +135,7 @@ class EpcRecord
 
             throw $e;
         }
-        self::trigger();
+        dcCore::app()->blog?->triggerBlog();
 
         # --BEHAVIOR-- enhancePostContentAfterAddRecord : cursor
         dcCore::app()->callBehavior('enhancePostContentAfterAddRecord', $cur);
@@ -125,6 +143,12 @@ class EpcRecord
         return (int) $cur->getField('epc_id');
     }
 
+    /**
+     * Update a record.
+     *
+     * @param   int     $id     The record ID
+     * @param   cursor  $cur    The cursor
+     */
     public static function updRecord(int $id, cursor $cur): void
     {
         if (empty($id)) {
@@ -134,12 +158,21 @@ class EpcRecord
         $cur->setField('epc_upddt', date('Y-m-d H:i:s'));
 
         $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ");
-        self::trigger();
+        dcCore::app()->blog?->triggerBlog();
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord : cursor, int
         dcCore::app()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
     }
 
+    /**
+     * Check if a record exists.
+     *
+     * @param   null|string     $filter     The filter ID
+     * @param   null|string     $key        The record key
+     * @param   null|int        $not_id     Exclude an id
+     *
+     * @return  bool    True if it exists
+     */
     public static function isRecord(?string $filter, ?string $key, ?int $not_id = null): bool
     {
         return 0 < self::getRecords([
@@ -149,6 +182,11 @@ class EpcRecord
         ], true)->f(0);
     }
 
+    /**
+     * Delete a record.
+     *
+     * @param   int     $id     The record ID
+     */
     public static function delRecord(int $id): void
     {
         if (empty($id)) {
@@ -164,9 +202,14 @@ class EpcRecord
             "AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' "
         );
 
-        self::trigger();
+        dcCore::app()->blog?->triggerBlog();
     }
 
+    /**
+     * Get next record ID.
+     *
+     * @return  int     The next record ID
+     */
     private static function getNextId(): int
     {
         return (int) dcCore::app()->con->select(
@@ -174,11 +217,21 @@ class EpcRecord
         )->f(0) + 1;
     }
 
+    /**
+     * Open filter cursor.
+     *
+     * @return  cursor  The cursor
+     */
     public static function openCursor(): cursor
     {
         return dcCore::app()->con->openCursor(dcCore::app()->prefix . My::TABLE_NAME);
     }
 
+    /**
+     * Clean up a cursor.
+     *
+     * @param   cursor  $cur    The cursor
+     */
     private static function getCursor(cursor $cur): void
     {
         if ($cur->getField('epc_key') == '') {
@@ -190,10 +243,5 @@ class EpcRecord
         if ($cur->getField('epc_filter') == '') {
             throw new Exception(__('No record filter'));
         }
-    }
-
-    private static function trigger(): void
-    {
-        dcCore::app()->blog?->triggerBlog();
     }
 }

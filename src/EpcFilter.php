@@ -20,31 +20,67 @@ use dcRecord;
 use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
 
+/**
+ * Filter abstract class.
+ *
+ * All filter must extends this class.
+ */
 abstract class EpcFilter
 {
+    /** @var    string  $id     The filter id */
     protected string $id = 'undefined';
 
+    /** @var    dcRecord    $records    The filter record if any */
     private ?dcRecord $records = null;
 
-    // properties
+    /** @var    int     $priority   The filter priority (property) */
     public readonly int $priority;
+
+    /** @var    string  $name   The filter name (property) */
     public readonly string $name;
-    public readonly string $help;
+
+    /** @var    string  $description   The filter description (property) */
+    public readonly string $description;
+
+    /** @var    bool    $has_list   Filter has list of records (property) */
     public readonly bool $has_list;
-    public readonly string $htmltag;
+
+    /** @var    array  $ignore     The filter disabled html tags (property) */
+    public readonly array $ignore;
+
+    /** @var    array  $class  The css class that apply to filter (property) */
     public readonly array $class;
+
+    /** @var    string  $replace    The filter replacement bloc in content (property) */
     public readonly string $replace;
+
+    /** @var    string  $widget     The filter replacement bloc in widget (property) */
     public readonly string $widget;
 
-    // settings
+    /** @var    bool    $nocase     The filter caseless match (settings) */
     public readonly bool $nocase;
-    public readonly bool $plural;
-    public readonly int $limit;
-    public readonly array $style;
-    public readonly string $notag;
-    public readonly array $tplValues;
-    public readonly array $pubPages;
 
+    /** @var    bool    $plural     The filter caseless match (settings) */
+    public readonly bool $plural;
+
+    /** @var    bool    $plural     The replacement limit per filter (settings) */
+    public readonly int $limit;
+
+    /** @var    array  $style   The style applied to filter class (settings) */
+    public readonly array $style;
+
+    /** @var    array  $notag   The filter disabled html tags (settings) */
+    public readonly array $notag;
+
+    /** @var    array  $template    The extra template value to scan (settings) */
+    public readonly array $template;
+
+    /** @var    array  $page    The extra frontend pages to scan (settings) */
+    public readonly array $page;
+
+    /**
+     * Constructor sets filter properties and settings.
+     */
     final public function __construct()
     {
         if ($this->id == 'undefined') {
@@ -61,55 +97,66 @@ abstract class EpcFilter
         $settings   = $this->initSettings();
 
         // from filter defautl properties
-        $this->priority = isset($properties['priority']) ? abs((int) $properties['priority']) : 500;
-        $this->name     = isset($properties['name']) ? (string) $properties['name'] : 'undefined';
-        $this->help     = isset($properties['help']) ? (string) $properties['help'] : 'undefined';
-        $this->has_list = isset($properties['has_list']) ? (bool) $properties['has_list'] : false;
-        $this->htmltag  = isset($properties['htmltag']) ? (string) $properties['htmltag'] : '';
-        $this->class    = isset($properties['class']) && is_array($properties['class']) ? $properties['class'] : [];
-        $this->replace  = isset($properties['replace']) ? (string) $properties['replace'] : '';
-        $this->widget   = isset($properties['widget']) ? (string) $properties['widget'] : '';
+        $this->priority    = isset($properties['priority']) ? abs((int) $properties['priority']) : 500;
+        $this->name        = isset($properties['name']) ? (string) $properties['name'] : 'undefined';
+        $this->description = isset($properties['description']) ? (string) $properties['description'] : 'undefined';
+        $this->has_list    = isset($properties['has_list']) ? (bool) $properties['has_list'] : false;
+        $this->ignore      = isset($properties['ignore']) && is_array($properties['ignore']) ? $properties['ignore'] : [];
+        $this->class       = isset($properties['class'])  && is_array($properties['class']) ? $properties['class'] : [];
+        $this->replace     = isset($properties['replace']) ? (string) $properties['replace'] : '';
+        $this->widget      = isset($properties['widget']) ? (string) $properties['widget'] : '';
 
         // from filter defautl settings
-        $nocase    = isset($settings['nocase']) ? (bool) $settings['nocase'] : false;
-        $plural    = isset($settings['plural']) ? (bool) $settings['plural'] : false;
-        $limit     = isset($settings['limit']) ? abs((int) $settings['limit']) : 0;
-        $style     = isset($settings['style']) && is_array($settings['style']) ? $settings['style'] : [];
-        $notag     = isset($settings['notag']) ? (string) $settings['notag'] : '';
-        $tplValues = isset($settings['tplValues']) && is_array($settings['tplValues']) ? $settings['tplValues'] : [];
-        $pubPages  = isset($settings['pubPages'])  && is_array($settings['pubPages']) ? $settings['pubPages'] : [];
+        $nocase   = isset($settings['nocase']) ? (bool) $settings['nocase'] : false;
+        $plural   = isset($settings['plural']) ? (bool) $settings['plural'] : false;
+        $limit    = isset($settings['limit']) ? abs((int) $settings['limit']) : 0;
+        $style    = isset($settings['style'])    && is_array($settings['style']) ? $settings['style'] : [];
+        $notag    = isset($settings['notag'])    && is_array($settings['notag']) ? $settings['notag'] : [];
+        $template = isset($settings['template']) && is_array($settings['template']) ? $settings['template'] : [];
+        $page     = isset($settings['page'])     && is_array($settings['page']) ? $settings['page'] : [];
 
         // from blog settings
-        $this->nocase    = isset($s['nocase']) ? (bool) $s['nocase'] : $nocase;
-        $this->plural    = isset($s['plural']) ? (bool) $s['plural'] : $plural;
-        $this->limit     = isset($s['limit']) ? abs((int) $s['limit']) : $limit;
-        $this->style     = isset($s['style']) && is_array($s['style']) ? $s['style'] : $style;
-        $this->notag     = isset($s['notag']) ? (string) $s['notag'] : $notag;
-        $this->tplValues = isset($s['tplValues']) && is_array($s['tplValues']) ? $s['tplValues'] : $tplValues;
-        $this->pubPages  = isset($s['pubPages'])  && is_array($s['pubPages']) ? $s['pubPages'] : $pubPages;
+        $this->nocase   = isset($s['nocase']) ? (bool) $s['nocase'] : $nocase;
+        $this->plural   = isset($s['plural']) ? (bool) $s['plural'] : $plural;
+        $this->limit    = isset($s['limit']) ? abs((int) $s['limit']) : $limit;
+        $this->style    = isset($s['style'])    && is_array($s['style']) ? $s['style'] : $style;
+        $this->notag    = isset($s['notag'])    && is_array($s['notag']) ? $s['notag'] : $notag;
+        $this->template = isset($s['template']) && is_array($s['template']) ? $s['template'] : $template;
+        $this->page     = isset($s['page'])     && is_array($s['page']) ? $s['page'] : $page;
     }
 
-    protected function initProperties(): array
-    {
-        return [];
-    }
+    /**
+     * Return filter default properties.
+     *
+     * @return  array   The properties
+     */
+    abstract protected function initProperties(): array;
 
-    protected function initSettings(): array
-    {
-        return [];
-    }
+    /**
+     * Return filter default settings.
+     *
+     * @return  array   The settings
+     */
+    abstract protected function initSettings(): array;
 
-    public static function create(ArrayObject $o): void
-    {
-        $c = static::class;
-        $o->append(new $c());
-    }
-
+    /**
+     * Get fitler ID.
+     *
+     * @return  string  The filter ID
+     */
     final public function id(): string
     {
         return $this->id;
     }
 
+    /**
+     * Get fitler record.
+     *
+     * Fitler records are usefull to store and retrieve
+     * list of keyword / replacement etc...
+     *
+     * @return  dcRecord    The filter record instance
+     */
     final public function records(): dcRecord
     {
         if ($this->records === null && $this->has_list) {
@@ -119,11 +166,27 @@ abstract class EpcFilter
         return $this->records ?? dcRecord::newFromArray([]);
     }
 
+    /**
+     * Filter frontend contents in situ.
+     *
+     * @param   string  $tag    The tempale block tag
+     * @param   array   $args   The template block arguments
+     */
     public function publicContent(string $tag, array $args): void
     {
     }
 
-    public function widgetList(string $content, WidgetsElement $w, ArrayObject $list): void
+    /**
+     * Filter frontend contents for widgets.
+     *
+     * Filter the contents and return matching results infos
+     * into the list of current widget.
+     *
+     * @param   string          $content    The contents
+     * @param   WidgetsElement  $widget     The widget
+     * @param   ArrayObject     $list       The list
+     */
+    public function widgetList(string $content, WidgetsElement $widget, ArrayObject $list): void
     {
     }
 }

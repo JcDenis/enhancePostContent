@@ -67,7 +67,7 @@ class EpcFilters
     {
         $nid = [];
         foreach ($this->stack as $filter) {
-            if ($filter->widget != '') {
+            if (!$exclude_widget || $filter->widget != '') {
                 $nid[$filter->name] = $filter->id();
             }
         }
@@ -76,13 +76,17 @@ class EpcFilters
     }
 
     /**
-     * Sort filters stack by filter name.
+     * Sort filters stack by filter name or priority.
      *
      * @return 	EpcFilters 	The filters instance
      */
-    public function sort(): EpcFilters
+    public function sort(bool $by_name = false): EpcFilters
     {
-        uasort($this->stack, fn ($a, $b) => $a->name <=> $b->name);
+        if ($by_name) {
+            uasort($this->stack, fn ($a, $b) => $a->name <=> $b->name);
+        } else {
+            uasort($this->stack, fn ($a, $b) => $a->priority <=> $b->priority);
+        }
 
         return $this;
     }

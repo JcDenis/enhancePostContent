@@ -38,17 +38,24 @@ class Frontend extends dcNsProcess
         }
 
         dcCore::app()->addBehaviors([
-            // add CSS URL to header
+            // Add CSS URL to frontend header
             'publicHeadContent' => function (): void {
                 echo dcUtils::cssLoad(dcCore::app()->blog?->url . dcCore::app()->url->getURLFor('epccss'));
             },
             // Filter template blocks content
             'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
                 foreach (Epc::getFilters()->dump() as $filter) {
-                    if (!Epc::testContext($tag, $args, $filter)) {
-                        continue;
+                    // test context
+                    if (in_array((string) dcCore::app()->ctx?->__get('current_tpl'), $filter->page)
+                        && in_array($tag, $filter->template)
+                        && $args[0] != '' //content
+                        && empty($args['encode_xml'])
+                        && empty($args['encode_html'])
+                        && empty($args['remove_html'])
+                        && empty($args['strip_tags'])
+                    ) {
+                        $filter->publicContent($tag, $args);
                     }
-                    $filter->publicContent($tag, $args);
                 }
             },
             // Widgets

@@ -26,24 +26,24 @@ class EpcFilterLink extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 500,
-            'name'     => __('Link'),
-            'help'     => __('Link some words. First term of the list is the term to link and second term the link.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,a',
-            'class'    => ['a.epc-link'],
-            'replace'  => '<a class="epc-link" title="%s" href="%s">%s</a>',
-            'widget'   => '<a title="%s" href="%s">%s</a>',
+            'priority'    => 500,
+            'name'        => __('Link'),
+            'description' => __('Link some words. First term of the list is the term to link and second term the link.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','a'],
+            'class'       => ['a.epc-link'],
+            'replace'     => '<a class="epc-link" title="%s" href="%s">%s</a>',
+            'widget'      => '<a title="%s" href="%s">%s</a>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['text-decoration: none; font-style: italic; color: #0000FF;'],
-            'notag'     => 'a,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['text-decoration: none; font-style: italic; color: #0000FF;'],
+            'notag'    => ['h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

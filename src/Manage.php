@@ -57,37 +57,41 @@ class Manage extends dcNsProcess
             return false;
         }
 
+        // nullsafe check
         if (is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return false;
         }
 
+        // get filter and post values
         $action = $_POST['action'] ?? '';
         $filter = Epc::getFilters()->get($_REQUEST['part'] ?? '');
         if (is_null($filter)) {
             return true;
         }
 
+        // check errors
         if (dcCore::app()->error->flag()) {
             return true;
         }
 
+        // open save to other plugins
         if (!empty($action)) {
             # --BEHAVIOR-- enhancePostContentAdminSave
             dcCore::app()->callBehavior('enhancePostContentAdminSave');
         }
 
         try {
-            # Update filter settings
+            // Update filter settings
             if ($action == 'savefiltersetting') {
                 # Parse filters options
                 $f = [
-                    'nocase'    => !empty($_POST['filter_nocase']),
-                    'plural'    => !empty($_POST['filter_plural']),
-                    'limit'     => abs((int) $_POST['filter_limit']),
-                    'style'     => (array) $_POST['filter_style'],
-                    'notag'     => (string) $_POST['filter_notag'],
-                    'tplValues' => (array) $_POST['filter_tplValues'],
-                    'pubPages'  => (array) $_POST['filter_pubPages'],
+                    'nocase'   => !empty($_POST['filter_nocase']),
+                    'plural'   => !empty($_POST['filter_plural']),
+                    'limit'    => abs((int) $_POST['filter_limit']),
+                    'style'    => (array) $_POST['filter_style'],
+                    'notag'    => Epc::decodeSingle($_POST['filter_notag']),
+                    'template' => (array) $_POST['filter_template'],
+                    'page'     => (array) $_POST['filter_page'],
                 ];
 
                 dcCore::app()->blog->settings->get(My::id())->put($filter->id(), json_encode($f));
@@ -105,7 +109,7 @@ class Manage extends dcNsProcess
                 );
             }
 
-            # Add new filter record
+            // Add new filter record
             if ($action == 'savenewrecord'
                 && !empty($_POST['new_key'])
                 && !empty($_POST['new_value'])
@@ -133,7 +137,7 @@ class Manage extends dcNsProcess
                 );
             }
 
-            # Update filter records
+            // Update filter records
             if ($action == 'deleterecords'
                 && $filter->has_list
                 && !empty($_POST['epc_id'])
@@ -172,17 +176,22 @@ class Manage extends dcNsProcess
             return;
         }
 
+        // nullsafe check
         if (is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return;
         }
 
+        // get filters
         $filters = Epc::getFilters();
         $filter  = $filters->get($_REQUEST['part'] ?? 'link');
         if (is_null($filter)) {
             return;
         }
 
-        # -- Prepare page --
+        // sort filters by name on backend
+        Epc::getFilters()->sort(true);
+
+        // Prepare tabs and lists
         $header = '';
         if ($filter->has_list) {
             $sorts = new adminGenericFilterV2('epc');
@@ -203,7 +212,7 @@ class Manage extends dcNsProcess
             $header = $sorts->js(dcCore::app()->adminurl->get('admin.plugin.' . My::id(), ['part' => $filter->id()], '&') . '#record');
         }
 
-        # Page headers
+        // display
         dcPage::openModule(
             My::name(),
             dcPage::jsPageTabs() .
@@ -214,7 +223,6 @@ class Manage extends dcNsProcess
             dcCore::app()->callBehavior('enhancePostContentAdminHeader')
         );
 
-        # Page title
         echo
         dcPage::breadcrumb([
             __('Plugins') => '',
@@ -223,7 +231,7 @@ class Manage extends dcNsProcess
         ]) .
         dcPage::notices();
 
-        # Filters select menu list
+        // filters select menu
         echo
         (new Form('filters_menu'))->method('get')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->fields([
             (new Para())->class('anchor-nav')->items([
@@ -233,25 +241,25 @@ class Manage extends dcNsProcess
             ]),
         ])->render();
 
-        # Filter title and description
+        // selected filter
         echo
         '<h3>' . $filter->name . '</h3>' .
-        '<p>' . $filter->help . '</p>';
+        '<p>' . $filter->description . '</p>';
 
-        # Filter settings
+        // Filter settings
         $form_pages = [(new Text('h4', __('Pages to be filtered')))];
-        foreach (Epc::blogAllowedPubPages() as $k => $v) {
+        foreach (Epc::blogAllowedTemplatePage() as $k => $v) {
             $form_pages[] = (new Para())->items([
-                (new Checkbox(['filter_pubPages[]', 'filter_pubPages' . $v], in_array($v, $filter->pubPages)))->value($v),
-                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_pubPages' . $v)->class('classic'),
+                (new Checkbox(['filter_page[]', 'filter_page' . $v], in_array($v, $filter->page)))->value($v),
+                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_page' . $v)->class('classic'),
             ]);
         }
 
         $form_values = [(new Text('h4', __('Contents to be filtered')))];
-        foreach (Epc::blogAllowedTplValues() as $k => $v) {
+        foreach (Epc::blogAllowedTemplateValue() as $k => $v) {
             $form_values[] = (new Para())->items([
-                (new Checkbox(['filter_tplValues[]', 'filter_tplValues' . $v], in_array($v, $filter->tplValues)))->value($v),
-                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_tplValues' . $v)->class('classic'),
+                (new Checkbox(['filter_template[]', 'filter_template' . $v], in_array($v, $filter->template)))->value($v),
+                (new Label(__($k), Label::OUTSIDE_LABEL_AFTER))->for('filter_template' . $v)->class('classic'),
             ]);
         }
 
@@ -288,9 +296,9 @@ class Manage extends dcNsProcess
                     (new Note())->class('form-note')->text(sprintf(__('The inserted HTML tag looks like: %s'), Html::escapeHTML(str_replace('%s', '...', $filter->replace)))),
                     (new Para())->items([
                         (new Label(__('Ignore HTML tags:'), Label::OUTSIDE_LABEL_BEFORE))->for('filter_notag'),
-                        (new Input('filter_notag'))->size(60)->maxlenght(255)->value(Html::escapeHTML($filter->notag)),
+                        (new Input('filter_notag'))->size(60)->maxlenght(255)->value(Epc::encodeSingle($filter->notag)),
                     ]),
-                    (new Note())->class('form-note')->text(__('This is the list of HTML tags where content will be ignored.') . ' ' . ('' != $filter->htmltag ? '' : sprintf(__('Tag "%s" always be ignored.'), $filter->htmltag))),
+                    (new Note())->class('form-note')->text(__('This is the list of HTML tags where content will be ignored.') . '<br />' . (empty($filter->ignore) ? '' : sprintf(__('Tags "%s" will allways be ignored.'), Epc::encodeSingle($filter->ignore)))),
 
                 ])),
                 (new Div())->class('clear')->items([
@@ -302,7 +310,7 @@ class Manage extends dcNsProcess
             ]),
         ])->render();
 
-        # Filter records list
+        // Filter records list (if any)
         if ($filter->has_list && isset($pager)) {
             $pager_url = dcCore::app()->adminurl->get('admin.plugin.' . My::id(), array_diff_key($sorts->values(true), ['page' => ''])) . '&page=%s#record';
 
@@ -335,7 +343,7 @@ class Manage extends dcNsProcess
 
             echo '</div>';
 
-            # New record
+            // New record
             echo
             (new Div('newrecord'))->class('multi-part')->title(__('New record'))->items([
                 (new Form('form-create'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()) . '#record')->fields([

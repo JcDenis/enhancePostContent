@@ -26,24 +26,24 @@ class EpcFilterAcronym extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 700,
-            'name'     => __('Acronym'),
-            'help'     => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,acronym',
-            'class'    => ['acronym.epc-acronym'],
-            'replace'  => '<acronym class="epc-acronym" title="%s">%s</acronym>',
-            'widget'   => '<acronym title="%s">%s</acronym>',
+            'priority'    => 700,
+            'name'        => __('Acronym'),
+            'description' => __('Explain some acronyms. First term of the list is the acornym and second term the explanation.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','acronym'],
+            'class'       => ['acronym.epc-acronym'],
+            'replace'     => '<acronym class="epc-acronym" title="%s">%s</acronym>',
+            'widget'      => '<acronym title="%s">%s</acronym>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['font-weight: bold;'],
-            'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['font-weight: bold;'],
+            'notag'    => ['a','acronym','abbr','dfn','h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

@@ -33,39 +33,54 @@ __('RSS feeds');
 
 class Epc
 {
+    /** @var    string  The temporary pattern to tag words to replace */
     public const FLAGGER = 'ççççç%sççççç';
 
+    /** @var    EpcFilters  $filters    THe filters stack */
     private static EpcFilters $filters;
-    public static array $epcFilterLimit = [];
 
-    #
-    # Default definition
-    #
+    /** @var    array<string,int>   $limits     The replacment limit per filtre */
+    private static array $limits = [];
 
-    public static function defaultAllowedTplValues(): array
+    /**
+     * Get list of default allowed templates name->tag.
+     *
+     * @return  array<string,string>    The templates name->tag pairs
+     */
+    public static function defaultAllowedTemplateValue(): array
     {
-        $rs = new ArrayObject([
+        $list = new ArrayObject([
             'entry excerpt'   => 'EntryExcerpt',
             'entry content'   => 'EntryContent',
             'comment content' => 'CommentContent',
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedTplValues : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedTplValues', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedTplValues', $list);
 
-        return iterator_to_array($rs, true);
+        return iterator_to_array($list, true);
     }
 
-    public static function blogAllowedTplValues(): array
+    /**
+     * Get list of allowed templates name->tag set on current blog.
+     *
+     * @return  array<string,string>    The templates name->tag pairs
+     */
+    public static function blogAllowedTemplateValue(): array
     {
-        $rs = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedtplvalues'), true);
+        $list = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedtplvalues'), true);
 
-        return is_array($rs) ? $rs : self::defaultAllowedTplValues();
+        return is_array($list) ? $list : self::defaultAllowedTemplateValue();
     }
 
-    public static function defaultAllowedWidgetValues(): array
+    /**
+     * Get list of allowed templates name->[tag,callback] to list on epc widgets.
+     *
+     * @return  array    The templates name->[id,cb] values
+     */
+    public static function widgetAllowedTemplateValue(): array
     {
-        $rs = new ArrayObject([
+        $list = new ArrayObject([
             'entry excerpt' => [
                 'id' => 'entryexcerpt',
                 'cb' => [self::class, 'widgetContentEntryExcerpt'],
@@ -81,14 +96,19 @@ class Epc
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedWidgetValues : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedWidgetValues', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedWidgetValues', $list);
 
-        return iterator_to_array($rs, true);
+        return iterator_to_array($list, true);
     }
 
-    public static function defaultAllowedPubPages(): array
+    /**
+     * Get list of default allowed templates name->page to list on epc widgets.
+     *
+     * @return  array<string,string>    The templates name->page pairs
+     */
+    public static function defaultAllowedTemplatePage(): array
     {
-        $rs = new ArrayObject([
+        $list = new ArrayObject([
             'home page'           => 'home.html',
             'post page'           => 'post.html',
             'category page'       => 'category.html',
@@ -98,16 +118,21 @@ class Epc
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedPubPages : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedPubPages', $rs);
+        dcCore::app()->callBehavior('enhancePostContentAllowedPubPages', $list);
 
-        return iterator_to_array($rs, true);
+        return iterator_to_array($list, true);
     }
 
-    public static function blogAllowedPubPages(): array
+    /**
+     * Get list of allowed templates name->page set on blog to list on epc widgets.
+     *
+     * @return  array<string,string>    The templates name->page pairs
+     */
+    public static function blogAllowedTemplatePage(): array
     {
-        $rs = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedpubpages'), true);
+        $list = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedpubpages'), true);
 
-        return is_array($rs) ? $rs : self::defaultAllowedPubPages();
+        return is_array($list) ? $list : self::defaultAllowedTemplatePage();
     }
 
     /**
@@ -135,153 +160,193 @@ class Epc
         return self::$filters;
     }
 
-    public static function testContext(string $tag, array $args, EpcFilter $filter): bool
-    {
-        return in_array((string) dcCore::app()->ctx?->__get('current_tpl'), $filter->pubPages)
-            && in_array($tag, $filter->tplValues)
-            && $args[0] != '' //content
-            && empty($args['encode_xml'])
-            && empty($args['encode_html'])
-            && empty($args['remove_html'])
-            && empty($args['strip_tags'])
-        ;
-    }
-
-    public static function replaceString(string $p, string $r, string $s, EpcFilter $filter, string $before = '\b', string $after = '\b'): string
-    {
-        # Limit
+    /**
+     * Apply filter to content.
+     *
+     * @param   string      $search         The search
+     * @param   string      $replacement    The replacement
+     * @param   string      $content        The content
+     * @param   EpcFilter   $filter         The filter
+     * @param   string      $before         The start limit pattern
+     * @param   string      $after          The end limit pattern
+     */
+    public static function replaceString(
+        string $search,
+        string $replacement,
+        string $content,
+        EpcFilter $filter,
+        string $before = '\b',
+        string $after = '\b'
+    ): string {
+        // Limit
         if ($filter->limit > 0) {
-            $limit = array_key_exists($filter->id() . '_' . $p, self::$epcFilterLimit) ? self::$epcFilterLimit[$filter->id() . '_' . $p] : $filter->limit;
+            // memorize limit between two template values
+            $limit = array_key_exists($filter->id() . '_' . $search, self::$limits) ? self::$limits[$filter->id() . '_' . $search] : $filter->limit;
             if ($limit < 1) {
-                return $s;
+                return $content;
             }
         } else {
             $limit = -1;
         }
-        # Case sensitive
-        $i = $filter->nocase ? 'i' : '';
+
+        // Case sensitive
+        $caseless = $filter->nocase ? 'i' : '';
+
         # Plural
-        $x = $filter->plural ? $p . 's|' . $p : $p;
+        $plural = $filter->plural ? 's?' : '';
 
-        # Mark words
-        $ret = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1' . sprintf(self::FLAGGER, '$2') . '$3', $s, -1, $count);
+        // Mark words
+        $ret = preg_replace('#(' . $before . ')(' . $search . $plural . ')(' . $after . ')#su' . $caseless, '$1' . sprintf(self::FLAGGER, '$2') . '$3', $content, -1, $count);
         if (is_string($ret)) {
-            $s = $ret;
+            $content = $ret;
         }
-        # Nothing to parse
+
+        // Nothing to parse
         if (!$count) {
-            return $s;
+            return $content;
         }
 
-        # Remove words that are into unwanted html tags
-        $ignore_tags = array_merge(self::decodeTags($filter->htmltag), self::decodeTags($filter->notag));
-        if (!empty($ignore_tags)) {
-            $tags = implode('|', array_unique($ignore_tags));
-
-            $ret = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', [self::class, 'removeTags'], $s);
+        // Remove words that are into unwanted html tags
+        $ignore = array_merge(self::decodeSingle($filter->ignore), self::decodeSingle($filter->notag));
+        if (!empty($ignore)) {
+            $ret = preg_replace_callback('#(<(' . implode('|', array_unique($ignore)) . ')[^>]*?>)(.*?)(</\\2>)#s', function (array $m): string {
+                return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') . ')#s', '$1', $m[3]) . $m[4];
+            }, $content);
             if (is_string($ret)) {
-                $s = $ret;
+                $content = $ret;
             }
         }
 
-        # Remove words inside html tag (class, title, alt, href, ...)
-        $ret = preg_replace('#(' . sprintf(self::FLAGGER, '(' . $x . '(s|))') . ')(?=[^<]*>)#s' . $i, '$2$4', $s);
+        // Remove words inside html tag (class, title, alt, href, ...)
+        $ret = preg_replace('#(' . sprintf(self::FLAGGER, '(' . $search . '(' . $plural . '))') . ')(?=[^<]*>)#s' . $caseless, '$2$4', $content);
         if (is_string($ret)) {
-            $s = $ret;
+            $content = $ret;
         }
 
-        # Replace words by what you want (with limit)
-        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(' . $p . '(s|))') . '#s' . $i, $r, $s, $limit, $count);
+        // Replace words by what you want (with limit)
+        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(' . $search . '(' . $plural . '))') . '#s' . $caseless, $replacement, $content, $limit, $count);
         if (is_string($ret)) {
-            $s = $ret;
+            $content = $ret;
         }
 
-        # update limit
-        self::$epcFilterLimit[$filter->id() . '_' . $p] = $limit - $count;
+        // update limit
+        self::$limits[$filter->id() . '_' . $search] = $limit - $count;
 
-        # Clean rest
-        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(.*?)') . '#s', '$1', $s);
+        // Clean rest
+        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(.*?)') . '#s', '$1', $content);
         if (is_string($ret)) {
-            $s = $ret;
+            $content = $ret;
         }
 
-        return $s;
+        return $content;
     }
 
-    public static function matchString(string $p, string $r, string $s, EpcFilter $filter, string $before = '\b', string $after = '\b'): array
-    {
-        # Case sensitive
-        $i = $filter->nocase ? 'i' : '';
-        # Plural
-        $x = $filter->plural ? $p . 's|' . $p : $p;
-        # Mark words
-        $t = preg_match_all('#' . $before . '(' . $x . ')' . $after . '#su' . $i, $s, $matches);
-        # Nothing to parse
-        if (!$t) {
-            return ['total' => 0, 'matches' => []];
-        }
-
-        # Build array
-        $m    = [];
-        $loop = 0;
-        foreach ($matches[1] as $match) {
-            $m[$loop]['key']   = $match;
-            $m[$loop]['match'] = preg_replace('#(' . $p . '(s|))#s' . $i, $r, $match, -1, $count);
-            $m[$loop]['num']   = $count;
-            $loop++;
-        }
-
-        return ['total' => $t, 'matches' => $m];
+    /**
+     * Find filter on content.
+     *
+     * @param   string      $search         The search
+     * @param   string      $replacement    The replacement
+     * @param   string      $content        The content
+     * @param   EpcFilter   $filter         The filter
+     * @param   string      $before         The start limit pattern
+     * @param   string      $after          The end limit pattern
+     */
+    public static function matchString(
+        string $search,
+        string $replacement,
+        string $content,
+        EpcFilter $filter,
+        string $before = '\b',
+        string $after = '\b'
+    ): array {
+        return [
+            'total'       => (int) preg_match_all('#' . $before . '(' . $search . ($filter->plural ? 's?' : '') . ')' . $after . '#su' . ($filter->nocase ? 'i' : ''), $content),
+            'search'      => $search,
+            'replacement' => preg_replace('#(' . $search . ')#', $replacement, $search),
+        ];
     }
 
-    public static function quote(string $s): string
+    /**
+     * Quote regular expression according to epc parser.
+     *
+     * @param   string  $string     The string
+     *
+     * @return  string  The quoted string
+     */
+    public static function quote(string $string): string
     {
-        return preg_quote($s, '#');
+        return preg_quote($string, '#');
     }
 
-    public static function removeTags(array $m): string
+    /**
+     * Implode simple array into string a,b,c.
+     *
+     * @param   array|string    $values     The values
+     *
+     * @return  string  The value
+     */
+    public static function encodeSingle(array|string $values): string
     {
-        return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') . ')#s', '$1', $m[3]) . $m[4];
+        return implode(',', self::decodeSingle($values));
     }
 
-    public static function decodeTags(string $t): array
+    /**
+     * Explode string into simple array [a,b,c].
+     *
+     * @param   array|string    $value  The value
+     *
+     * @return  array   The values
+     */
+    public static function decodeSingle(array|string $value): array
     {
-        return preg_match_all('#([A-Za-z0-9]+)#', (string) $t, $m) ? $m[1] : [];
+        if (is_array($value)) {
+            $value = implode(',', $value);
+        }
+
+        return preg_match_all('#([A-Za-z0-9]+)#', (string) $value, $matches) ? $matches[1] : [];
     }
 
-    public static function implode(array|string $a): string
+    /**
+     * Implode complexe array into string a:aa:b:bb;c:cc.
+     *
+     * @param   array|string    $values     The values
+     *
+     * @return  string  The value
+     */
+    public static function encodeMulti(array|string $values): string
     {
-        if (is_string($a)) {
-            return $a;
-        }
-        if (!is_array($a)) {
-            return '';
+        if (is_string($values)) {
+            return $values;
         }
 
-        $r = '';
-        foreach ($a as $k => $v) {
-            $r .= $k . ':' . $v . ';';
+        $string = '';
+        foreach ($values as $key => $value) {
+            $string .= $key . ':' . $value . ';';
         }
 
-        return $r;
+        return $string;
     }
 
-    public static function explode(array|string $s): array
+    /**
+     * Explode string into complexe array [a=>aa,b=>aa,c=>cc].
+     *
+     * @param   array|string    $value  The value
+     *
+     * @return  array   The values
+     */
+    public static function decodeMulti(array|string $value): array
     {
-        if (is_array($s)) {
-            return $s;
+        if (is_array($value)) {
+            return $value;
         }
-        if (!is_string($s)) {
+
+        $values = [];
+        $exp    = explode(';', (string) $value);
+        if (!is_array($exp)) {
             return [];
         }
 
-        $r = [];
-        $s = explode(';', (string) $s);
-        if (!is_array($s)) {
-            return [];
-        }
-
-        foreach ($s as $cpl) {
+        foreach ($exp as $cpl) {
             $cur = explode(':', $cpl);
 
             if (!is_array($cur) || !isset($cur[1])) {
@@ -295,59 +360,75 @@ class Epc
                 continue;
             }
 
-            $r[$key] = $val;
+            $values[$key] = $val;
         }
 
-        return $r;
+        return $values;
     }
 
-    #
-    # Widgets
-    #
-
-    public static function widgetContentEntryExcerpt(?WidgetsElement $w = null): string
+    /**
+     * Send entries excerpts to widget.
+     *
+     * @param   WidgetsElement|null     $widget     The widgets
+     *
+     * @return  string  The entries exceprts
+     */
+    public static function widgetContentEntryExcerpt(?WidgetsElement $widget = null): string
     {
         if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
-        $res = '';
+        $content = '';
         while (dcCore::app()->ctx->__get('posts')?->fetch()) {
-            $res .= dcCore::app()->ctx->__get('posts')->f('post_excerpt');
+            $content .= dcCore::app()->ctx->__get('posts')->f('post_excerpt');
         }
 
-        return $res;
+        return $content;
     }
 
-    public static function widgetContentEntryContent(): string
+    /**
+     * Send entries contents to widget.
+     *
+     * @param   WidgetsElement|null     $widget     The widgets
+     *
+     * @return  string  The entries contents
+     */
+    public static function widgetContentEntryContent(?WidgetsElement $widget = null): string
     {
         if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
-        $res = '';
+        $content = '';
         while (dcCore::app()->ctx->__get('posts')?->fetch()) {
-            $res .= dcCore::app()->ctx->__get('posts')->f('post_content');
+            $content .= dcCore::app()->ctx->__get('posts')->f('post_content');
         }
 
-        return $res;
+        return $content;
     }
 
-    public static function widgetContentCommentContent(): string
+    /**
+     * Send entries comments to widget.
+     *
+     * @param   WidgetsElement|null     $widget     The widgets
+     *
+     * @return  string  The entries comments
+     */
+    public static function widgetContentCommentContent(?WidgetsElement $widget = null): string
     {
         if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
             return '';
         }
 
-        $res      = '';
-        $post_ids = [];
+        $content = '';
         while (dcCore::app()->ctx->__get('posts')?->fetch()) {
             $comments = dcCore::app()->blog?->getComments(['post_id' => dcCore::app()->ctx->__get('posts')->f('post_id')]);
             while ($comments?->fetch()) {
-                $res .= $comments->getContent();
+                $content .= $comments->getContent();
             }
         }
 
-        return $res;
+        return $content;
     }
 }

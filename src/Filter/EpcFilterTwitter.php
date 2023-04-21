@@ -24,22 +24,22 @@ class EpcFilterTwitter extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 1000,
-            'name'     => __('Twitter'),
-            'help'     => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
-            'htmltag'  => 'pre,code,a',
-            'class'    => ['a.epc-twitter'],
-            'replace'  => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
+            'priority'    => 1000,
+            'name'        => __('Twitter'),
+            'description' => __('Add link to twitter user page. Every word started with "@" will be considered as twitter user.'),
+            'ingore'      => ['pre','code','a'],
+            'class'       => ['a.epc-twitter'],
+            'replace'     => '<a class="epc-twitter" title="' . __("View this user's twitter page") . '" href="%s">%s</a>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['text-decoration: none; font-weight: bold; font-style: italic; color: #0000FF;'],
-            'notag'     => 'a,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['text-decoration: none; font-weight: bold; font-style: italic; color: #0000FF;'],
+            'notag'    => ['h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

@@ -27,23 +27,23 @@ class EpcFilterTag extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 900,
-            'name'     => __('Tag'),
-            'help'     => __('Highlight tags of your blog.'),
-            'htmltag'  => 'pre,code,a',
-            'class'    => ['a.epc-tag'],
-            'replace'  => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
-            'widget'   => '<a href="%s" title="' . __('Tag') . '">%s</a>',
+            'priority'    => 900,
+            'name'        => __('Tag'),
+            'description' => __('Highlight tags of your blog.'),
+            'ignore'      => ['pre','code','a'],
+            'class'       => ['a.epc-tag'],
+            'replace'     => '<a class="epc-tag" href="%s" title="' . __('Tag') . '">%s</a>',
+            'widget'      => '<a href="%s" title="' . __('Tag') . '">%s</a>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
-            'notag'     => 'pre,code,a,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['text-decoration: none; border-bottom: 3px double #CCCCCC;'],
+            'notag'    => ['h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

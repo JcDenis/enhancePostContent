@@ -26,24 +26,24 @@ class EpcFilterAbbreviation extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 400,
-            'name'     => __('Abbreviation'),
-            'help'     => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,a',
-            'class'    => ['abbr.epc-abbr'],
-            'replace'  => '<abbr class="epc-abbr" title="%s">%s</abbr>',
-            'widget'   => '<abbr title="%s">%s</abbr>',
+            'priority'    => 400,
+            'name'        => __('Abbreviation'),
+            'description' => __('Explain some abbreviation. First term of the list is the abbreviation and second term the explanation.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','a'],
+            'class'       => ['abbr.epc-abbr'],
+            'replace'     => '<abbr class="epc-abbr" title="%s">%s</abbr>',
+            'widget'      => '<abbr title="%s">%s</abbr>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['font-weight: bold;'],
-            'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['font-weight: bold;'],
+            'notag'    => ['acronym','abbr','dfn','h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

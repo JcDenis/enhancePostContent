@@ -24,25 +24,25 @@ class EpcFilterUpdate extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 300,
-            'name'     => __('Update'),
-            'help'     => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,del,ins',
-            'class'    => ['del.epc-update', 'ins.epc-update'],
-            'replace'  => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
+            'priority'    => 300,
+            'name'        => __('Update'),
+            'description' => __('Update and show terms. First term of the list is the term to update and second term the new term.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','del','ins'],
+            'class'       => ['del.epc-update', 'ins.epc-update'],
+            'replace'     => '<del class="epc-update">%s</del> <ins class="epc-update">%s</ins>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'nocase'    => true,
-            'plural'    => true,
-            'style'     => ['text-decoration: line-through;', 'font-style: italic;'],
-            'notag'     => 'h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'nocase'   => true,
+            'plural'   => true,
+            'style'    => ['text-decoration: line-through;', 'font-style: italic;'],
+            'notag'    => ['h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

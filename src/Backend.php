@@ -48,7 +48,7 @@ class Backend extends dcNsProcess
             return false;
         }
 
-        # Admin menu
+        // backend sidebar menu icon
         dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
             My::name(),
             dcCore::app()->adminurl?->get('admin.plugin.' . My::id()),
@@ -58,7 +58,7 @@ class Backend extends dcNsProcess
         );
 
         dcCore::app()->addBehaviors([
-            # Dashboard favorites
+            // backend user dashboard favorites icon
             'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
                 $favs->register(My::id(), [
                     'title'       => My::name(),
@@ -68,11 +68,11 @@ class Backend extends dcNsProcess
                     'permissions' => dcCore::app()->auth?->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
                 ]);
             },
-            # Preference form
+            // backend user preference form
             'adminBlogPreferencesFormV2' => function (dcSettings $blog_settings): void {
                 $active           = (bool) $blog_settings->get(My::id())->get('active');
-                $allowedtplvalues = Epc::blogAllowedTplValues();
-                $allowedpubpages  = Epc::blogAllowedPubPages();
+                $allowedtplvalues = Epc::blogAllowedTemplateValue();
+                $allowedpubpages  = Epc::blogAllowedTemplatePage();
 
                 echo
                 '<div class="fieldset"><h4 id="epc_params">' . My::name() . '</h4>' .
@@ -95,13 +95,13 @@ class Backend extends dcNsProcess
                 // allowedtplvalues
                 (new Para())->items([
                     (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
-                    (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::implode($allowedtplvalues)),
+                    (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedtplvalues)),
                 ])->render() .
                 '<p class="form-note">' . __('Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".') . '</p>' .
                 // allowedpubpages
                 (new Para())->items([
                     (new Label(__('Allowed public pages:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedpubpages'),
-                    (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::implode($allowedpubpages)),
+                    (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedpubpages)),
                 ])->render() .
                 '<p class="form-note">' . __('Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".') . '</p>' .
                 '</div>' .
@@ -109,17 +109,17 @@ class Backend extends dcNsProcess
                 '<br class="clear" />' .
                 '</div>';
             },
-            # Save preference
+            // backend user preference save
             'adminBeforeBlogSettingsUpdate' => function (dcSettings $blog_settings): void {
                 $active           = !empty($_POST['epc_active']);
-                $allowedtplvalues = Epc::explode($_POST['epc_allowedtplvalues']);
-                $allowedpubpages  = Epc::explode($_POST['epc_allowedpubpages']);
+                $allowedtplvalues = Epc::decodeMulti($_POST['epc_allowedtplvalues']);
+                $allowedpubpages  = Epc::decodeMulti($_POST['epc_allowedpubpages']);
 
                 $blog_settings->get(My::id())->put('active', $active);
                 $blog_settings->get(My::id())->put('allowedtplvalues', json_encode($allowedtplvalues));
                 $blog_settings->get(My::id())->put('allowedpubpages', json_encode($allowedpubpages));
             },
-            # List filter
+            // backend epc list filter
             'adminFiltersListsV2' => function (ArrayObject $sorts): void {
                 $sorts['epc'] = [
                     My::name(),
@@ -134,7 +134,7 @@ class Backend extends dcNsProcess
                     [__('records per page'), 20],
                 ];
             },
-            # Widgets
+            // widgets registration
             'initWidgets' => [Widgets::class, 'initWidgets'],
         ]);
 

@@ -26,24 +26,24 @@ class EpcFilterDefinition extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 800,
-            'name'     => __('Definition'),
-            'help'     => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code,dfn',
-            'class'    => ['dfn.epc-dfn'],
-            'replace'  => '<dfn class="epc-dfn" title="%s">%s</dfn>',
-            'widget'   => '<dfn class="epc-dfn" title="%s">%s</dfn>',
+            'priority'    => 800,
+            'name'        => __('Definition'),
+            'description' => __('Explain some definition. First term of the list is the sample to define and second term the explanation.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code','dfn'],
+            'class'       => ['dfn.epc-dfn'],
+            'replace'     => '<dfn class="epc-dfn" title="%s">%s</dfn>',
+            'widget'      => '<dfn class="epc-dfn" title="%s">%s</dfn>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'style'     => ['font-weight: bold;'],
-            'notag'     => 'a,acronym,abbr,dfn,h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'style'    => ['font-weight: bold;'],
+            'notag'    => ['a','acronym','abbr','dfn','h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 

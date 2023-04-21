@@ -59,10 +59,10 @@ class Widgets
             Epc::getFilters()->nid(true)
         );
         # Content
-        foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
+        foreach (Epc::widgetAllowedTemplateValue() as $name => $info) {
             $w->epclist->setting(
-                'content' . $v['id'],
-                sprintf(__('Enable filter on %s'), __($k)),
+                'content' . $info['id'],
+                sprintf(__('Enable filter on %s'), __($name)),
                 1,
                 'check'
             );
@@ -101,11 +101,11 @@ class Widgets
 
         # Content
         $content = '';
-        foreach (Epc::defaultAllowedWidgetValues() as $k => $v) {
-            $ns = 'content' . $v['id'];
-            if ($w->$ns && is_callable($v['cb'])) {
+        foreach (Epc::widgetAllowedTemplateValue() as $info) {
+            $ns = 'content' . $info['id'];
+            if ($w->$ns && is_callable($info['cb'])) {
                 $content .= call_user_func(
-                    $v['cb'],
+                    $info['cb'],
                     $w
                 );
             }
@@ -130,11 +130,11 @@ class Widgets
         # Parse result
         $res = '';
         foreach ($list as $line) {
-            if (empty($line['matches'][0]['match'])) {
+            if ((int) $line['total'] == 0) {
                 continue;
             }
 
-            $res .= '<li>' . $line['matches'][0]['match'] .
+            $res .= '<li>' . $line['replacement'] .
             ($w->show_total ? ' (' . $line['total'] . ')' : '') .
             '</li>';
         }

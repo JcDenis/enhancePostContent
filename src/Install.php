@@ -71,19 +71,19 @@ class Install extends dcNsProcess
             $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
             $s->put('list_order', 'desc', 'string', 'Admin records list order', false, true);
             $s->put('list_nb', 20, 'integer', 'Admin records list nb per page', false, true);
-            $s->put('allowedtplvalues', json_encode(Epc::defaultAllowedTplValues()), 'string', 'List of allowed template values', false, true);
-            $s->put('allowedpubpages', json_encode(Epc::defaultAllowedPubPages()), 'string', 'List of allowed template pages', false, true);
+            $s->put('allowedtplvalues', json_encode(Epc::defaultAllowedTemplateValue()), 'string', 'List of allowed template values', false, true);
+            $s->put('allowedpubpages', json_encode(Epc::defaultAllowedTemplatePage()), 'string', 'List of allowed template pages', false, true);
 
             // Filters settings
             foreach (Epc::getFilters()->dump() as $filter) {
                 // Only editable options
                 $opt = [
-                    'nocase'    => $filter->nocase,
-                    'plural'    => $filter->plural,
-                    'style'     => $filter->style,
-                    'notag'     => $filter->notag,
-                    'tplValues' => $filter->tplValues,
-                    'pubPages'  => $filter->pubPages,
+                    'nocase'   => $filter->nocase,
+                    'plural'   => $filter->plural,
+                    'style'    => $filter->style,
+                    'notag'    => $filter->notag,
+                    'template' => $filter->template,
+                    'page'     => $filter->page,
                 ];
                 $s->put($filter->id(), json_encode($opt), 'string', 'Settings for ' . $filter->id(), false, true);
             }
@@ -114,10 +114,12 @@ class Install extends dcNsProcess
         if ($current && version_compare($current, '2022.11.20', '<=')) {
             self::upTo20221120();
         }
+
+        // 2023.04.22: not replaced: tplValues->template and pubPages->page
     }
 
     /**
-     * 0.6.6
+     * Upgrade from 0.6.6
      *
      * - filters move from settings to dedicated table
      */
@@ -150,7 +152,7 @@ class Install extends dcNsProcess
     }
 
     /**
-     * 2021.10.06
+     * Upgrade from 2021.10.06
      *
      * - filters change name to id
      */
@@ -169,7 +171,7 @@ class Install extends dcNsProcess
     }
 
     /**
-     * 2022.11.20
+     * Upgrade from 2022.11.20
      *
      * - setting id changes to shorter one,
      * - setting ns changes to abstract one (no real changes),

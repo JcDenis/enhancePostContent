@@ -24,25 +24,25 @@ class EpcFilterReplace extends EpcFilter
     protected function initProperties(): array
     {
         return [
-            'priority' => 200,
-            'name'     => __('Replace'),
-            'help'     => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
-            'has_list' => true,
-            'htmltag'  => 'pre,code',
-            'class'    => ['span.epc-replace'],
-            'replace'  => '<span class="epc-replace">%s</span>',
+            'priority'    => 200,
+            'name'        => __('Replace'),
+            'description' => __('Replace some text. First term of the list is the text to replace and second term the replacement.'),
+            'has_list'    => true,
+            'ignore'      => ['pre','code'],
+            'class'       => ['span.epc-replace'],
+            'replace'     => '<span class="epc-replace">%s</span>',
         ];
     }
 
     protected function initSettings(): array
     {
         return [
-            'nocase'    => true,
-            'plural'    => true,
-            'style'     => ['font-style: italic;'],
-            'notag'     => 'h1,h2,h3',
-            'tplValues' => ['EntryContent'],
-            'pubPages'  => ['post.html'],
+            'nocase'   => true,
+            'plural'   => true,
+            'style'    => ['font-style: italic;'],
+            'notag'    => ['h1','h2','h3'],
+            'template' => ['EntryContent'],
+            'page'     => ['post.html'],
         ];
     }
 
