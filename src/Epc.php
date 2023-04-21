@@ -33,6 +33,8 @@ __('RSS feeds');
 
 class Epc
 {
+    public const FLAGGER = 'ççççç%sççççç';
+
     protected static array $default_filters = [];
     public static array $epcFilterLimit     = [];
 
@@ -162,39 +164,45 @@ class Epc
         $i = $filter->nocase ? 'i' : '';
         # Plural
         $x = $filter->plural ? $p . 's|' . $p : $p;
+
         # Mark words
-        $ret = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1ççççç$2ççççç$3', $s, -1, $count);
+        $ret = preg_replace('#(' . $before . ')(' . $x . ')(' . $after . ')#su' . $i, '$1' . sprintf(self::FLAGGER, '$2') . '$3', $s, -1, $count);
+        if (is_string($ret)) {
+            $s = $ret;
+        }
         # Nothing to parse
-        if (!is_string($ret) || !$count) {
+        if (!$count) {
             return $s;
         }
-        $s = $ret;
+
         # Remove words that are into unwanted html tags
-        $tags        = '';
         $ignore_tags = array_merge(self::decodeTags($filter->htmltag), self::decodeTags($filter->notag));
-        if (is_array($ignore_tags) && !empty($ignore_tags)) {
-            $tags = implode('|', $ignore_tags);
-        }
-        if (!empty($tags)) {
+        if (!empty($ignore_tags)) {
+            $tags = implode('|', array_unique($ignore_tags));
+
             $ret = preg_replace_callback('#(<(' . $tags . ')[^>]*?>)(.*?)(</\\2>)#s', [self::class, 'removeTags'], $s);
             if (is_string($ret)) {
                 $s = $ret;
             }
         }
+
         # Remove words inside html tag (class, title, alt, href, ...)
-        $ret = preg_replace('#(ççççç(' . $p . '(s|))ççççç)(?=[^<]+>)#s' . $i, '$2$4', $s);
+        $ret = preg_replace('#(' . sprintf(self::FLAGGER, '(' . $x . '(s|))') . ')(?=[^<]*>)#s' . $i, '$2$4', $s);
         if (is_string($ret)) {
             $s = $ret;
         }
+
         # Replace words by what you want (with limit)
-        $ret = preg_replace('#ççççç(' . $p . '(s|))ççççç#s' . $i, $r, $s, $limit, $count);
+        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(' . $p . '(s|))') . '#s' . $i, $r, $s, $limit, $count);
         if (is_string($ret)) {
             $s = $ret;
         }
+
         # update limit
         self::$epcFilterLimit[$filter->id() . '_' . $p] = $limit - $count;
+
         # Clean rest
-        $ret = preg_replace('#ççççç(.*?)ççççç#s', '$1', $s);
+        $ret = preg_replace('#' . sprintf(self::FLAGGER, '(.*?)') . '#s', '$1', $s);
         if (is_string($ret)) {
             $s = $ret;
         }
@@ -235,7 +243,7 @@ class Epc
 
     public static function removeTags(array $m): string
     {
-        return $m[1] . preg_replace('#ççççç(?!ççççç)#s', '$1', $m[3]) . $m[4];
+        return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') .')#s', '$1', $m[3]) . $m[4];
     }
 
     public static function decodeTags(string $t): array
