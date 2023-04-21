@@ -1,7 +1,16 @@
 dev
 - [ ] add auto-find post title in content
 - [ ] add auto-find categorie
-- fix remplacement limit
+
+2023.04.22
+- require Dotclear 2.26
+- require PHP >= 8.1
+- break settings for tplValues and pubPages (must reconf them)
+- change default values on ignore tags
+- fix bug in replacement (html tag)
+- phpstan code review (level 8)
+- use object for filters stacks (change registration for them)
+- add plugin Uninstaller feature
 
 2023.04.09
 - require Dotclear 2.26
