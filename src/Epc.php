@@ -425,7 +425,7 @@ class Epc
         while (dcCore::app()->ctx->__get('posts')?->fetch()) {
             $comments = dcCore::app()->blog?->getComments(['post_id' => dcCore::app()->ctx->__get('posts')->f('post_id')]);
             while ($comments?->fetch()) {
-                $content .= $comments->getContent();
+                $content .= $comments->__call('getContent', null);
             }
         }
 
