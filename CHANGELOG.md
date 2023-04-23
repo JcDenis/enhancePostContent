@@ -2,6 +2,12 @@ dev
 - [ ] add auto-find post title in content
 - [ ] add auto-find categorie
 
+2023.04.23
+- require Dotclear 2.26
+- require PHP 8.1+
+- use latest Database namespace
+- remove some magic
+
 2023.04.22
 - require Dotclear 2.26
 - require PHP >= 8.1
@@ -11,6 +17,7 @@ dev
 - phpstan code review (level 8)
 - use object for filters stacks (change registration for them)
 - add plugin Uninstaller feature
+- add code doc
 
 2023.04.09
 - require Dotclear 2.26

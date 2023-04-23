@@ -23,7 +23,7 @@ atgs, acronyms, abbreviations, definition, citation, link, etc...
   * admin permissions to set up plugin
   * content admin permissions to manage fitlers
   * Dotclear 2.26
-  * PHP >= 8.1
+  * PHP 8.1+
 
 ## USAGE
 
