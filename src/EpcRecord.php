@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use cursor;
 use dcCore;
-use dcRecord;
+use Dotclear\Database\{
+    Cursor,
+    MetaRecord
+};
 use Exception;
 
 /**
@@ -30,9 +32,9 @@ class EpcRecord
      * @param   array   $params         The query params
      * @param   bool    $count_only     Count only
      *
-     * @return  dcRecord    The records instance
+     * @return  MetaRecord    The records instance
      */
-    public static function getRecords(array $params, bool $count_only = false): dcRecord
+    public static function getRecords(array $params, bool $count_only = false): MetaRecord
     {
         if ($count_only) {
             $strReq = 'SELECT count(E.epc_id) ';
@@ -107,17 +109,17 @@ class EpcRecord
             $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
-        return new dcRecord(dcCore::app()->con->select($strReq));
+        return new MetaRecord(dcCore::app()->con->select($strReq));
     }
 
     /**
      * Add record.
      *
-     * @param   cursor  $cur    The cursor
+     * @param   Cursor  $cur    The Cursor
      *
      * @return  int     The record ID
      */
-    public static function addRecord(cursor $cur): int
+    public static function addRecord(Cursor $cur): int
     {
         dcCore::app()->con->writeLock(dcCore::app()->prefix . My::TABLE_NAME);
 
@@ -137,7 +139,7 @@ class EpcRecord
         }
         dcCore::app()->blog?->triggerBlog();
 
-        # --BEHAVIOR-- enhancePostContentAfterAddRecord : cursor
+        # --BEHAVIOR-- enhancePostContentAfterAddRecord : Cursor
         dcCore::app()->callBehavior('enhancePostContentAfterAddRecord', $cur);
 
         return (int) $cur->getField('epc_id');
@@ -147,9 +149,9 @@ class EpcRecord
      * Update a record.
      *
      * @param   int     $id     The record ID
-     * @param   cursor  $cur    The cursor
+     * @param   Cursor  $cur    The Cursor
      */
-    public static function updRecord(int $id, cursor $cur): void
+    public static function updRecord(int $id, Cursor $cur): void
     {
         if (empty($id)) {
             throw new Exception(__('No such record ID'));
@@ -160,7 +162,7 @@ class EpcRecord
         $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ");
         dcCore::app()->blog?->triggerBlog();
 
-        # --BEHAVIOR-- enhancePostContentAfterUpdRecord : cursor, int
+        # --BEHAVIOR-- enhancePostContentAfterUpdRecord : Cursor, int
         dcCore::app()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
     }
 
@@ -218,21 +220,21 @@ class EpcRecord
     }
 
     /**
-     * Open filter cursor.
+     * Open filter Cursor.
      *
-     * @return  cursor  The cursor
+     * @return  Cursor  The Cursor
      */
-    public static function openCursor(): cursor
+    public static function openCursor(): Cursor
     {
         return dcCore::app()->con->openCursor(dcCore::app()->prefix . My::TABLE_NAME);
     }
 
     /**
-     * Clean up a cursor.
+     * Clean up a Cursor.
      *
-     * @param   cursor  $cur    The cursor
+     * @param   Cursor  $cur    The Cursor
      */
-    private static function getCursor(cursor $cur): void
+    private static function getCursor(Cursor $cur): void
     {
         if ($cur->getField('epc_key') == '') {
             throw new Exception(__('No record key'));

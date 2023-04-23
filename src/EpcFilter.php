@@ -16,7 +16,7 @@ namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
 use dcCore;
-use dcRecord;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
 
@@ -30,8 +30,8 @@ abstract class EpcFilter
     /** @var    string  $id     The filter id */
     protected string $id = 'undefined';
 
-    /** @var    dcRecord    $records    The filter record if any */
-    private ?dcRecord $records = null;
+    /** @var    MetaRecord    $records    The filter record if any */
+    private ?MetaRecord $records = null;
 
     /** @var    int     $priority   The filter priority (property) */
     public readonly int $priority;
@@ -155,15 +155,15 @@ abstract class EpcFilter
      * Fitler records are usefull to store and retrieve
      * list of keyword / replacement etc...
      *
-     * @return  dcRecord    The filter record instance
+     * @return  MetaRecord    The filter record instance
      */
-    final public function records(): dcRecord
+    final public function records(): MetaRecord
     {
         if ($this->records === null && $this->has_list) {
             $this->records = EpcRecord::getRecords(['epc_filter' => $this->id()]);
         }
 
-        return $this->records ?? dcRecord::newFromArray([]);
+        return $this->records ?? MetaRecord::newFromArray([]);
     }
 
     /**

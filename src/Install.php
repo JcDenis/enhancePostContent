@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dbStruct;
 use dcCore;
 use dcNamespace;
 use dcNsProcess;
+use Dotclear\Database\Structure;
 use Exception;
 
 class Install extends dcNsProcess
@@ -39,15 +39,15 @@ class Install extends dcNsProcess
 
         try {
             // Database
-            $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
-            $s->{My::TABLE_NAME}
-                ->epc_id('bigint', 0, false)
-                ->blog_id('varchar', 32, false)
-                ->epc_type('varchar', 32, false, "'epc'")
-                ->epc_filter('varchar', 64, false)
-                ->epc_key('varchar', 255, false)
-                ->epc_value('text', 0, false)
-                ->epc_upddt('timestamp', 0, false, 'now()')
+            $s = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $s->__get(My::TABLE_NAME)
+                ->field('epc_id', 'bigint', 0, false)
+                ->field('blog_id', 'varchar', 32, false)
+                ->field('epc_type', 'varchar', 32, false, "'epc'")
+                ->field('epc_filter', 'varchar', 64, false)
+                ->field('epc_key', 'varchar', 255, false)
+                ->field('epc_value', 'text', 0, false)
+                ->field('epc_upddt', 'timestamp', 0, false, 'now()')
 
                 ->primary('pk_epc', 'epc_id')
                 ->index('idx_epc_blog_id', 'btree', 'blog_id')
@@ -55,7 +55,7 @@ class Install extends dcNsProcess
                 ->index('idx_epc_filter', 'btree', 'epc_filter')
                 ->index('idx_epc_key', 'btree', 'epc_key');
 
-            (new dbStruct(dcCore::app()->con, dcCore::app()->prefix))->synchronize($s);
+            (new Structure(dcCore::app()->con, dcCore::app()->prefix))->synchronize($s);
             $s = null;
 
             // Uppgrade
