@@ -17,17 +17,14 @@ namespace Dotclear\Plugin\enhancePostContent;
 use dcCore;
 
 /**
- * Plugin definitions
+ * This module definitions.
  */
 class My
 {
-    /** @var string Required php version */
-    public const PHP_MIN = '8.1';
-
-    /** @var string Plugin table name */
+    /** @var    string  Plugin table name */
     public const TABLE_NAME = 'epc';
 
-    /** @var array Distributed filters */
+    /** @var    array   Distributed filters */
     public const DEFAULT_FILTERS = [
         Filter\EpcFilterTag::class,
         Filter\EpcFilterSearch::class,
@@ -41,8 +38,11 @@ class My
         Filter\EpcFilterTwitter::class,
     ];
 
+    /** @var    string  This module required php version */
+    public const PHP_MIN = '8.1';
+
     /**
-     * This module id
+     * This module id.
      */
     public static function id(): string
     {
@@ -50,15 +50,25 @@ class My
     }
 
     /**
-     * This module name
+     * This module name.
      */
     public static function name(): string
     {
-        return __((string) dcCore::app()->plugins->moduleInfo(self::id(), 'name'));
+        $name = dcCore::app()->plugins->moduleInfo(self::id(), 'name');
+
+        return __(is_string($name) ? $name : self::id());
     }
 
     /**
-     * Check php version
+     * This module path.
+     */
+    public static function path(): string
+    {
+        return dirname(__DIR__);
+    }
+
+    /**
+     * Check this module PHP version compliant.
      */
     public static function phpCompliant(): bool
     {
