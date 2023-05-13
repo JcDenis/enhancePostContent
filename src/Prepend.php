@@ -45,7 +45,7 @@ class Prepend extends dcNsProcess
             'epccss',
             'epc.css',
             '^epc\.css',
-            function (string $args): void {
+            function (?string $args): void {
                 $css = [];
                 foreach (Epc::getFilters()->dump() as $filter) {
                     if ('' == $filter->class || '' == $filter->style) {
