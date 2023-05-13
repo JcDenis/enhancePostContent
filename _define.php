@@ -18,9 +18,9 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2023.04.23',
+    '2023.05.13',
     [
-        'requires'    => [
+        'requires' => [
             ['php', '8.1'],
             ['core', '2.26'],
         ],

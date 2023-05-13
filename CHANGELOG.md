@@ -2,6 +2,12 @@ dev
 - [ ] add auto-find post title in content
 - [ ] add auto-find categorie
 
+2023.05.13
+- require Dotclear 2.26
+- require PHP 8.1+
+- use define php_min
+- fix wrong call property
+
 2023.04.23
 - require Dotclear 2.26
 - require PHP 8.1+
