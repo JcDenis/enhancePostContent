@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use adminGenericFilterV2;
-use adminGenericListV2;
-use dcPager;
+use Dotclear\Core\Backend\Filter\Filters;
+use Dotclear\Core\Backend\Listing\{
+    Listing,
+    Pager
+};
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
@@ -24,16 +26,16 @@ use Dotclear\Helper\Html\Html;
 /**
  * Backend filters values list.
  */
-class BackendList extends adminGenericListV2
+class BackendList extends Listing
 {
     /**
      * Display list.
      *
-     * @param   adminGenericFilterV2    $filter     The filter
-     * @param   string                  $url        The pager URL
-     * @param   string                  $block      The enclose bloc
+     * @param   Filters     $filter     The filter
+     * @param   string      $url        The pager URL
+     * @param   string      $block      The enclose bloc
      */
-    public function display(adminGenericFilterV2 $filter, string $url, string $block): void
+    public function display(Filters $filter, string $url, string $block): void
     {
         if ($this->rs->isEmpty()) {
             echo '<p><strong>' . ($filter->show() ? __('No record matches the filter') : __('No record')) . '</strong></p>';
@@ -41,7 +43,7 @@ class BackendList extends adminGenericListV2
             return;
         }
 
-        $pager           = new dcPager($filter->value('page'), $this->rs_count, $filter->value('nb'), 10);
+        $pager           = new Pager($filter->value('page'), $this->rs_count, $filter->value('nb'), 10);
         $pager->base_url = $url;
 
         $epc_id = [];

@@ -93,7 +93,7 @@ class Widgets
         }
 
         # Page
-        if (!dcCore::app()->blog?->settings->get(My::id())->get('active')
+        if (!My::settings()->get('active')
             || !in_array(dcCore::app()->ctx?->__get('current_tpl'), ['post.html', 'page.html'])
         ) {
             return '';

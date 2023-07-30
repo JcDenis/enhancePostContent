@@ -1,6 +1,12 @@
 dev
 - [ ] add auto-find post title in content
 - [ ] add auto-find categorie
+- [ ] use SQL statements
+
+2023.07.30
+- require Dotclear 2.27
+- require PHP 8.1+
+- update to Dotclear 2.27-dev
 
 2023.05.13
 - require Dotclear 2.26

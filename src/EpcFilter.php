@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
-use dcCore;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
@@ -88,7 +87,7 @@ abstract class EpcFilter
         }
 
         // get blog settings
-        $s = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get($this->id), true);
+        $s = json_decode((string) My::settings()->get($this->id), true);
         if (empty($s)) {
             $s = [];
         }

@@ -68,7 +68,7 @@ class Epc
      */
     public static function blogAllowedTemplateValue(): array
     {
-        $list = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedtplvalues'), true);
+        $list = json_decode((string) My::settings()->get('allowedtplvalues'), true);
 
         return is_array($list) ? $list : self::defaultAllowedTemplateValue();
     }
@@ -130,7 +130,7 @@ class Epc
      */
     public static function blogAllowedTemplatePage(): array
     {
-        $list = json_decode((string) dcCore::app()->blog?->settings->get(My::id())->get('allowedpubpages'), true);
+        $list = json_decode((string) My::settings()->get('allowedpubpages'), true);
 
         return is_array($list) ? $list : self::defaultAllowedTemplatePage();
     }

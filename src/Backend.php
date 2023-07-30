@@ -15,56 +15,45 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
-use dcAdmin;
 use dcCore;
-use dcPage;
-use dcFavorites;
-use dcNsProcess;
 use dcSettings;
+use Dotclear\Core\Backend\Favorites;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Form\{
     Checkbox,
+    Div,
     Input,
     Label,
-    Para
+    Link,
+    Note,
+    Para,
+    Text
 };
 
-class Backend extends dcNsProcess
+class Backend extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN')
-            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog)
-            && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
-            ]), dcCore::app()->blog->id);
-
-        return static::$init;
+        return self::status(My::checkContext(My::BACKEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
-        // backend sidebar menu icon
-        dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
-            My::name(),
-            dcCore::app()->adminurl?->get('admin.plugin.' . My::id()),
-            dcPage::getPF(My::id() . '/icon.svg'),
-            preg_match('/' . preg_quote((string) dcCore::app()->adminurl?->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-            dcCore::app()->auth?->check(dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]), dcCore::app()->blog?->id)
-        );
+        My::addBackendMenuItem();
 
         dcCore::app()->addBehaviors([
             // backend user dashboard favorites icon
-            'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
+            'adminDashboardFavoritesV2' => function (Favorites $favs): void {
                 $favs->register(My::id(), [
                     'title'       => My::name(),
-                    'url'         => dcCore::app()->adminurl?->get('admin.plugin.' . My::id()),
-                    'small-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
-                    'large-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
-                    'permissions' => dcCore::app()->auth?->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
+                    'url'         => My::manageUrl(),
+                    'small-icon'  => My::icons(),
+                    'large-icon'  => My::icons(),
+                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
                 ]);
             },
             // backend user preference form
@@ -74,39 +63,64 @@ class Backend extends dcNsProcess
                 $allowedpubpages  = Epc::blogAllowedTemplatePage();
 
                 echo
-                '<div class="fieldset"><h4 id="epc_params">' . My::name() . '</h4>' .
-                '<div class="two-cols">' .
-                '<div class="col">' .
-                // active
-                (new Para())->items([
-                    (new Checkbox('epc_active', $active))->value(1),
-                    (new Label(__('Enable plugin'), Label::OUTSIDE_LABEL_AFTER))->for('epc_active')->class('classic'),
-                ])->render() .
-                '<p class="form-note">' .
-                __('This enable public widgets and contents filter.') .
-                '</p>' .
-                '<p><a href="' . dcCore::app()->adminurl?->get('admin.plugin.' . My::id()) . '">' .
-                __('Set content filters') . '</a></p>' .
-                '</div>' .
-                '<div class="col">' .
-                '<h5>' . __('Extra') . '</h5>' .
-                '<p>' . __('This is a special feature to edit list of allowed template values and public pages where this plugin works.') . '</p>' .
-                // allowedtplvalues
-                (new Para())->items([
-                    (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
-                    (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedtplvalues)),
-                ])->render() .
-                '<p class="form-note">' . __('Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".') . '</p>' .
-                // allowedpubpages
-                (new Para())->items([
-                    (new Label(__('Allowed public pages:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedpubpages'),
-                    (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedpubpages)),
-                ])->render() .
-                '<p class="form-note">' . __('Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".') . '</p>' .
-                '</div>' .
-                '</div>' .
-                '<br class="clear" />' .
-                '</div>';
+                (new Div())
+                    ->class('fieldset')
+                    ->items([
+                        (new Text('h4', My::name()))
+                            ->id('epc_params'),
+                        (new Div())
+                            ->class('two-cols')
+                            ->items([
+                                (new Div())
+                                    ->class('col')
+                                    ->items([
+                                        // active
+                                        (new Para())
+                                            ->items([
+                                                (new Checkbox('epc_active', $active))
+                                                    ->value(1),
+                                                (new Label(__('Enable plugin'), Label::OUTSIDE_LABEL_AFTER))
+                                                    ->for('epc_active')
+                                                    ->class('classic'),
+                                            ]),
+                                        (new Note())
+                                            ->class('form-note')
+                                            ->text(__('This enable public widgets and contents filter.')),
+                                        (new Para())
+                                            ->items([
+                                                (new Link())
+                                                    ->href(My::manageUrl())
+                                                    ->text(__('Set content filters')),
+                                            ]),
+                                    ]),
+                                (new Div())
+                                    ->class('col')
+                                    ->items([
+                                        (new Text('h5', __('Extra'))),
+                                        (new Para())
+                                            ->text(__('This is a special feature to edit list of allowed template values and public pages where this plugin works.')),
+                                        // allowedtplvalues
+                                        (new Para())->items([
+                                            (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
+                                            (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedtplvalues)),
+                                        ]),
+                                        (new Note())
+                                            ->class('form-note')
+                                            ->text(__('Use "readable_name1:template_value1;readable_name2:template_value2;" like "entry content:EntryContent;entry excerpt:EntryExcerpt;".')),
+                                        // allowedpubpages
+                                        (new Para())->items([
+                                            (new Label(__('Allowed public pages:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedpubpages'),
+                                            (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedpubpages)),
+                                        ]),
+                                        (new Note())
+                                            ->class('form-note')
+                                            ->text(__('Use "readable_name1:template_page1;readable_name2:template_page2;" like "post page:post.html;home page:home.html;".')),
+                                    ]),
+                            ]),
+                        (new Text('br'))
+                            ->class('clear'),
+                    ])
+                    ->render();
             },
             // backend user preference save
             'adminBeforeBlogSettingsUpdate' => function (dcSettings $blog_settings): void {

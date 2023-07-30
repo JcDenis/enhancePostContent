@@ -15,25 +15,19 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use dcCore;
-use dcNsProcess;
 use dcUtils;
+use Dotclear\Core\Process;
 
-class Frontend extends dcNsProcess
+class Frontend extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_RC_PATH');
-
-        return static::$init;
+        return self::status(My::checkContext(My::FRONTEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
-            return false;
-        }
-
-        if (!dcCore::app()->blog?->settings->get(My::id())->get('active')) {
+        if (!self::status() || !My::settings()->get('active')) {
             return false;
         }
 
