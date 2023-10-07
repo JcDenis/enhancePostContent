@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent\Filter;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
 use Dotclear\Plugin\widgets\WidgetsElement;
@@ -49,16 +49,16 @@ class EpcFilterTag extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        if (!dcCore::app()->plugins->moduleExists('tags')) {
+        if (!App::plugins()->moduleExists('tags')) {
             return;
         }
 
-        $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
+        $metas = App::meta()->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
             $args[0] = Epc::replaceString(
                 $metas->f('meta_id'),
-                sprintf($this->replace, dcCore::app()->blog?->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
+                sprintf($this->replace, App::blog()->url() . App::url()->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $args[0],
                 $this
             );
@@ -67,16 +67,16 @@ class EpcFilterTag extends EpcFilter
 
     public function widgetList(string $content, WidgetsElement $w, ArrayObject $list): void
     {
-        if (!dcCore::app()->plugins->moduleExists('tags')) {
+        if (!App::plugins()->moduleExists('tags')) {
             return;
         }
 
-        $metas = dcCore::app()->meta->getMetadata(['meta_type' => 'tag']);
+        $metas = App::meta()->getMetadata(['meta_type' => 'tag']);
 
         while ($metas->fetch()) {
             $list[] = Epc::matchString(
                 $metas->f('meta_id'),
-                sprintf($this->widget, dcCore::app()->blog?->url . dcCore::app()->url->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
+                sprintf($this->widget, App::blog()->url() . App::url()->getBase('tag') . '/' . $metas->f('meta_id'), '\\1'),
                 $content,
                 $this
             );

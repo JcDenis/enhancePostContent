@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Core\Backend\{
     Notices,
@@ -63,14 +63,14 @@ class Manage extends Process
         }
 
         // check errors
-        if (dcCore::app()->error->flag()) {
+        if (App::error()->flag()) {
             return true;
         }
 
         // open save to other plugins
         if (!empty($action)) {
             # --BEHAVIOR-- enhancePostContentAdminSave
-            dcCore::app()->callBehavior('enhancePostContentAdminSave');
+            App::behavior()->callBehavior('enhancePostContentAdminSave');
         }
 
         try {
@@ -89,7 +89,7 @@ class Manage extends Process
 
                 My::settings()->put($filter->id(), json_encode($f));
 
-                dcCore::app()->blog->triggerBlog();
+                App::blog()->triggerBlog();
 
                 Notices::addSuccessNotice(
                     __('Filter successfully updated.')
@@ -116,7 +116,7 @@ class Manage extends Process
                 } else {
                     EpcRecord::addRecord($cur);
 
-                    dcCore::app()->blog->triggerBlog();
+                    App::blog()->triggerBlog();
 
                     Notices::addSuccessNotice(
                         __('Filter successfully updated.')
@@ -138,7 +138,7 @@ class Manage extends Process
                     EpcRecord::delRecord((int) $id);
                 }
 
-                dcCore::app()->blog->triggerBlog();
+                App::blog()->triggerBlog();
 
                 Notices::addSuccessNotice(
                     __('Filter successfully updated.')
@@ -154,7 +154,7 @@ class Manage extends Process
                 }
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;
@@ -191,7 +191,7 @@ class Manage extends Process
                 $counter = EpcRecord::getRecords($params, true);
                 $pager   = new BackendList($list, (int) $counter->f(0));
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
 
             $header = $sorts->js(My::manageUrl(['part' => $filter->id()], '&') . '#record');
@@ -205,7 +205,7 @@ class Manage extends Process
             $header .
 
             # --BEHAVIOR-- enhancePostContentAdminHeader
-            dcCore::app()->callBehavior('enhancePostContentAdminHeader')
+            App::behavior()->callBehavior('enhancePostContentAdminHeader')
         );
 
         echo
@@ -220,7 +220,7 @@ class Manage extends Process
         echo
         (new Form('filters_menu'))
             ->method('get')
-            ->action(dcCore::app()->admin->getPageURL())
+            ->action(My::manageUrl())
             ->fields([
                 (new Para())
                     ->class('anchor-nav')
@@ -372,7 +372,7 @@ class Manage extends Process
             $pager->display(
                 $sorts,
                 My::manageUrl(array_merge($sorts->values(true), ['page' => '%s']), '#record'),
-                '<form action="' . dcCore::app()->admin->getPageURL() . '#record" method="post" id="form-records">' .
+                '<form action="' . App::backend()->getPageURL() . '#record" method="post" id="form-records">' .
                 '%s' .
 
                 '<div class="two-cols">' .
@@ -401,7 +401,7 @@ class Manage extends Process
                 ->items([
                     (new Form('form-create'))
                         ->method('post')
-                        ->action(dcCore::app()->admin->getPageURL() . '#record')
+                        ->action(App::backend()->getPageURL() . '#record')
                         ->fields([
                             (new Para())
                                 ->items([
@@ -436,7 +436,7 @@ class Manage extends Process
         }
 
         # --BEHAVIOR-- enhancePostContentAdminPage
-        dcCore::app()->callBehavior('enhancePostContentAdminPage');
+        App::behavior()->callBehavior('enhancePostContentAdminPage');
 
         Page::helpBlock('enhancePostContent');
         Page::closeModule();

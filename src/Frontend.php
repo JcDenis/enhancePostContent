@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
-use dcUtils;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
 class Frontend extends Process
@@ -31,16 +30,16 @@ class Frontend extends Process
             return false;
         }
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             // Add CSS URL to frontend header
             'publicHeadContent' => function (): void {
-                echo dcUtils::cssLoad(dcCore::app()->blog?->url . dcCore::app()->url->getURLFor('epccss'));
+                echo App::plugins()->cssLoad(App::blog()->url() . App::url()->getURLFor('epccss'));
             },
             // Filter template blocks content
             'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
                 foreach (Epc::getFilters()->dump() as $filter) {
                     // test context
-                    if (in_array((string) dcCore::app()->ctx?->__get('current_tpl'), $filter->page)
+                    if (in_array((string) App::frontend()->ctx->__get('current_tpl'), $filter->page)
                         && in_array($tag, $filter->template)
                         && $args[0] != '' //content
                         && empty($args['encode_xml'])

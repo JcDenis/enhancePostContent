@@ -1,3 +1,9 @@
+enhancePostContent 2023.10.08
+===========================================================
+* Require Dotclear 2.28
+* Require PHP 8.1
+* Upgrade to Dotclear 2.28
+
 enhancePostContent 2023.08.14
 ===========================================================
 * Require Dotclear 2.27

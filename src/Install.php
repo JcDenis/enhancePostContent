@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
-use dcNamespace;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
 use Exception;
@@ -35,7 +34,7 @@ class Install extends Process
 
         try {
             // Database
-            $s = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $s = new Structure(App::con(), App::con()->prefix());
             $s->__get(My::TABLE_NAME)
                 ->field('epc_id', 'bigint', 0, false)
                 ->field('blog_id', 'varchar', 32, false)
@@ -51,7 +50,7 @@ class Install extends Process
                 ->index('idx_epc_filter', 'btree', 'epc_filter')
                 ->index('idx_epc_key', 'btree', 'epc_key');
 
-            (new Structure(dcCore::app()->con, dcCore::app()->prefix))->synchronize($s);
+            (new Structure(App::con(), App::con()->prefix()))->synchronize($s);
             $s = null;
 
             // Uppgrade
@@ -59,10 +58,6 @@ class Install extends Process
 
             // Settings
             $s = My::settings();
-            if (is_null($s)) {
-                return false;
-            }
-
             $s->put('active', false, 'boolean', 'Enable enhancePostContent', false, true);
             $s->put('list_sortby', 'epc_key', 'string', 'Admin records list field order', false, true);
             $s->put('list_order', 'desc', 'string', 'Admin records list order', false, true);
@@ -86,7 +81,7 @@ class Install extends Process
 
             return true;
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
 
             return false;
         }
@@ -97,7 +92,7 @@ class Install extends Process
      */
     public static function growUp(): void
     {
-        $current = dcCore::app()->getVersion(My::id());
+        $current = App::version()->getVersion(My::id());
 
         if ($current && version_compare($current, '0.6.6', '<=')) {
             self::upTo00060607();
@@ -122,27 +117,27 @@ class Install extends Process
     private static function upTo00060607(): void
     {
         # Move old filters lists from settings to database
-        $record = dcCore::app()->con->select('SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
+        $record = App::con()->select('SELECT * FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
 
         while ($record->fetch()) {
             if (preg_match('#enhancePostContent_(.*?)List#', $record->f('setting_id'), $m)) {
                 $curlist = @unserialize($record->f('setting_value'));
                 if (is_array($curlist)) {
                     foreach ($curlist as $k => $v) {
-                        $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . My::TABLE_NAME);
-                        dcCore::app()->con->writeLock(dcCore::app()->prefix . My::TABLE_NAME);
+                        $cur = App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
+                        App::con()->writeLock(App::con()->prefix() . My::TABLE_NAME);
 
-                        $cur->setField('epc_id', (int) dcCore::app()->con->select('SELECT MAX(epc_id) FROM ' . dcCore::app()->prefix . My::TABLE_NAME . ' ')->f(0) + 1);
+                        $cur->setField('epc_id', (int) App::con()->select('SELECT MAX(epc_id) FROM ' . App::con()->prefix() . My::TABLE_NAME . ' ')->f(0) + 1);
                         $cur->setField('blog_id', $record->f('blog_id'));
                         $cur->setField('epc_filter', strtolower($m[1]));
                         $cur->setField('epc_key', $k);
                         $cur->setField('epc_value', $v);
 
                         $cur->insert();
-                        dcCore::app()->con->unlock();
+                        App::con()->unlock();
                     }
                 }
-                dcCore::app()->con->execute('DELETE FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . " WHERE setting_id='" . $record->f('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->f('blog_id') . "' ");
+                App::con()->execute('DELETE FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_id='" . $record->f('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->f('blog_id') . "' ");
             }
         }
     }
@@ -155,14 +150,14 @@ class Install extends Process
     private static function upTo20211006(): void
     {
         # Move old filter name to filter id
-        $record = dcCore::app()->con->select('SELECT epc_id, epc_filter FROM ' . dcCore::app()->prefix . My::TABLE_NAME);
+        $record = App::con()->select('SELECT epc_id, epc_filter FROM ' . App::con()->prefix() . My::TABLE_NAME);
         while ($record->fetch()) {
-            $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . My::TABLE_NAME);
+            $cur = App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
 
             $cur->setField('epc_filter', strtolower($record->f('epc_filter')));
 
             $cur->update('WHERE epc_id = ' . $record->f('epc_id') . ' ');
-            dcCore::app()->blog?->triggerBlog();
+            App::blog()->triggerBlog();
         }
     }
 
@@ -185,15 +180,15 @@ class Install extends Process
         );
 
         // get all enhancePostContent settings
-        $record = dcCore::app()->con->select(
-            'SELECT * FROM ' . dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME . ' ' .
+        $record = App::con()->select(
+            'SELECT * FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . ' ' .
             "WHERE setting_ns = 'enhancePostContent' "
         );
 
         // update settings id, ns, value
         while ($record->fetch()) {
             if (preg_match('/^enhancePostContent_(.*?)$/', $record->f('setting_id'), $match)) {
-                $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME);
+                $cur = App::blogWorkspace()->openBlogWorkspaceCursor();
                 $cur->setField('setting_id', $match[1]);
                 $cur->setField('setting_ns', My::id());
 

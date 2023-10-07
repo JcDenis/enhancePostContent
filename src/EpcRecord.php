@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Database\{
     Cursor,
     MetaRecord
@@ -48,19 +48,19 @@ class EpcRecord
             'E.epc_filter, E.epc_key, E.epc_value ';
         }
 
-        $strReq .= 'FROM ' . dcCore::app()->prefix . My::TABLE_NAME . ' E ';
+        $strReq .= 'FROM ' . App::con()->prefix() . My::TABLE_NAME . ' E ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE E.blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ";
+        $strReq .= "WHERE E.blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' ";
 
         if (isset($params['epc_type'])) {
             if (is_array($params['epc_type']) && !empty($params['epc_type'])) {
-                $strReq .= 'AND E.epc_type ' . dcCore::app()->con->in($params['epc_type']);
+                $strReq .= 'AND E.epc_type ' . App::con()->in($params['epc_type']);
             } elseif ($params['epc_type'] != '') {
-                $strReq .= "AND E.epc_type = '" . dcCore::app()->con->escapeStr((string) $params['epc_type']) . "' ";
+                $strReq .= "AND E.epc_type = '" . App::con()->escapeStr((string) $params['epc_type']) . "' ";
             }
         } else {
             $strReq .= "AND E.epc_type = 'epc' ";
@@ -68,9 +68,9 @@ class EpcRecord
 
         if (isset($params['epc_filter'])) {
             if (is_array($params['epc_filter']) && !empty($params['epc_filter'])) {
-                $strReq .= 'AND E.epc_filter ' . dcCore::app()->con->in($params['epc_filter']);
+                $strReq .= 'AND E.epc_filter ' . App::con()->in($params['epc_filter']);
             } elseif ($params['epc_filter'] != '') {
-                $strReq .= "AND E.epc_filter = '" . dcCore::app()->con->escapeStr((string) $params['epc_filter']) . "' ";
+                $strReq .= "AND E.epc_filter = '" . App::con()->escapeStr((string) $params['epc_filter']) . "' ";
             }
         }
 
@@ -80,16 +80,16 @@ class EpcRecord
             } else {
                 $params['epc_id'] = [(int) $params['epc_id']];
             }
-            $strReq .= 'AND E.epc_id ' . dcCore::app()->con->in($params['epc_id']);
+            $strReq .= 'AND E.epc_id ' . App::con()->in($params['epc_id']);
         } elseif (isset($params['not_id']) && is_numeric($params['not_id'])) {
             $strReq .= "AND NOT E.epc_id = '" . $params['not_id'] . "' ";
         }
 
         if (isset($params['epc_key'])) {
             if (is_array($params['epc_key']) && !empty($params['epc_key'])) {
-                $strReq .= 'AND E.epc_key ' . dcCore::app()->con->in($params['epc_key']);
+                $strReq .= 'AND E.epc_key ' . App::con()->in($params['epc_key']);
             } elseif ($params['epc_key'] != '') {
-                $strReq .= "AND E.epc_key = '" . dcCore::app()->con->escapeStr((string) $params['epc_key']) . "' ";
+                $strReq .= "AND E.epc_key = '" . App::con()->escapeStr((string) $params['epc_key']) . "' ";
             }
         }
 
@@ -99,17 +99,17 @@ class EpcRecord
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . dcCore::app()->con->escapeStr((string) $params['order']) . ' ';
+                $strReq .= 'ORDER BY ' . App::con()->escapeStr((string) $params['order']) . ' ';
             } else {
                 $strReq .= 'ORDER BY E.epc_key ASC ';
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $strReq .= dcCore::app()->con->limit($params['limit']);
+            $strReq .= App::con()->limit($params['limit']);
         }
 
-        return new MetaRecord(dcCore::app()->con->select($strReq));
+        return new MetaRecord(App::con()->select($strReq));
     }
 
     /**
@@ -121,26 +121,26 @@ class EpcRecord
      */
     public static function addRecord(Cursor $cur): int
     {
-        dcCore::app()->con->writeLock(dcCore::app()->prefix . My::TABLE_NAME);
+        App::con()->writeLock(App::con()->prefix() . My::TABLE_NAME);
 
         try {
             $cur->setField('epc_id', self::getNextId());
-            $cur->setField('blog_id', (string) dcCore::app()->blog?->id);
+            $cur->setField('blog_id', App::blog()->id());
             $cur->setField('epc_upddt', date('Y-m-d H:i:s'));
 
             self::getCursor($cur);
 
             $cur->insert();
-            dcCore::app()->con->unlock();
+            App::con()->unlock();
         } catch (Exception $e) {
-            dcCore::app()->con->unlock();
+            App::con()->unlock();
 
             throw $e;
         }
-        dcCore::app()->blog?->triggerBlog();
+        App::blog()->triggerBlog();
 
         # --BEHAVIOR-- enhancePostContentAfterAddRecord : Cursor
-        dcCore::app()->callBehavior('enhancePostContentAfterAddRecord', $cur);
+        App::behavior()->callBehavior('enhancePostContentAfterAddRecord', $cur);
 
         return (int) $cur->getField('epc_id');
     }
@@ -159,11 +159,11 @@ class EpcRecord
 
         $cur->setField('epc_upddt', date('Y-m-d H:i:s'));
 
-        $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' ");
-        dcCore::app()->blog?->triggerBlog();
+        $cur->update('WHERE epc_id = ' . $id . " AND blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' ");
+        App::blog()->triggerBlog();
 
         # --BEHAVIOR-- enhancePostContentAfterUpdRecord : Cursor, int
-        dcCore::app()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
+        App::behavior()->callBehavior('enhancePostContentAfterUpdRecord', $cur, $id);
     }
 
     /**
@@ -196,15 +196,15 @@ class EpcRecord
         }
 
         # --BEHAVIOR-- enhancePostContentBeforeDelRecord, int
-        dcCore::app()->callBehavior('enhancePostContentbeforeDelRecord', $id);
+        App::behavior()->callBehavior('enhancePostContentbeforeDelRecord', $id);
 
-        dcCore::app()->con->execute(
-            'DELETE FROM ' . dcCore::app()->prefix . My::TABLE_NAME . ' ' .
+        App::con()->execute(
+            'DELETE FROM ' . App::con()->prefix() . My::TABLE_NAME . ' ' .
             'WHERE epc_id = ' . $id . ' ' .
-            "AND blog_id = '" . dcCore::app()->con->escapeStr((string) dcCore::app()->blog?->id) . "' "
+            "AND blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' "
         );
 
-        dcCore::app()->blog?->triggerBlog();
+        App::blog()->triggerBlog();
     }
 
     /**
@@ -214,8 +214,8 @@ class EpcRecord
      */
     private static function getNextId(): int
     {
-        return (int) dcCore::app()->con->select(
-            'SELECT MAX(epc_id) FROM ' . dcCore::app()->prefix . My::TABLE_NAME . ' '
+        return (int) App::con()->select(
+            'SELECT MAX(epc_id) FROM ' . App::con()->prefix() . My::TABLE_NAME . ' '
         )->f(0) + 1;
     }
 
@@ -226,7 +226,7 @@ class EpcRecord
      */
     public static function openCursor(): Cursor
     {
-        return dcCore::app()->con->openCursor(dcCore::app()->prefix . My::TABLE_NAME);
+        return App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
     }
 
     /**

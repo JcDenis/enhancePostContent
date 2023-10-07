@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Module\MyPlugin;
 
 /**
@@ -42,8 +42,8 @@ class My extends MyPlugin
     public static function checkCustomContext(int $context): ?bool
     {
         return !in_array($context, [My::BACKEND, My::MANAGE, My::MENU]) ? null :
-            dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
-            ]), dcCore::app()->blog->id);
+            App::auth()->check(App::auth()->makePermissions([
+                App::auth()::PERMISSION_CONTENT_ADMIN,
+            ]), App::blog()->id());
     }
 }

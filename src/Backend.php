@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
-use dcCore;
-use dcSettings;
+use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
+use Dotclear\Core\BlogSettings;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Form\{
     Checkbox,
@@ -45,7 +45,7 @@ class Backend extends Process
 
         My::addBackendMenuItem();
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             // backend user dashboard favorites icon
             'adminDashboardFavoritesV2' => function (Favorites $favs): void {
                 $favs->register(My::id(), [
@@ -53,11 +53,11 @@ class Backend extends Process
                     'url'         => My::manageUrl(),
                     'small-icon'  => My::icons(),
                     'large-icon'  => My::icons(),
-                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
+                    'permissions' => App::auth()->makePermissions([App::auth()::PERMISSION_CONTENT_ADMIN]),
                 ]);
             },
             // backend user preference form
-            'adminBlogPreferencesFormV2' => function (dcSettings $blog_settings): void {
+            'adminBlogPreferencesFormV2' => function (BlogSettings $blog_settings): void {
                 $active           = (bool) $blog_settings->get(My::id())->get('active');
                 $allowedtplvalues = Epc::blogAllowedTemplateValue();
                 $allowedpubpages  = Epc::blogAllowedTemplatePage();
@@ -123,7 +123,7 @@ class Backend extends Process
                     ->render();
             },
             // backend user preference save
-            'adminBeforeBlogSettingsUpdate' => function (dcSettings $blog_settings): void {
+            'adminBeforeBlogSettingsUpdate' => function (BlogSettings $blog_settings): void {
                 $active           = !empty($_POST['epc_active']);
                 $allowedtplvalues = Epc::decodeMulti($_POST['epc_allowedtplvalues']);
                 $allowedpubpages  = Epc::decodeMulti($_POST['epc_allowedpubpages']);

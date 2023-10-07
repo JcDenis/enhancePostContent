@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent\Filter;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Plugin\enhancePostContent\Epc;
 use Dotclear\Plugin\enhancePostContent\EpcFilter;
 
@@ -48,11 +48,11 @@ class EpcFilterSearch extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        if (empty(dcCore::app()->public->search)) {
+        if (empty(App::frontend()->search)) {
             return;
         }
 
-        $searchs = explode(' ', dcCore::app()->public->search);
+        $searchs = explode(' ', App::frontend()->search);
 
         foreach ($searchs as $k => $v) {
             $args[0] = Epc::replaceString(

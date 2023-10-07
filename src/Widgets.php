@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsStack;
 use Dotclear\Plugin\widgets\WidgetsElement;
@@ -94,7 +94,7 @@ class Widgets
 
         # Page
         if (!My::settings()->get('active')
-            || !in_array(dcCore::app()->ctx?->__get('current_tpl'), ['post.html', 'page.html'])
+            || !in_array(App::frontend()->ctx->__get('current_tpl'), ['post.html', 'page.html'])
         ) {
             return '';
         }

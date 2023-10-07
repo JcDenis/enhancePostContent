@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 
@@ -32,14 +32,14 @@ class Prepend extends Process
         }
 
         // register epc filters
-        dcCore::app()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
+        app::behavior()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
             foreach (My::DEFAULT_FILTERS as $class) {
                 $stack->add(new $class());
             }
         });
 
         // register epc filters frontend css
-        dcCore::app()->url->register(
+        App::url()->register(
             'epccss',
             'epc.css',
             '^epc\.css',

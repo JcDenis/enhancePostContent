@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
@@ -56,7 +56,7 @@ class Epc
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedTplValues : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedTplValues', $list);
+        App::behavior()->callBehavior('enhancePostContentAllowedTplValues', $list);
 
         return iterator_to_array($list, true);
     }
@@ -96,7 +96,7 @@ class Epc
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedWidgetValues : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedWidgetValues', $list);
+        App::behavior()->callBehavior('enhancePostContentAllowedWidgetValues', $list);
 
         return iterator_to_array($list, true);
     }
@@ -118,7 +118,7 @@ class Epc
         ]);
 
         # --BEHAVIOR-- enhancePostContentAllowedPubPages : ArrayObject
-        dcCore::app()->callBehavior('enhancePostContentAllowedPubPages', $list);
+        App::behavior()->callBehavior('enhancePostContentAllowedPubPages', $list);
 
         return iterator_to_array($list, true);
     }
@@ -149,9 +149,9 @@ class Epc
 
             try {
                 # --BEHAVIOR-- enhancePostContentFilters : EpcFilters
-                dcCore::app()->callBehavior('enhancePostContentFilters', $filters);
+                App::behavior()->callBehavior('enhancePostContentFilters', $filters);
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
 
             self::$filters = $filters->sort();
@@ -375,13 +375,13 @@ class Epc
      */
     public static function widgetContentEntryExcerpt(?WidgetsElement $widget = null): string
     {
-        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
+        if (!App::frontend()->ctx->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
-            $content .= dcCore::app()->ctx->__get('posts')->f('post_excerpt');
+        while (App::frontend()->ctx->__get('posts')?->fetch()) {
+            $content .= App::frontend()->__get('posts')->f('post_excerpt');
         }
 
         return $content;
@@ -396,13 +396,13 @@ class Epc
      */
     public static function widgetContentEntryContent(?WidgetsElement $widget = null): string
     {
-        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
+        if (!App::frontend()->ctx->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
-            $content .= dcCore::app()->ctx->__get('posts')->f('post_content');
+        while (App::frontend()->ctx->__get('posts')?->fetch()) {
+            $content .= dApp::frontend()->ctx->__get('posts')->f('post_content');
         }
 
         return $content;
@@ -417,13 +417,13 @@ class Epc
      */
     public static function widgetContentCommentContent(?WidgetsElement $widget = null): string
     {
-        if (is_null(dcCore::app()->ctx) || !dcCore::app()->ctx->exists('posts')) {
+        if (!App::frontend()->ctx->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (dcCore::app()->ctx->__get('posts')?->fetch()) {
-            $comments = dcCore::app()->blog?->getComments(['post_id' => dcCore::app()->ctx->__get('posts')->f('post_id')]);
+        while (App::frontend()->ctx->__get('posts')?->fetch()) {
+            $comments = App::blog()->getComments(['post_id' => App::frontend()->ctx->__get('posts')->f('post_id')]);
             while ($comments?->fetch()) {
                 $content .= $comments->__call('getContent', []);
             }

@@ -10,9 +10,8 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+
+use Dotclear\App;
 
 $this->registerModule(
     'Enhance post content',
@@ -22,10 +21,10 @@ $this->registerModule(
     [
         'requires' => [
             ['php', '8.1'],
-            ['core', '2.27'],
+            ['core', '2.28'],
         ],
-        'permissions' => dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+        'permissions' => App::auth()->makePermissions([
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]),
         'settings' => [
             'blog' => '#params.epc_params',
