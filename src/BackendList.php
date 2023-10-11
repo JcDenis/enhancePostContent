@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -23,8 +13,14 @@ use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
 
+
 /**
- * Backend filters values list.
+ * @brief   enhancePostContent filters list class.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class BackendList extends Listing
 {
@@ -43,7 +39,7 @@ class BackendList extends Listing
             return;
         }
 
-        $pager           = new Pager($filter->value('page'), $this->rs_count, $filter->value('nb'), 10);
+        $pager           = new Pager($filter->value('page'), (int) $this->rs_count, $filter->value('nb'), 10);
         $pager->base_url = $url;
 
         $epc_id = [];
@@ -71,7 +67,7 @@ class BackendList extends Listing
         echo $pager->getLinks() . $blocks[0];
 
         while ($this->rs->fetch()) {
-            $this->line(isset($epc_id[$this->rs->epc_id]));
+            $this->line(isset($epc_id[$this->rs->f('epc_id')]));
         }
 
         echo $blocks[1] . $blocks[2] . $pager->getLinks();
@@ -85,14 +81,14 @@ class BackendList extends Listing
     private function line(bool $checked): void
     {
         $cols = [
-            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->epc_id)->render() . '</td>',
-            'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->epc_key) . '</td>',
-            'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->epc_value) . '</td>',
-            'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->epc_upddt) . '</td>',
+            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->f('epc_id'))->render() . '</td>',
+            'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->f('epc_key')) . '</td>',
+            'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->f('epc_value')) . '</td>',
+            'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->f('epc_upddt')) . '</td>',
         ];
 
         echo
-        '<tr class="line" id="p' . $this->rs->epc_id . '">' .
+        '<tr class="line" id="p' . $this->rs->f('epc_id') . '">' .
         implode($cols) .
         '</tr>';
     }

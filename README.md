@@ -32,10 +32,6 @@ you should also add widgets.
 
 ## LINKS
 
-* License : [GNU GPL v2](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html)
-* Source & contribution : [Gitea Page](https://git.dotclear.watch/JcDenis/enhancePostContent) or [GitHub Page](https://github.com/JcDenis/enhancePostContent)
-* Packages & details: [Gitea Page](https://git.dotclear.watch/JcDenis/enhancePostContent/releases) or [Dotaddict Page](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
-
 * [License](https://git.dotclear.watch/JcDenis/enhancePostContent/src/branch/master/LICENSE)
 * [Packages & details](https://git.dotclear.watch/JcDenis/enhancePostContent/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/enhancePostContent))
 * [Sources & contributions](https://git.dotclear.watch/JcDenis/enhancePostContent) (or on [GitHub](https://github.com/JcDenis/enhancePostContent))

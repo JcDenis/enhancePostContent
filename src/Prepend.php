@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -18,6 +8,14 @@ use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 
+/**
+ * @brief   enhancePostContent prepend class.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Prepend extends Process
 {
     public static function init(): bool
@@ -33,7 +31,7 @@ class Prepend extends Process
 
         // register epc filters
         app::behavior()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
-            foreach (My::DEFAULT_FILTERS as $class) {
+            foreach (Epc::DEFAULT_FILTERS as $class) {
                 $stack->add(new $class());
             }
         });

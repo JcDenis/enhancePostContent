@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -20,9 +10,14 @@ use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
 
 /**
- * Filter abstract class.
+ * @brief   enhancePostContent abstract filter class.
+ * @ingroup enhancePostContent
  *
  * All filter must extends this class.
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 abstract class EpcFilter
 {
@@ -44,10 +39,10 @@ abstract class EpcFilter
     /** @var    bool    $has_list   Filter has list of records (property) */
     public readonly bool $has_list;
 
-    /** @var    array  $ignore     The filter disabled html tags (property) */
+    /** @var    array<int,string>   $ignore     The filter disabled html tags (property) */
     public readonly array $ignore;
 
-    /** @var    array  $class  The css class that apply to filter (property) */
+    /** @var    array<int,string>  $class  The css class that apply to filter (property) */
     public readonly array $class;
 
     /** @var    string  $replace    The filter replacement bloc in content (property) */
@@ -65,16 +60,16 @@ abstract class EpcFilter
     /** @var    bool    $plural     The replacement limit per filter (settings) */
     public readonly int $limit;
 
-    /** @var    array  $style   The style applied to filter class (settings) */
+    /** @var    array<int,string>   $style   The style applied to filter class (settings) */
     public readonly array $style;
 
-    /** @var    array  $notag   The filter disabled html tags (settings) */
+    /** @var    array<int,string>   $notag   The filter disabled html tags (settings) */
     public readonly array $notag;
 
-    /** @var    array  $template    The extra template value to scan (settings) */
+    /** @var    array<int,string>   $template    The extra template value to scan (settings) */
     public readonly array $template;
 
-    /** @var    array  $page    The extra frontend pages to scan (settings) */
+    /** @var    array<int,string>   $page   The extra frontend pages to scan (settings) */
     public readonly array $page;
 
     /**

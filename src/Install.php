@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -19,6 +9,14 @@ use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
 use Exception;
 
+/**
+ * @brief   enhancePostContent installation class.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Install extends Process
 {
     public static function init(): bool
@@ -35,7 +33,7 @@ class Install extends Process
         try {
             // Database
             $s = new Structure(App::con(), App::con()->prefix());
-            $s->__get(My::TABLE_NAME)
+            $s->__get(Epc::TABLE_NAME)
                 ->field('epc_id', 'bigint', 0, false)
                 ->field('blog_id', 'varchar', 32, false)
                 ->field('epc_type', 'varchar', 32, false, "'epc'")
@@ -124,10 +122,10 @@ class Install extends Process
                 $curlist = @unserialize($record->f('setting_value'));
                 if (is_array($curlist)) {
                     foreach ($curlist as $k => $v) {
-                        $cur = App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
-                        App::con()->writeLock(App::con()->prefix() . My::TABLE_NAME);
+                        $cur = App::con()->openCursor(App::con()->prefix() . Epc::TABLE_NAME);
+                        App::con()->writeLock(App::con()->prefix() . Epc::TABLE_NAME);
 
-                        $cur->setField('epc_id', (int) App::con()->select('SELECT MAX(epc_id) FROM ' . App::con()->prefix() . My::TABLE_NAME . ' ')->f(0) + 1);
+                        $cur->setField('epc_id', (int) App::con()->select('SELECT MAX(epc_id) FROM ' . App::con()->prefix() . Epc::TABLE_NAME . ' ')->f(0) + 1);
                         $cur->setField('blog_id', $record->f('blog_id'));
                         $cur->setField('epc_filter', strtolower($m[1]));
                         $cur->setField('epc_key', $k);
@@ -150,9 +148,9 @@ class Install extends Process
     private static function upTo20211006(): void
     {
         # Move old filter name to filter id
-        $record = App::con()->select('SELECT epc_id, epc_filter FROM ' . App::con()->prefix() . My::TABLE_NAME);
+        $record = App::con()->select('SELECT epc_id, epc_filter FROM ' . App::con()->prefix() . Epc::TABLE_NAME);
         while ($record->fetch()) {
-            $cur = App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
+            $cur = App::con()->openCursor(App::con()->prefix() . Epc::TABLE_NAME);
 
             $cur->setField('epc_filter', strtolower($record->f('epc_filter')));
 

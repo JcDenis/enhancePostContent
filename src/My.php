@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -18,32 +8,23 @@ use Dotclear\App;
 use Dotclear\Module\MyPlugin;
 
 /**
- * This module definitions.
+ * @brief   enhancePostContent My helper.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class My extends MyPlugin
 {
-    /** @var    string  Plugin table name */
-    public const TABLE_NAME = 'epc';
-
-    /** @var    array   Distributed filters */
-    public const DEFAULT_FILTERS = [
-        Filter\EpcFilterTag::class,
-        Filter\EpcFilterSearch::class,
-        Filter\EpcFilterAcronym::class,
-        Filter\EpcFilterAbbreviation::class,
-        Filter\EpcFilterDefinition::class,
-        Filter\EpcFilterCitation::class,
-        Filter\EpcFilterLink::class,
-        Filter\EpcFilterReplace::class,
-        Filter\EpcFilterUpdate::class,
-        Filter\EpcFilterTwitter::class,
-    ];
-
     public static function checkCustomContext(int $context): ?bool
     {
-        return !in_array($context, [My::BACKEND, My::MANAGE, My::MENU]) ? null :
-            App::auth()->check(App::auth()->makePermissions([
-                App::auth()::PERMISSION_CONTENT_ADMIN,
-            ]), App::blog()->id());
-    }
-}
+        return match ($context) {
+            // Limit main backend featrues to content admin
+            self::BACKEND, self::MANAGE, self::MENU => 
+                App::auth()->check(App::auth()->makePermissions([
+                    App::auth()::PERMISSION_CONTENT_ADMIN,
+                ]), App::blog()->id()),
+
+            default => null,
+  

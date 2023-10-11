@@ -31,15 +31,60 @@ __('search results page');
 __('atom feeds');
 __('RSS feeds');
 
+/**
+ * @brief   enhancePostContent main class.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Epc
 {
-    /** @var    string  The temporary pattern to tag words to replace */
+    /**
+     * Plugin table name.
+     *
+     * @var     string  TABLE_NAME
+     */
+    public const TABLE_NAME = 'epc';
+
+    /**
+     * Distributed filters.
+     *
+     * @var     array<int,string>   DEFAULT_FILTERS
+     */
+    public const DEFAULT_FILTERS = [
+        Filter\EpcFilterTag::class,
+        Filter\EpcFilterSearch::class,
+        Filter\EpcFilterAcronym::class,
+        Filter\EpcFilterAbbreviation::class,
+        Filter\EpcFilterDefinition::class,
+        Filter\EpcFilterCitation::class,
+        Filter\EpcFilterLink::class,
+        Filter\EpcFilterReplace::class,
+        Filter\EpcFilterUpdate::class,
+        Filter\EpcFilterTwitter::class,
+    ];
+
+    /**
+     * The temporary pattern to tag words to replace.
+     *
+     * @var     string  FLAGGER
+     */
     public const FLAGGER = 'ççççç%sççççç';
 
-    /** @var    EpcFilters  $filters    THe filters stack */
+    /**
+     * The filters stack.
+     *
+     * @var     EpcFilters  $filters
+     */
     private static EpcFilters $filters;
 
-    /** @var    array<string,int>   $limits     The replacment limit per filtre */
+    /**
+     * The replacment limit per filtre.
+     *
+     * @var     array<string,int>   $limits
+     */
     private static array $limits = [];
 
     /**
@@ -76,7 +121,7 @@ class Epc
     /**
      * Get list of allowed templates name->[tag,callback] to list on epc widgets.
      *
-     * @return  array    The templates name->[id,cb] values
+     * @return  array   The templates name->[id,cb] values
      */
     public static function widgetAllowedTemplateValue(): array
     {
@@ -402,7 +447,7 @@ class Epc
 
         $content = '';
         while (App::frontend()->ctx->__get('posts')?->fetch()) {
-            $content .= dApp::frontend()->ctx->__get('posts')->f('post_content');
+            $content .= App::frontend()->ctx->__get('posts')->f('post_content');
         }
 
         return $content;
@@ -422,9 +467,9 @@ class Epc
         }
 
         $content = '';
-        while (App::frontend()->ctx->__get('posts')?->fetch()) {
+        while (App::frontend()->ctx->__get('posts')->fetch()) {
             $comments = App::blog()->getComments(['post_id' => App::frontend()->ctx->__get('posts')->f('post_id')]);
-            while ($comments?->fetch()) {
+            while ($comments->fetch()) {
                 $content .= $comments->__call('getContent', []);
             }
         }

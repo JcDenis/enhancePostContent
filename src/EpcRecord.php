@@ -1,15 +1,5 @@
 <?php
-/**
- * @brief enhancePostContent, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
@@ -22,7 +12,12 @@ use Dotclear\Database\{
 use Exception;
 
 /**
- * Filter records.
+ * @brief   enhancePostContent filters records.
+ * @ingroup enhancePostContent
+ *
+ * @author      Jean-Christian Denis
+ * @copyright   Jean-Christian Denis
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class EpcRecord
 {
@@ -48,7 +43,7 @@ class EpcRecord
             'E.epc_filter, E.epc_key, E.epc_value ';
         }
 
-        $strReq .= 'FROM ' . App::con()->prefix() . My::TABLE_NAME . ' E ';
+        $strReq .= 'FROM ' . App::con()->prefix() . Epc::TABLE_NAME . ' E ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
@@ -121,7 +116,7 @@ class EpcRecord
      */
     public static function addRecord(Cursor $cur): int
     {
-        App::con()->writeLock(App::con()->prefix() . My::TABLE_NAME);
+        App::con()->writeLock(App::con()->prefix() . Epc::TABLE_NAME);
 
         try {
             $cur->setField('epc_id', self::getNextId());
@@ -199,7 +194,7 @@ class EpcRecord
         App::behavior()->callBehavior('enhancePostContentbeforeDelRecord', $id);
 
         App::con()->execute(
-            'DELETE FROM ' . App::con()->prefix() . My::TABLE_NAME . ' ' .
+            'DELETE FROM ' . App::con()->prefix() . Epc::TABLE_NAME . ' ' .
             'WHERE epc_id = ' . $id . ' ' .
             "AND blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' "
         );
@@ -215,7 +210,7 @@ class EpcRecord
     private static function getNextId(): int
     {
         return (int) App::con()->select(
-            'SELECT MAX(epc_id) FROM ' . App::con()->prefix() . My::TABLE_NAME . ' '
+            'SELECT MAX(epc_id) FROM ' . App::con()->prefix() . Epc::TABLE_NAME . ' '
         )->f(0) + 1;
     }
 
@@ -226,7 +221,7 @@ class EpcRecord
      */
     public static function openCursor(): Cursor
     {
-        return App::con()->openCursor(App::con()->prefix() . My::TABLE_NAME);
+        return App::con()->openCursor(App::con()->prefix() . Epc::TABLE_NAME);
     }
 
     /**
