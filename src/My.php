@@ -21,10 +21,11 @@ class My extends MyPlugin
     {
         return match ($context) {
             // Limit main backend featrues to content admin
-            self::BACKEND, self::MANAGE, self::MENU => 
-                App::auth()->check(App::auth()->makePermissions([
-                    App::auth()::PERMISSION_CONTENT_ADMIN,
-                ]), App::blog()->id()),
+            self::BACKEND, self::MANAGE, self::MENU => App::auth()->check(App::auth()->makePermissions([
+                App::auth()::PERMISSION_CONTENT_ADMIN,
+            ]), App::blog()->id()),
 
             default => null,
-  
+        };
+    }
+}

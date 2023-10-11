@@ -13,7 +13,6 @@ use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
 
-
 /**
  * @brief   enhancePostContent filters list class.
  * @ingroup enhancePostContent
