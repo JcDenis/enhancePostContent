@@ -37,7 +37,7 @@ class Frontend extends Process
             'publicBeforeContentFilterV2' => function (string $tag, array $args): void {
                 foreach (Epc::getFilters()->dump() as $filter) {
                     // test context
-                    if (in_array((string) App::frontend()->ctx->__get('current_tpl'), $filter->page)
+                    if (in_array((string) App::frontend()->context()->__get('current_tpl'), $filter->page)
                         && in_array($tag, $filter->template)
                         && $args[0] != '' //content
                         && empty($args['encode_xml'])

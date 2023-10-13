@@ -87,7 +87,7 @@ class Widgets
 
         # Page
         if (!My::settings()->get('active')
-            || !in_array(App::frontend()->ctx->__get('current_tpl'), ['post.html', 'page.html'])
+            || !in_array(App::frontend()->context()->__get('current_tpl'), ['post.html', 'page.html'])
         ) {
             return '';
         }

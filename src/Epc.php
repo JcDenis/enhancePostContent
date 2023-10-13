@@ -420,12 +420,12 @@ class Epc
      */
     public static function widgetContentEntryExcerpt(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->ctx->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (App::frontend()->ctx->__get('posts')?->fetch()) {
+        while (App::frontend()->context()->__get('posts')?->fetch()) {
             $content .= App::frontend()->__get('posts')->f('post_excerpt');
         }
 
@@ -441,13 +441,13 @@ class Epc
      */
     public static function widgetContentEntryContent(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->ctx->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (App::frontend()->ctx->__get('posts')?->fetch()) {
-            $content .= App::frontend()->ctx->__get('posts')->f('post_content');
+        while (App::frontend()->context()->__get('posts')?->fetch()) {
+            $content .= App::frontend()->context()->__get('posts')->f('post_content');
         }
 
         return $content;
@@ -462,13 +462,13 @@ class Epc
      */
     public static function widgetContentCommentContent(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->ctx->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts')) {
             return '';
         }
 
         $content = '';
-        while (App::frontend()->ctx->__get('posts')->fetch()) {
-            $comments = App::blog()->getComments(['post_id' => App::frontend()->ctx->__get('posts')->f('post_id')]);
+        while (App::frontend()->context()->__get('posts')->fetch()) {
+            $comments = App::blog()->getComments(['post_id' => App::frontend()->context()->__get('posts')->f('post_id')]);
             while ($comments->fetch()) {
                 $content .= $comments->__call('getContent', []);
             }
