@@ -9,11 +9,10 @@ use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Html;
 
 /**
- * @brief   enhancePostContent prepend class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent prepend class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Prepend extends Process
@@ -30,7 +29,7 @@ class Prepend extends Process
         }
 
         // register epc filters
-        app::behavior()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
+        App::behavior()->addBehavior('enhancePostContentFilters', function (EpcFilters $stack): void {
             foreach (Epc::DEFAULT_FILTERS as $class) {
                 $stack->add(new $class());
             }

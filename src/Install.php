@@ -10,11 +10,10 @@ use Dotclear\Database\Structure;
 use Exception;
 
 /**
- * @brief   enhancePostContent installation class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent installation class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Install extends Process

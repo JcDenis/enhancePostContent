@@ -8,11 +8,10 @@ use Dotclear\App;
 use Dotclear\Module\MyPlugin;
 
 /**
- * @brief   enhancePostContent My helper.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent My helper.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class My extends MyPlugin

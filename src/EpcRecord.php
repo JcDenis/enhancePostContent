@@ -12,11 +12,10 @@ use Dotclear\Database\{
 use Exception;
 
 /**
- * @brief   enhancePostContent filters records.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent filters records.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class EpcRecord

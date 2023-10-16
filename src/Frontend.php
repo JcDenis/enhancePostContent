@@ -8,11 +8,10 @@ use Dotclear\App;
 use Dotclear\Core\Process;
 
 /**
- * @brief   enhancePostContent frontend class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent frontend class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Frontend extends Process
@@ -50,7 +49,7 @@ class Frontend extends Process
                 }
             },
             // Widgets
-            'initWidgets' => [Widgets::class, 'initWidgets'],
+            'initWidgets' => Widgets::initWidgets(...),
         ]);
 
         return true;

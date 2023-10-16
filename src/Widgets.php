@@ -11,11 +11,10 @@ use Dotclear\Plugin\widgets\WidgetsStack;
 use Dotclear\Plugin\widgets\WidgetsElement;
 
 /**
- * @brief   enhancePostContent widgets class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent widgets class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Widgets
@@ -30,7 +29,7 @@ class Widgets
         $w->create(
             'epclist',
             My::name(),
-            [self::class, 'parseWidget'],
+            self::parseWidget(...),
             null,
             __('List filtered contents.')
         );

@@ -7,7 +7,6 @@ namespace Dotclear\Plugin\enhancePostContent;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
-use Dotclear\Core\BlogSettings;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Form\{
     Checkbox,
@@ -19,13 +18,13 @@ use Dotclear\Helper\Html\Form\{
     Para,
     Text
 };
+use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**
- * @brief   enhancePostContent backend class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent backend class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Backend extends Process
@@ -55,7 +54,7 @@ class Backend extends Process
                 ]);
             },
             // backend user preference form
-            'adminBlogPreferencesFormV2' => function (BlogSettings $blog_settings): void {
+            'adminBlogPreferencesFormV2' => function (BlogSettingsInterface $blog_settings): void {
                 $active           = (bool) $blog_settings->get(My::id())->get('active');
                 $allowedtplvalues = Epc::blogAllowedTemplateValue();
                 $allowedpubpages  = Epc::blogAllowedTemplatePage();
@@ -121,7 +120,7 @@ class Backend extends Process
                     ->render();
             },
             // backend user preference save
-            'adminBeforeBlogSettingsUpdate' => function (BlogSettings $blog_settings): void {
+            'adminBeforeBlogSettingsUpdate' => function (BlogSettingsInterface $blog_settings): void {
                 $active           = !empty($_POST['epc_active']);
                 $allowedtplvalues = Epc::decodeMulti($_POST['epc_allowedtplvalues']);
                 $allowedpubpages  = Epc::decodeMulti($_POST['epc_allowedpubpages']);
@@ -146,7 +145,7 @@ class Backend extends Process
                 ];
             },
             // widgets registration
-            'initWidgets' => [Widgets::class, 'initWidgets'],
+            'initWidgets' => Widgets::initWidgets(...),
         ]);
 
         return true;

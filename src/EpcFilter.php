@@ -10,13 +10,12 @@ use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
 
 /**
- * @brief   enhancePostContent abstract filter class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent abstract filter class.
+ * @ingroup     enhancePostContent
  *
  * All filter must extends this class.
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 abstract class EpcFilter

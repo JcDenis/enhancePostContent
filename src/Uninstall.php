@@ -8,11 +8,10 @@ use Dotclear\Core\Process;
 use Dotclear\Plugin\Uninstaller\Uninstaller;
 
 /**
- * @brief   enhancePostContent uninstall class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent uninstall class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Uninstall extends Process

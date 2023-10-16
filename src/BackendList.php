@@ -14,11 +14,10 @@ use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;
 
 /**
- * @brief   enhancePostContent filters list class.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent filters list class.
+ * @ingroup     enhancePostContent
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class BackendList extends Listing

@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 /**
- * @brief   enhancePostContent filters stack.
- * @ingroup enhancePostContent
+ * @brief       enhancePostContent filters stack.
+ * @ingroup     enhancePostContent
  *
  * Use Epc::getFilters() to get loaded stack
  *
  * @author      Jean-Christian Denis
- * @copyright   Jean-Christian Denis
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class EpcFilters
 {
-    /** @var 	array<int,EpcFilter> 	$satck 	The filters stack */
+    /**
+     * The filters stack.
+     *
+     * @var     array<int, EpcFilter>    $stack
+     */
     private array $stack = [];
 
     /**
