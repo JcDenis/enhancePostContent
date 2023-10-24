@@ -99,7 +99,7 @@ class Backend extends Process
                                         // allowedtplvalues
                                         (new Para())->items([
                                             (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
-                                            (new Input('epc_allowedtplvalues'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedtplvalues)),
+                                            (new Input('epc_allowedtplvalues'))->size(100)->maxlength(0)->value(Epc::encodeMulti($allowedtplvalues)),
                                         ]),
                                         (new Note())
                                             ->class('form-note')
@@ -107,7 +107,7 @@ class Backend extends Process
                                         // allowedpubpages
                                         (new Para())->items([
                                             (new Label(__('Allowed public pages:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedpubpages'),
-                                            (new Input('epc_allowedpubpages'))->size(100)->maxlenght(0)->value(Epc::encodeMulti($allowedpubpages)),
+                                            (new Input('epc_allowedpubpages'))->size(100)->maxlength(0)->value(Epc::encodeMulti($allowedpubpages)),
                                         ]),
                                         (new Note())
                                             ->class('form-note')

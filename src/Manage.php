@@ -265,7 +265,7 @@ class Manage extends Process
                         ->for('filter_style' . $k),
                     (new Input(['filter_style[]', 'filter_style' . $k]))
                         ->size(60)
-                        ->maxlenght(255)
+                        ->maxlength(255)
                         ->value(Html::escapeHTML($filter->style[$k])),
                 ]);
         }
@@ -337,7 +337,7 @@ class Manage extends Process
                                                     ->for('filter_notag'),
                                                 (new Input('filter_notag'))
                                                     ->size(60)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Epc::encodeSingle($filter->notag)),
                                             ]),
                                         (new Note())
@@ -406,7 +406,7 @@ class Manage extends Process
                                         ->for('new_key'),
                                     (new Input('new_key'))
                                         ->size(60)
-                                        ->maxlenght(255)
+                                        ->maxlength(255)
                                         ->required(true),
                                 ]),
                             (new Para())
@@ -415,7 +415,7 @@ class Manage extends Process
                                         ->for('new_value'),
                                     (new Input('new_value'))
                                         ->size(60)
-                                        ->maxlenght(255)
+                                        ->maxlength(255)
                                         ->required(true),
                                 ]),
                             (new Para())
