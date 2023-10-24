@@ -110,7 +110,7 @@ class Epc
     /**
      * Get list of allowed templates name->[tag,callback] to list on epc widgets.
      *
-     * @return  array   The templates name->[id,cb] values
+     * @return  array<string, array<string, mixed>>     The templates name->[id,cb] values
      */
     public static function widgetAllowedTemplateValue(): array
     {
@@ -415,7 +415,7 @@ class Epc
 
         $content = '';
         while (App::frontend()->context()->__get('posts')?->fetch()) {
-            $content .= App::frontend()->__get('posts')->f('post_excerpt');
+            $content .= App::frontend()->context()->__get('posts')->f('post_excerpt');
         }
 
         return $content;
