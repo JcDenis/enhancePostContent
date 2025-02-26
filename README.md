@@ -1,10 +1,10 @@
 # README
 
-[![Release](https://img.shields.io/badge/release-2023.10.24-a2cbe9.svg)](https://git.dotclear.watch/JcDenis/enhancePostContent/releases)
-![Date](https://img.shields.io/badge/date-2023.10.24-c44d58.svg)
-[![Dotclear](https://img.shields.io/badge/dotclear-v2.28-137bbb.svg)](https://fr.dotclear.org/download)
+[![Release](https://img.shields.io/github/v/release/jcdenis/enhancePostContent?color=lightblue)](https://github.com/JcDenis/enhancePostContent/releases)
+![Date](https://img.shields.io/github/release-date/jcdenis/enhancePostContent?color=red)
+[![Dotclear](https://img.shields.io/badge/dotclear-v2.33-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
-[![License](https://img.shields.io/badge/license-GPL--2.0-ececec.svg)](https://git.dotclear.watch/JcDenis/enhancePostContent/src/branch/master/LICENSE)
+[![License](https://img.shields.io/github/license/jcdenis/enhancePostContent?color=white)](https://github.com/JcDenis/enhancePostContent/src/branch/master/LICENSE)
 
 ## ABOUT
 
@@ -32,10 +32,10 @@ you should also add widgets.
 
 ## LINKS
 
-* [License](https://git.dotclear.watch/JcDenis/enhancePostContent/src/branch/master/LICENSE)
-* [Packages & details](https://git.dotclear.watch/JcDenis/enhancePostContent/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/enhancePostContent))
-* [Sources & contributions](https://git.dotclear.watch/JcDenis/enhancePostContent) (or on [GitHub](https://github.com/JcDenis/enhancePostContent))
-* [Issues & security](https://git.dotclear.watch/JcDenis/enhancePostContent/issues) (or on [GitHub](https://github.com/JcDenis/enhancePostContent/issues))
+* [License](https://github.com/JcDenis/enhancePostContent/src/branch/master/LICENSE)
+* [Packages & details](https://github.com/JcDenis/enhancePostContent/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/enhancePostContent))
+* [Sources & contributions](https://github.com/JcDenis/enhancePostContent)
+* [Issues & security](https://github.com/JcDenis/enhancePostContent/issues)
 * [Discuss and help](http://forum.dotclear.org/viewtopic.php?id=40876)
 
 ## CONTRIBUTORS
