@@ -4,7 +4,7 @@
 ![Date](https://img.shields.io/github/release-date/jcdenis/enhancePostContent?color=red)
 [![Dotclear](https://img.shields.io/badge/dotclear-v2.33-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
-[![License](https://img.shields.io/github/license/jcdenis/enhancePostContent?color=white)](https://github.com/JcDenis/enhancePostContent/src/branch/master/LICENSE)
+[![License](https://img.shields.io/github/license/jcdenis/enhancePostContent?color=white)](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
 
 ## ABOUT
 
@@ -32,7 +32,7 @@ you should also add widgets.
 
 ## LINKS
 
-* [License](https://github.com/JcDenis/enhancePostContent/src/branch/master/LICENSE)
+* [License](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/enhancePostContent/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/enhancePostContent))
 * [Sources & contributions](https://github.com/JcDenis/enhancePostContent)
 * [Issues & security](https://github.com/JcDenis/enhancePostContent/issues)
