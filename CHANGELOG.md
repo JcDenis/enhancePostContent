@@ -1,3 +1,7 @@
+enhancePostContent 2025.06.26
+===========================================================
+* Standardize backend blocs
+
 enhancePostContent 2025.03.02
 ===========================================================
 * Require Dotclear 2.28
