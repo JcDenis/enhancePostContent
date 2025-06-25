@@ -8,16 +8,7 @@ use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Core\Process;
-use Dotclear\Helper\Html\Form\{
-    Checkbox,
-    Div,
-    Input,
-    Label,
-    Link,
-    Note,
-    Para,
-    Text
-};
+use Dotclear\Helper\Html\Form\{ Checkbox, Div, Fieldset, Img, Input, Label, Legend, Link, Note, Para, Text };
 use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**
@@ -60,11 +51,9 @@ class Backend extends Process
                 $allowedpubpages  = Epc::blogAllowedTemplatePage();
 
                 echo
-                (new Div())
-                    ->class('fieldset')
+                (new Fieldset(My::id() . '_params'))
+                    ->legend(new Legend((new Img(My::icons()[0]))->class('icon-small')->render() . ' ' . My::name()))
                     ->items([
-                        (new Text('h4', My::name()))
-                            ->id('epc_params'),
                         (new Div())
                             ->class('two-cols')
                             ->items([
