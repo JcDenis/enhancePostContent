@@ -1,3 +1,8 @@
+enhancePostContent 2025.09.09
+===========================================================
+* Bump Dotclear from 2.28 to 2.36
+* Use TraitProcess
+
 enhancePostContent 2025.06.26
 ===========================================================
 * Standardize backend blocs
