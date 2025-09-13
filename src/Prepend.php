@@ -45,7 +45,7 @@ class Prepend
             function (?string $args): void {
                 $css = [];
                 foreach (Epc::getFilters()->dump() as $filter) {
-                    if ('' == $filter->class || '' == $filter->style) {
+                    if ([] === $filter->class || [] === $filter->style) {
                         continue;
                     }
 

@@ -18,7 +18,7 @@ class EpcFilters
     /**
      * The filters stack.
      *
-     * @var     array<int, EpcFilter>    $stack
+     * @var     array<string, EpcFilter>    $stack
      */
     private array $stack = [];
 
@@ -59,7 +59,7 @@ class EpcFilters
     /**
      * Get filters name / id pair.
      *
-     * @return 	array 	The nid pairs
+     * @return 	array<string, string>    The nid pairs
      */
     public function nid(bool $exclude_widget = false): array
     {

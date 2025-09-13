@@ -121,14 +121,14 @@ abstract class EpcFilter
     /**
      * Return filter default properties.
      *
-     * @return  array   The properties
+     * @return  array<string, mixed>    The properties
      */
     abstract protected function initProperties(): array;
 
     /**
      * Return filter default settings.
      *
-     * @return  array   The settings
+     * @return  array<string, mixed>    The settings
      */
     abstract protected function initSettings(): array;
 
@@ -162,8 +162,8 @@ abstract class EpcFilter
     /**
      * Filter frontend contents in situ.
      *
-     * @param   string  $tag    The tempale block tag
-     * @param   array   $args   The template block arguments
+     * @param   string                      $tag    The tempale block tag
+     * @param   array<int|string, mixed>    $args   The template block arguments
      */
     public function publicContent(string $tag, array $args): void
     {
@@ -175,9 +175,9 @@ abstract class EpcFilter
      * Filter the contents and return matching results infos
      * into the list of current widget.
      *
-     * @param   string          $content    The contents
-     * @param   WidgetsElement  $widget     The widget
-     * @param   ArrayObject     $list       The list
+     * @param   string                                  $content    The contents
+     * @param   WidgetsElement                          $widget     The widget
+     * @param   ArrayObject<int, array<string, mixed>>  $list       The list
      */
     public function widgetList(string $content, WidgetsElement $widget, ArrayObject $list): void
     {

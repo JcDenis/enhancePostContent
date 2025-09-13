@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use Dotclear\Core\Backend\Filter\Filters;
-use Dotclear\Core\Backend\Listing\{
-    Listing,
-    Pager
-};
+use Dotclear\Core\Backend\Listing\Listing;
+use Dotclear\Core\Backend\Listing\Pager;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Html;

@@ -34,16 +34,16 @@ class Widgets
             __('List filtered contents.')
         );
         # Title
-        $w->__get('epclist')->addTitle(__('In this article'));
+        $w->get('epclist')->addTitle(__('In this article'));
         # Text
-        $w->__get('epclist')->setting(
+        $w->get('epclist')->setting(
             'text',
             __('Description:'),
             '',
             'text'
         );
         # Type
-        $w->__get('epclist')->setting(
+        $w->get('epclist')->setting(
             'type',
             __('Type:'),
             'Definition',
@@ -52,7 +52,7 @@ class Widgets
         );
         # Content
         foreach (Epc::widgetAllowedTemplateValue() as $name => $info) {
-            $w->__get('epclist')->setting(
+            $w->get('epclist')->setting(
                 'content' . $info['id'],
                 sprintf(__('Enable filter on %s'), __($name)),
                 1,
@@ -60,14 +60,14 @@ class Widgets
             );
         }
         # Show count
-        $w->__get('epclist')->setting(
+        $w->get('epclist')->setting(
             'show_total',
             __('Show the number of appearance'),
             1,
             'check'
         );
         # widget options
-        $w->__get('epclist')
+        $w->get('epclist')
             ->addContentOnly()
             ->addClass()
             ->addOffline();
@@ -80,7 +80,7 @@ class Widgets
      */
     public static function parseWidget(WidgetsElement $w): string
     {
-        if ($w->__get('offline')) {
+        if ($w->get('offline')) {
             return '';
         }
 
@@ -95,7 +95,7 @@ class Widgets
         $content = '';
         foreach (Epc::widgetAllowedTemplateValue() as $info) {
             $ns = 'content' . $info['id'];
-            if ($w->__get($ns) && is_callable($info['cb'])) {
+            if ($w->get($ns) && is_callable($info['cb'])) {
                 $content .= call_user_func(
                     $info['cb'],
                     $w
@@ -109,7 +109,7 @@ class Widgets
 
         # Filter
         $list   = new ArrayObject();
-        $filter = Epc::getFilters()->get($w->__get('type'));
+        $filter = Epc::getFilters()->get($w->get('type'));
 
         if (!is_null($filter)) {
             $filter->widgetList($content, $w, $list);
@@ -127,16 +127,16 @@ class Widgets
             }
 
             $res .= '<li>' . $line['replacement'] .
-            ($w->__get('show_total') ? ' (' . $line['total'] . ')' : '') .
+            ($w->get('show_total') ? ' (' . $line['total'] . ')' : '') .
             '</li>';
         }
 
         return empty($res) ? '' : $w->renderDiv(
-            (bool) $w->__get('content_only'),
-            $w->__get('class'),
-            'id="epc_' . $w->__get('type') . '"',
-            ($w->__get('title') ? $w->renderTitle(Html::escapeHTML($w->__get('title'))) : '') .
-            ($w->__get('text') ? '<p>' . Html::escapeHTML($w->__get('text')) . '</p>' : '') .
+            (bool) $w->get('content_only'),
+            $w->get('class'),
+            'id="epc_' . $w->get('type') . '"',
+            ($w->get('title') ? $w->renderTitle(Html::escapeHTML($w->get('title'))) : '') .
+            ($w->get('text') ? '<p>' . Html::escapeHTML($w->get('text')) . '</p>' : '') .
             '<ul>' . $res . '</ul>'
         );
     }

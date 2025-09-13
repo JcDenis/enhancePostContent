@@ -284,6 +284,8 @@ class Epc
      * @param   EpcFilter   $filter         The filter
      * @param   string      $before         The start limit pattern
      * @param   string      $after          The end limit pattern
+     *
+     * @return  array<string, mixed>
      */
     public static function matchString(
         string $search,
@@ -315,7 +317,7 @@ class Epc
     /**
      * Implode simple array into string a,b,c.
      *
-     * @param   array|string    $values     The values
+     * @param   array<int, string>|string    $values     The values
      *
      * @return  string  The value
      */
@@ -327,9 +329,9 @@ class Epc
     /**
      * Explode string into simple array [a,b,c].
      *
-     * @param   array|string    $value  The value
+     * @param   array<int, string>|string    $value  The value
      *
-     * @return  array   The values
+     * @return  array<int, string>  The values
      */
     public static function decodeSingle(array|string $value): array
     {
@@ -343,7 +345,7 @@ class Epc
     /**
      * Implode complexe array into string a:aa:b:bb;c:cc.
      *
-     * @param   array|string    $values     The values
+     * @param   array<string, string>|string    $values     The values
      *
      * @return  string  The value
      */
@@ -364,9 +366,9 @@ class Epc
     /**
      * Explode string into complexe array [a=>aa,b=>aa,c=>cc].
      *
-     * @param   array|string    $value  The value
+     * @param   array<string, string>|string    $value  The value
      *
-     * @return  array   The values
+     * @return  array<string, string>   The values
      */
     public static function decodeMulti(array|string $value): array
     {
@@ -376,14 +378,11 @@ class Epc
 
         $values = [];
         $exp    = explode(';', (string) $value);
-        if (!is_array($exp)) {
-            return [];
-        }
 
         foreach ($exp as $cpl) {
             $cur = explode(':', $cpl);
 
-            if (!is_array($cur) || !isset($cur[1])) {
+            if (!isset($cur[1])) {
                 continue;
             }
 

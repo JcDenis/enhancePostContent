@@ -6,7 +6,6 @@ namespace Dotclear\Plugin\enhancePostContent;
 
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
-use Dotclear\Database\Structure;
 use Exception;
 
 /**
@@ -33,8 +32,8 @@ class Install
 
         try {
             // Database
-            $s = new Structure(App::con(), App::con()->prefix());
-            $s->__get(Epc::TABLE_NAME)
+            $s = App::db()->structure();
+            $s->table(Epc::TABLE_NAME)
                 ->field('epc_id', 'bigint', 0, false)
                 ->field('blog_id', 'varchar', 32, false)
                 ->field('epc_type', 'varchar', 32, false, "'epc'")
@@ -49,7 +48,7 @@ class Install
                 ->index('idx_epc_filter', 'btree', 'epc_filter')
                 ->index('idx_epc_key', 'btree', 'epc_key');
 
-            (new Structure(App::con(), App::con()->prefix()))->synchronize($s);
+            App::db()->structure()->synchronize($s);
             $s = null;
 
             // Uppgrade
@@ -116,27 +115,27 @@ class Install
     private static function upTo00060607(): void
     {
         # Move old filters lists from settings to database
-        $record = App::con()->select('SELECT * FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
+        $record = App::db()->con()->select('SELECT * FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
 
         while ($record->fetch()) {
             if (preg_match('#enhancePostContent_(.*?)List#', $record->f('setting_id'), $m)) {
                 $curlist = @unserialize($record->f('setting_value'));
                 if (is_array($curlist)) {
                     foreach ($curlist as $k => $v) {
-                        $cur = App::con()->openCursor(App::con()->prefix() . Epc::TABLE_NAME);
-                        App::con()->writeLock(App::con()->prefix() . Epc::TABLE_NAME);
+                        $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
+                        App::db()->con()->writeLock(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
-                        $cur->setField('epc_id', (int) App::con()->select('SELECT MAX(epc_id) FROM ' . App::con()->prefix() . Epc::TABLE_NAME . ' ')->f(0) + 1);
+                        $cur->setField('epc_id', (int) App::db()->con()->select('SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' ')->f(0) + 1);
                         $cur->setField('blog_id', $record->f('blog_id'));
                         $cur->setField('epc_filter', strtolower($m[1]));
                         $cur->setField('epc_key', $k);
                         $cur->setField('epc_value', $v);
 
                         $cur->insert();
-                        App::con()->unlock();
+                        App::db()->con()->unlock();
                     }
                 }
-                App::con()->execute('DELETE FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_id='" . $record->f('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->f('blog_id') . "' ");
+                App::db()->con()->execute('DELETE FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_id='" . $record->f('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->f('blog_id') . "' ");
             }
         }
     }
@@ -149,9 +148,9 @@ class Install
     private static function upTo20211006(): void
     {
         # Move old filter name to filter id
-        $record = App::con()->select('SELECT epc_id, epc_filter FROM ' . App::con()->prefix() . Epc::TABLE_NAME);
+        $record = App::db()->con()->select('SELECT epc_id, epc_filter FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME);
         while ($record->fetch()) {
-            $cur = App::con()->openCursor(App::con()->prefix() . Epc::TABLE_NAME);
+            $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
             $cur->setField('epc_filter', strtolower($record->f('epc_filter')));
 
@@ -179,8 +178,8 @@ class Install
         );
 
         // get all enhancePostContent settings
-        $record = App::con()->select(
-            'SELECT * FROM ' . App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . ' ' .
+        $record = App::db()->con()->select(
+            'SELECT * FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . ' ' .
             "WHERE setting_ns = 'enhancePostContent' "
         );
 
@@ -192,7 +191,7 @@ class Install
                 $cur->setField('setting_ns', My::id());
 
                 if (in_array($match[1], $ids)) {
-                    $cur->setfield('setting_value', json_encode(unserialize($record->f('setting_value'))));
+                    $cur->setField('setting_value', json_encode(unserialize($record->f('setting_value'))));
                 }
 
                 $cur->update("WHERE setting_id = '" . $record->f('setting_id') . "' and setting_ns = 'enhancePostContent' ");

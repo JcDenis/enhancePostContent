@@ -8,7 +8,17 @@ use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Helper\Process\TraitProcess;
-use Dotclear\Helper\Html\Form\{ Checkbox, Div, Fieldset, Img, Input, Label, Legend, Link, Note, Para, Text };
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Img;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**
@@ -85,8 +95,7 @@ class Backend
                                     ->class('col')
                                     ->items([
                                         (new Text('h5', __('Extra'))),
-                                        (new Para())
-                                            ->text(__('This is a special feature to edit list of allowed template values and public pages where this plugin works.')),
+                                        (new Text('p', __('This is a special feature to edit list of allowed template values and public pages where this plugin works.'))),
                                         // allowedtplvalues
                                         (new Para())->items([
                                             (new Label(__('Allowed DC template values:'), Label::OUTSIDE_LABEL_BEFORE))->for('epc_allowedtplvalues'),
