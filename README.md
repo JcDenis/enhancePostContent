@@ -3,7 +3,7 @@
 [![Release](https://img.shields.io/github/v/release/jcdenis/enhancePostContent?color=lightblue)](https://github.com/JcDenis/enhancePostContent/releases)
 ![Date](https://img.shields.io/github/release-date/jcdenis/enhancePostContent?color=red)
 [![Dotclear](https://img.shields.io/badge/dotclear-v2.36-137bbb.svg)](https://fr.dotclear.org/download)
-[![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/enhancePostContent)
+[![Repository](https://img.shields.io/badge/repository-official-9ac123.svg)](https://dotclear.org/plugin/detail/enhancePostContent)
 [![License](https://img.shields.io/github/license/jcdenis/enhancePostContent?color=white)](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
 
 ## ABOUT
@@ -14,7 +14,7 @@ _enhancePostContent_ is a plugin for the open-source web publishing software cal
 
 ## REQUIREMENTS
 
-* Dotclear 2.36
+* Dotclear 2.39
 * PHP 8.1+
 * Dotclear admin permissions to set up plugin
 * Dotclear content admin permissions to manage fitlers
@@ -22,7 +22,7 @@ _enhancePostContent_ is a plugin for the open-source web publishing software cal
 ## USAGE
 
 First install _enhancePostContent_, manualy from a zip package or from 
-Dotaddict repository. (See Dotclear's documentation to know how do this)
+Dotclear plugins repository. (See Dotclear's documentation to know how do this)
 
 Go to ''blog preference'' => fieldset ''plugin preference'', fill in form.
 
@@ -33,7 +33,7 @@ you should also add widgets.
 ## LINKS
 
 * [License](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
-* [Packages & details](https://github.com/JcDenis/enhancePostContent/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/enhancePostContent))
+* [Packages & details](https://github.com/JcDenis/enhancePostContent/releases) (or on [Repository](https://dotclear.org/plugin/detail/enhancePostContent))
 * [Sources & contributions](https://github.com/JcDenis/enhancePostContent)
 * [Issues & security](https://github.com/JcDenis/enhancePostContent/issues)
 * [Discuss and help](http://forum.dotclear.org/viewtopic.php?id=40876)
