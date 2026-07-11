@@ -173,7 +173,7 @@ class EpcRecord
             'epc_filter' => $filter,
             'epc_key'    => $key,
             'not_id'     => $not_id,
-        ], true)->f(0);
+        ], true)->cardinal();
     }
 
     /**
@@ -208,7 +208,7 @@ class EpcRecord
     {
         return (int) App::db()->con()->select(
             'SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' '
-        )->f(0) + 1;
+        )->cardinal() + 1;
     }
 
     /**

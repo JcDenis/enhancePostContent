@@ -49,8 +49,8 @@ class EpcFilterLink extends EpcFilter
     {
         while ($this->records()->fetch()) {
             $args[0] = Epc::replaceString(
-                $this->records()->f('epc_key'),
-                sprintf($this->replace, '\\1', $this->records()->f('epc_value'), '\\1'),
+                $this->records()->strField('epc_key'),
+                sprintf($this->replace, '\\1', $this->records()->strField('epc_value'), '\\1'),
                 $args[0],
                 $this
             );
@@ -61,8 +61,8 @@ class EpcFilterLink extends EpcFilter
     {
         while ($this->records()->fetch()) {
             $list[] = Epc::matchString(
-                $this->records()->f('epc_key'),
-                sprintf($this->widget, $this->records()->f('epc_value'), $this->records()->f('epc_value'), '\\1'),
+                $this->records()->strField('epc_key'),
+                sprintf($this->widget, $this->records()->strField('epc_value'), $this->records()->strField('epc_value'), '\\1'),
                 $content,
                 $this
             );

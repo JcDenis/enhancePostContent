@@ -182,7 +182,7 @@ class Manage
             try {
                 $list    = EpcRecord::getRecords($params);
                 $counter = EpcRecord::getRecords($params, true);
-                $pager   = new BackendList($list, (int) $counter->f(0));
+                $pager   = new BackendList($list, (int) $counter->cardinal());
             } catch (Exception $e) {
                 App::error()->add($e->getMessage());
             }

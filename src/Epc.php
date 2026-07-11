@@ -414,7 +414,7 @@ class Epc
 
         $content = '';
         while (App::frontend()->context()->__get('posts')?->fetch()) {
-            $content .= App::frontend()->context()->__get('posts')->f('post_excerpt');
+            $content .= App::frontend()->context()->__get('posts')->strField('post_excerpt');
         }
 
         return $content;
@@ -435,7 +435,7 @@ class Epc
 
         $content = '';
         while (App::frontend()->context()->__get('posts')?->fetch()) {
-            $content .= App::frontend()->context()->__get('posts')->f('post_content');
+            $content .= App::frontend()->context()->__get('posts')->strField('post_content');
         }
 
         return $content;
@@ -456,7 +456,7 @@ class Epc
 
         $content = '';
         while (App::frontend()->context()->__get('posts')->fetch()) {
-            $comments = App::blog()->getComments(['post_id' => App::frontend()->context()->__get('posts')->f('post_id')]);
+            $comments = App::blog()->getComments(['post_id' => App::frontend()->context()->__get('posts')->intField('post_id')]);
             while ($comments->fetch()) {
                 $content .= $comments->__call('getContent', []);
             }

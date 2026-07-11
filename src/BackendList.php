@@ -63,7 +63,7 @@ class BackendList extends Listing
         echo $pager->getLinks() . $blocks[0];
 
         while ($this->rs->fetch()) {
-            $this->line(isset($epc_id[$this->rs->f('epc_id')]));
+            $this->line(isset($epc_id[$this->rs->intField('epc_id')]));
         }
 
         echo $blocks[1] . $blocks[2] . $pager->getLinks();
@@ -77,14 +77,14 @@ class BackendList extends Listing
     private function line(bool $checked): void
     {
         $cols = [
-            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->f('epc_id'))->render() . '</td>',
-            'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->f('epc_key')) . '</td>',
-            'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->f('epc_value')) . '</td>',
-            'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->f('epc_upddt')) . '</td>',
+            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->strField('epc_id'))->render() . '</td>',
+            'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->strField('epc_key')) . '</td>',
+            'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->strField('epc_value')) . '</td>',
+            'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->strField('epc_upddt')) . '</td>',
         ];
 
         echo
-        '<tr class="line" id="p' . $this->rs->f('epc_id') . '">' .
+        '<tr class="line" id="p' . $this->rs->strField('epc_id') . '">' .
         implode($cols) .
         '</tr>';
     }

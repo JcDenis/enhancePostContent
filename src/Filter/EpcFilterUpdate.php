@@ -48,8 +48,8 @@ class EpcFilterUpdate extends EpcFilter
     {
         while ($this->records()->fetch()) {
             $args[0] = Epc::replaceString(
-                $this->records()->f('epc_key'),
-                sprintf($this->replace, '\\1', $this->records()->f('epc_value')),
+                $this->records()->strField('epc_key'),
+                sprintf($this->replace, '\\1', $this->records()->strField('epc_value')),
                 $args[0],
                 $this
             );

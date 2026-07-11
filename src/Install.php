@@ -118,15 +118,15 @@ class Install
         $record = App::db()->con()->select('SELECT * FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
 
         while ($record->fetch()) {
-            if (preg_match('#enhancePostContent_(.*?)List#', $record->f('setting_id'), $m)) {
-                $curlist = @unserialize($record->f('setting_value'));
+            if (preg_match('#enhancePostContent_(.*?)List#', $record->strField('setting_id'), $m)) {
+                $curlist = @unserialize($record->strField('setting_value'));
                 if (is_array($curlist)) {
                     foreach ($curlist as $k => $v) {
                         $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
                         App::db()->con()->writeLock(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
-                        $cur->setField('epc_id', (int) App::db()->con()->select('SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' ')->f(0) + 1);
-                        $cur->setField('blog_id', $record->f('blog_id'));
+                        $cur->setField('epc_id', (int) App::db()->con()->select('SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' ')->cardinal() + 1);
+                        $cur->setField('blog_id', $record->strField('blog_id'));
                         $cur->setField('epc_filter', strtolower($m[1]));
                         $cur->setField('epc_key', $k);
                         $cur->setField('epc_value', $v);
@@ -135,7 +135,7 @@ class Install
                         App::db()->con()->unlock();
                     }
                 }
-                App::db()->con()->execute('DELETE FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_id='" . $record->f('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->f('blog_id') . "' ");
+                App::db()->con()->execute('DELETE FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_id='" . $record->strField('setting_id') . "' AND setting_ns='enhancePostContent' AND blog_id='" . $record->strField('blog_id') . "' ");
             }
         }
     }
@@ -152,9 +152,9 @@ class Install
         while ($record->fetch()) {
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
-            $cur->setField('epc_filter', strtolower($record->f('epc_filter')));
+            $cur->setField('epc_filter', strtolower($record->strField('epc_filter')));
 
-            $cur->update('WHERE epc_id = ' . $record->f('epc_id') . ' ');
+            $cur->update('WHERE epc_id = ' . $record->intField('epc_id') . ' ');
             App::blog()->triggerBlog();
         }
     }
@@ -185,16 +185,16 @@ class Install
 
         // update settings id, ns, value
         while ($record->fetch()) {
-            if (preg_match('/^enhancePostContent_(.*?)$/', $record->f('setting_id'), $match)) {
+            if (preg_match('/^enhancePostContent_(.*?)$/', $record->strField('setting_id'), $match)) {
                 $cur = App::blogWorkspace()->openBlogWorkspaceCursor();
                 $cur->setField('setting_id', $match[1]);
                 $cur->setField('setting_ns', My::id());
 
                 if (in_array($match[1], $ids)) {
-                    $cur->setField('setting_value', json_encode(unserialize($record->f('setting_value'))));
+                    $cur->setField('setting_value', json_encode(unserialize($record->strField('setting_value'))));
                 }
 
-                $cur->update("WHERE setting_id = '" . $record->f('setting_id') . "' and setting_ns = 'enhancePostContent' ");
+                $cur->update("WHERE setting_id = '" . $record->strField('setting_id') . "' and setting_ns = 'enhancePostContent' ");
             }
         }
     }
