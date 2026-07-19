@@ -46,13 +46,15 @@ class EpcFilterUpdate extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        while ($this->records()->fetch()) {
-            $args[0] = Epc::replaceString(
-                $this->records()->strField('epc_key'),
-                sprintf($this->replace, '\\1', $this->records()->strField('epc_value')),
-                $args[0],
-                $this
-            );
+        if (is_string($args[0])) {
+            while ($this->records()->fetch()) {
+                $args[0] = Epc::replaceString(
+                    $this->records()->strField('epc_key'),
+                    sprintf($this->replace, '\\1', $this->records()->strField('epc_value')),
+                    $args[0],
+                    $this
+                );
+            }
         }
     }
 }

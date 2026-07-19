@@ -33,7 +33,7 @@ class EpcRecord
         } else {
             $content_req = '';
             if (!empty($params['columns']) && is_array($params['columns'])) {
-                $content_req .= implode(', ', $params['columns']) . ', ';
+                $content_req .= implode(', ', array_filter($params['columns'], is_string(...))) . ', ';
             }
             $strReq = 'SELECT E.epc_id, E.blog_id, E.epc_type, E.epc_upddt, ' .
             $content_req .
@@ -43,62 +43,75 @@ class EpcRecord
         $strReq .= 'FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' E ';
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'] . ' ';
+            if (!is_array($params['from'])) {
+                $params['from'] = [$params['from']];
+            }
+            $params['from'] = array_filter($params['from'], is_string(...));
         }
-
         $strReq .= "WHERE E.blog_id = '" . App::db()->con()->escapeStr(App::blog()->id()) . "' ";
 
         if (isset($params['epc_type'])) {
-            if (is_array($params['epc_type']) && !empty($params['epc_type'])) {
-                $strReq .= 'AND E.epc_type ' . App::db()->con()->in($params['epc_type']);
-            } elseif ($params['epc_type'] != '') {
-                $strReq .= "AND E.epc_type = '" . App::db()->con()->escapeStr((string) $params['epc_type']) . "' ";
+            if (!is_array($params['epc_type'])) {
+                $params['epc_type'] = [$params['epc_type']];
             }
+            $strReq .= 'AND E.epc_type ' . App::db()->con()->in(array_filter($params['epc_type'],is_string(...)));
         } else {
             $strReq .= "AND E.epc_type = 'epc' ";
         }
 
         if (isset($params['epc_filter'])) {
-            if (is_array($params['epc_filter']) && !empty($params['epc_filter'])) {
-                $strReq .= 'AND E.epc_filter ' . App::db()->con()->in($params['epc_filter']);
-            } elseif ($params['epc_filter'] != '') {
-                $strReq .= "AND E.epc_filter = '" . App::db()->con()->escapeStr((string) $params['epc_filter']) . "' ";
+            if (!is_array($params['epc_filter'])) {
+                $params['epc_filter'] = [$params['epc_filter']];
             }
+            $strReq .= 'AND E.epc_filter ' . App::db()->con()->in(array_filter($params['epc_filter'],is_string(...)));
         }
 
         if (!empty($params['epc_id'])) {
-            if (is_array($params['epc_id'])) {
-                array_walk($params['epc_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v; }});
-            } else {
-                $params['epc_id'] = [(int) $params['epc_id']];
+            if (!is_array($params['epc_id'])) {
+                $params['epc_id'] = [$params['epc_id']];
             }
+            array_walk($params['epc_id'], function (&$v) { $v = is_numeric($v) ? (int) $v : 0; });
+
             $strReq .= 'AND E.epc_id ' . App::db()->con()->in($params['epc_id']);
         } elseif (isset($params['not_id']) && is_numeric($params['not_id'])) {
             $strReq .= "AND NOT E.epc_id = '" . $params['not_id'] . "' ";
         }
 
         if (isset($params['epc_key'])) {
-            if (is_array($params['epc_key']) && !empty($params['epc_key'])) {
-                $strReq .= 'AND E.epc_key ' . App::db()->con()->in($params['epc_key']);
-            } elseif ($params['epc_key'] != '') {
-                $strReq .= "AND E.epc_key = '" . App::db()->con()->escapeStr((string) $params['epc_key']) . "' ";
+            if (!is_array($params['epc_key'])) {
+                $params['epc_key'] = [$params['epc_key']];
             }
+            $strReq .= 'AND E.epc_key ' . App::db()->con()->in(array_filter($params['epc_key'],is_string(...)));
         }
 
-        if (!empty($params['sql'])) {
+        if (!empty($params['sql']) && is_string($params['sql'])) {
             $strReq .= $params['sql'] . ' ';
         }
 
         if (!$count_only) {
-            if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . App::db()->con()->escapeStr((string) $params['order']) . ' ';
+            if (!empty($params['order']) && is_string($params['order'])) {
+                $strReq .= 'ORDER BY ' . App::db()->con()->escapeStr($params['order']) . ' ';
             } else {
                 $strReq .= 'ORDER BY E.epc_key ASC ';
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $strReq .= App::db()->con()->limit($params['limit']);
+            $values = is_array($params['limit']) ? array_values($params['limit']) : [$params['limit']];
+            // Make $values an array of integer values
+            $values = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $values);
+
+            /**
+             * @var array{0: int, 1?: int}  $limit
+             */
+            $limit = [
+                $values[0],
+            ];
+            if (isset($values[1])) {
+                $limit[1] = $values[1];
+            }
+
+            $strReq .= App::db()->con()->limit($limit);
         }
 
         return new MetaRecord(App::db()->con()->select($strReq));
@@ -134,7 +147,7 @@ class EpcRecord
         # --BEHAVIOR-- enhancePostContentAfterAddRecord : Cursor
         App::behavior()->callBehavior('enhancePostContentAfterAddRecord', $cur);
 
-        return (int) $cur->getField('epc_id');
+        return is_numeric($cur->getField('epc_id')) ? (int) $cur->getField('epc_id') : 0;
     }
 
     /**
@@ -206,9 +219,11 @@ class EpcRecord
      */
     private static function getNextId(): int
     {
-        return (int) App::db()->con()->select(
+        $res = App::db()->con()->select(
             'SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' '
-        )->cardinal() + 1;
+        )->f(0);
+
+        return is_numeric($res) ? (int) $res + 1 : 1;
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Dotclear\Plugin\enhancePostContent;
 
 use ArrayObject;
 use Dotclear\App;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsElement;
 use Exception;
@@ -102,9 +103,9 @@ class Epc
      */
     public static function blogAllowedTemplateValue(): array
     {
-        $list = json_decode((string) My::settings()->get('allowedtplvalues'), true);
+        $list = json_decode(My::settings()->getStr('allowedtplvalues', false), true);
 
-        return is_array($list) ? $list : self::defaultAllowedTemplateValue();
+        return is_array($list) && !empty($list) ? array_filter($list, fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : self::defaultAllowedTemplateValue();
     }
 
     /**
@@ -164,9 +165,9 @@ class Epc
      */
     public static function blogAllowedTemplatePage(): array
     {
-        $list = json_decode((string) My::settings()->get('allowedpubpages'), true);
+        $list = json_decode(My::settings()->getStr('allowedpubpages', false), true);
 
-        return is_array($list) ? $list : self::defaultAllowedTemplatePage();
+        return is_array($list) ? array_filter($list, fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : self::defaultAllowedTemplatePage();
     }
 
     /**
@@ -408,12 +409,12 @@ class Epc
      */
     public static function widgetContentEntryExcerpt(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->context()->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts') || !(App::frontend()->context()->__get('posts') instanceof MetaRecord)) {
             return '';
         }
 
         $content = '';
-        while (App::frontend()->context()->__get('posts')?->fetch()) {
+        while (App::frontend()->context()->__get('posts')->fetch()) {
             $content .= App::frontend()->context()->__get('posts')->strField('post_excerpt');
         }
 
@@ -429,12 +430,12 @@ class Epc
      */
     public static function widgetContentEntryContent(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->context()->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts') || !(App::frontend()->context()->__get('posts') instanceof MetaRecord)) {
             return '';
         }
 
         $content = '';
-        while (App::frontend()->context()->__get('posts')?->fetch()) {
+        while (App::frontend()->context()->__get('posts')->fetch()) {
             $content .= App::frontend()->context()->__get('posts')->strField('post_content');
         }
 
@@ -450,7 +451,7 @@ class Epc
      */
     public static function widgetContentCommentContent(?WidgetsElement $widget = null): string
     {
-        if (!App::frontend()->context()->exists('posts')) {
+        if (!App::frontend()->context()->exists('posts') || !(App::frontend()->context()->__get('posts') instanceof MetaRecord)) {
             return '';
         }
 
@@ -458,7 +459,10 @@ class Epc
         while (App::frontend()->context()->__get('posts')->fetch()) {
             $comments = App::blog()->getComments(['post_id' => App::frontend()->context()->__get('posts')->intField('post_id')]);
             while ($comments->fetch()) {
-                $content .= $comments->__call('getContent', []);
+                $res = $comments->__call('getContent', []);
+                if (is_string($res)) {
+                    $content .= $res;
+                }
             }
         }
 

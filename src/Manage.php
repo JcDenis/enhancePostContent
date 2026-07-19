@@ -50,7 +50,7 @@ class Manage
 
         // get filter and post values
         $action = $_POST['action'] ?? '';
-        $filter = Epc::getFilters()->get($_REQUEST['part'] ?? '');
+        $filter = Epc::getFilters()->get(isset($_REQUEST['part']) && is_string($_REQUEST['part']) ? $_REQUEST['part'] : '');
         if (is_null($filter)) {
             return true;
         }
@@ -73,9 +73,9 @@ class Manage
                 $f = [
                     'nocase'   => !empty($_POST['filter_nocase']),
                     'plural'   => !empty($_POST['filter_plural']),
-                    'limit'    => abs((int) $_POST['filter_limit']),
+                    'limit'    => is_numeric($_POST['filter_limit']) ? abs((int) $_POST['filter_limit']) : 10,
                     'style'    => (array) $_POST['filter_style'],
-                    'notag'    => Epc::decodeSingle($_POST['filter_notag']),
+                    'notag'    => is_string($_POST['filter_notag']) ? Epc::decodeSingle($_POST['filter_notag']) : '',
                     'template' => (array) $_POST['filter_template'],
                     'page'     => (array) $_POST['filter_page'],
                 ];
@@ -95,16 +95,18 @@ class Manage
             }
 
             // Add new filter record
-            if ($action == 'savenewrecord'
-                && !empty($_POST['new_key'])
-                && !empty($_POST['new_value'])
+            $new_key = is_string($_POST['new_key']) ? Html::escapeHTML($_POST['new_key']) : '';
+            $new_val = is_string($_POST['new_value']) ? Html::escapeHTML($_POST['new_value']) : '';
+            if ($action === 'savenewrecord'
+                && !empty($new_key) 
+                && !empty($new_val) 
             ) {
                 $cur = EpcRecord::openCursor();
                 $cur->setField('epc_filter', $filter->id());
-                $cur->setField('epc_key', Html::escapeHTML($_POST['new_key']));
-                $cur->setField('epc_value', Html::escapeHTML($_POST['new_value']));
+                $cur->setField('epc_key', $new_key);
+                $cur->setField('epc_value', $new_val);
 
-                if (EpcRecord::isRecord($cur->getField('epc_filter'), $cur->getField('epc_key'))) {
+                if (EpcRecord::isRecord($new_key, $new_val)) {
                     Notices::addErrorNotice(__('Key already exists for this filter'));
                 } else {
                     EpcRecord::addRecord($cur);
@@ -128,7 +130,9 @@ class Manage
                 && is_array($_POST['epc_id'])
             ) {
                 foreach ($_POST['epc_id'] as $id) {
-                    EpcRecord::delRecord((int) $id);
+                    if (is_numeric($id)) {
+                        EpcRecord::delRecord((int) $id);
+                    }
                 }
 
                 App::blog()->triggerBlog();
@@ -137,7 +141,7 @@ class Manage
                     __('Filter successfully updated.')
                 );
 
-                if (!empty($_REQUEST['redir'])) {
+                if (!empty($_REQUEST['redir']) && is_string($_REQUEST['redir'])) {
                     Http::redirect($_REQUEST['redir']);
                 } else {
                     My::redirect(
@@ -161,7 +165,7 @@ class Manage
 
         // get filters
         $filters = Epc::getFilters();
-        $filter  = $filters->get($_REQUEST['part'] ?? 'link');
+        $filter  = $filters->get(isset($_REQUEST['part']) && is_string($_REQUEST['part']) ? $_REQUEST['part'] : 'link');
         if (is_null($filter)) {
             return;
         }
@@ -374,11 +378,11 @@ class Manage
                 (new Para())->class('col right')
                     ->items([
                         (new Submit(['save', 'del-action']))->value(__('Delete selected records')),
-                        ... My::hiddenFields([
+                        ... My::hiddenFields(array_filter([
                             ... $sorts->values(true),
-                            'redir'  => My::manageUrl($sorts->values(true)),
+                            'redir'  => My::manageUrl(array_filter($sorts->values(true), is_string(...))),
                             'action' => 'deleterecords',
-                        ]),
+                        ], is_string(...))),
                     ])->render() .
                 '</div>' .
                 '</form>'

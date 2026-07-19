@@ -46,7 +46,7 @@ class EpcFilterSearch extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        if (empty(App::frontend()->search)) {
+        if (empty(App::frontend()->search) || !is_string($args[0])) {
             return;
         }
 

@@ -35,13 +35,20 @@ class BackendList extends Listing
             return;
         }
 
-        $pager           = new Pager($filter->value('page'), (int) $this->rs_count, $filter->value('nb'), 10);
+        $pager           = new Pager(
+            is_numeric($filter->value('page')) ? (int) $filter->value('page') : 0,
+            (int) $this->rs_count,
+            is_numeric($filter->value('nb')) ? (int) $filter->value('nb') : 10,
+            10
+        );
         $pager->base_url = $url;
 
         $epc_id = [];
-        if (isset($_REQUEST['epc_id'])) {
+        if (isset($_REQUEST['epc_id']) && is_array($_REQUEST['epc_id'])) {
             foreach ($_REQUEST['epc_id'] as $v) {
-                $epc_id[(int) $v] = true;
+                if (is_numeric($v)) {
+                    $epc_id[(int) $v] = true;
+                }
             }
         }
 

@@ -43,13 +43,15 @@ class EpcFilterTwitter extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        $args[0] = Epc::replaceString(
-            '[A-Za-z0-9_]{2,}',
-            sprintf($this->replace, 'http://twitter.com/\\1', '\\1'),
-            $args[0],
-            $this,
-            '[^@]@',
-            '\b'
-        );
+        if (is_string($args[0])) {
+            $args[0] = Epc::replaceString(
+                '[A-Za-z0-9_]{2,}',
+                sprintf($this->replace, 'http://twitter.com/\\1', '\\1'),
+                $args[0],
+                $this,
+                '[^@]@',
+                '\b'
+            );
+        }
     }
 }

@@ -121,13 +121,13 @@ class Backend
             },
             // backend user preference save
             'adminBeforeBlogSettingsUpdate' => function (BlogSettingsInterface $blog_settings): void {
-                $active           = !empty($_POST['epc_active']);
-                $allowedtplvalues = Epc::decodeMulti($_POST['epc_allowedtplvalues']);
-                $allowedpubpages  = Epc::decodeMulti($_POST['epc_allowedpubpages']);
+                $active = !empty($_POST['epc_active']);
+                $values = isset($_POST['epc_allowedtplvalues']) && is_array($_POST['epc_allowedtplvalues']) ? array_filter($_POST['epc_allowedtplvalues'], fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : [];
+                $pages  = isset($_POST['epc_allowedpubpages']) && is_array($_POST['epc_allowedpubpages']) ? array_filter($_POST['epc_allowedpubpages'], fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : [];
 
                 $blog_settings->get(My::id())->put('active', $active);
-                $blog_settings->get(My::id())->put('allowedtplvalues', json_encode($allowedtplvalues));
-                $blog_settings->get(My::id())->put('allowedpubpages', json_encode($allowedpubpages));
+                $blog_settings->get(My::id())->put('allowedtplvalues', json_encode(Epc::decodeMulti($values)));
+                $blog_settings->get(My::id())->put('allowedpubpages', json_encode(Epc::decodeMulti($pages)));
             },
             // backend epc list filter
             'adminFiltersListsV2' => function (ArrayObject $sorts): void {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\enhancePostContent;
 
 use Dotclear\App;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Process\TraitProcess;
 use Exception;
 
@@ -116,6 +117,7 @@ class Install
     {
         # Move old filters lists from settings to database
         $record = App::db()->con()->select('SELECT * FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . " WHERE setting_ns='enhancePostContent' AND blog_id IS NOT NULL ");
+        $record = new MetaRecord($record);
 
         while ($record->fetch()) {
             if (preg_match('#enhancePostContent_(.*?)List#', $record->strField('setting_id'), $m)) {
@@ -125,7 +127,8 @@ class Install
                         $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
                         App::db()->con()->writeLock(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
-                        $cur->setField('epc_id', (int) App::db()->con()->select('SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' ')->cardinal() + 1);
+                        $epc_id = App::db()->con()->select('SELECT MAX(epc_id) FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME . ' ')->f(0);
+                        $cur->setField('epc_id', (is_numeric($epc_id) ? (int) $epc_id : 0) + 1);
                         $cur->setField('blog_id', $record->strField('blog_id'));
                         $cur->setField('epc_filter', strtolower($m[1]));
                         $cur->setField('epc_key', $k);
@@ -149,6 +152,7 @@ class Install
     {
         # Move old filter name to filter id
         $record = App::db()->con()->select('SELECT epc_id, epc_filter FROM ' . App::db()->con()->prefix() . Epc::TABLE_NAME);
+        $record = new MetaRecord($record);
         while ($record->fetch()) {
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . Epc::TABLE_NAME);
 
@@ -182,6 +186,7 @@ class Install
             'SELECT * FROM ' . App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME . ' ' .
             "WHERE setting_ns = 'enhancePostContent' "
         );
+        $record = new MetaRecord($record);
 
         // update settings id, ns, value
         while ($record->fetch()) {

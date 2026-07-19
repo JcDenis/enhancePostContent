@@ -33,17 +33,21 @@ class Widgets
             null,
             __('List filtered contents.')
         );
+        $_ = $w->get('epclist');
+        if (!($_ instanceof WidgetsElement)) {
+            return;
+        }
         # Title
-        $w->get('epclist')->addTitle(__('In this article'));
+        $_->addTitle(__('In this article'));
         # Text
-        $w->get('epclist')->setting(
+        $_->setting(
             'text',
             __('Description:'),
             '',
             'text'
         );
         # Type
-        $w->get('epclist')->setting(
+        $_->setting(
             'type',
             __('Type:'),
             'Definition',
@@ -52,22 +56,24 @@ class Widgets
         );
         # Content
         foreach (Epc::widgetAllowedTemplateValue() as $name => $info) {
-            $w->get('epclist')->setting(
-                'content' . $info['id'],
-                sprintf(__('Enable filter on %s'), __($name)),
-                1,
-                'check'
-            );
+            if (is_string($info['id'])) {
+                $_->setting(
+                    'content' . $info['id'],
+                    sprintf(__('Enable filter on %s'), __($name)),
+                    1,
+                    'check'
+                );
+            }
         }
         # Show count
-        $w->get('epclist')->setting(
+        $_->setting(
             'show_total',
             __('Show the number of appearance'),
             1,
             'check'
         );
         # widget options
-        $w->get('epclist')
+        $_
             ->addContentOnly()
             ->addClass()
             ->addOffline();
@@ -85,7 +91,7 @@ class Widgets
         }
 
         # Page
-        if (!My::settings()->get('active')
+        if (!My::settings()->getBool('active', false)
             || !in_array(App::frontend()->context()->__get('current_tpl'), ['post.html', 'page.html'])
         ) {
             return '';
@@ -94,16 +100,21 @@ class Widgets
         # Content
         $content = '';
         foreach (Epc::widgetAllowedTemplateValue() as $info) {
-            $ns = 'content' . $info['id'];
-            if ($w->get($ns) && is_callable($info['cb'])) {
-                $content .= call_user_func(
-                    $info['cb'],
-                    $w
-                );
+            if (is_string($info['id'])) {
+                $ns = 'content' . $info['id'];
+                if ($w->get($ns) && is_callable($info['cb'])) {
+                    $tmp = call_user_func(
+                        $info['cb'],
+                        $w
+                    );
+                    if (is_string($tmp)) {
+                        $content .= $tmp;
+                    }
+                }
             }
         }
 
-        if (empty($content)) {
+        if (empty($content) || !is_string($w->get('type'))) {
             return '';
         }
 
@@ -122,7 +133,7 @@ class Widgets
         # Parse result
         $res = '';
         foreach ($list as $line) {
-            if ((int) $line['total'] == 0) {
+            if (!is_numeric($line['total']) || (int) $line['total'] === 0 || !is_string($line['replacement'])) {
                 continue;
             }
 
@@ -133,10 +144,10 @@ class Widgets
 
         return empty($res) ? '' : $w->renderDiv(
             (bool) $w->get('content_only'),
-            $w->get('class'),
-            'id="epc_' . $w->get('type') . '"',
-            ($w->get('title') ? $w->renderTitle(Html::escapeHTML($w->get('title'))) : '') .
-            ($w->get('text') ? '<p>' . Html::escapeHTML($w->get('text')) . '</p>' : '') .
+            is_string($w->get('class')) ? $w->get('class') : '',
+            'id="epc_' . (is_string($w->get('type')) ? $w->get('type') : '') . '"',
+            (is_string($w->get('title')) && !empty($w->get('title')) ? $w->renderTitle(Html::escapeHTML($w->get('title'))) : '') .
+            (is_string($w->get('text')) && !empty($w->get('text')) ? '<p>' . Html::escapeHTML($w->get('text')) . '</p>' : '') .
             '<ul>' . $res . '</ul>'
         );
     }

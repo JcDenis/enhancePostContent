@@ -81,8 +81,8 @@ abstract class EpcFilter
         }
 
         // get blog settings
-        $s = json_decode((string) My::settings()->get($this->id), true);
-        if (empty($s)) {
+        $s = json_decode(My::settings()->getStr($this->id, false), true);
+        if (empty($s) || !is_array($s)) {
             $s = [];
         }
 
@@ -90,32 +90,32 @@ abstract class EpcFilter
         $settings   = $this->initSettings();
 
         // from filter defautl properties
-        $this->priority    = isset($properties['priority']) ? abs((int) $properties['priority']) : 500;
-        $this->name        = isset($properties['name']) ? (string) $properties['name'] : 'undefined';
-        $this->description = isset($properties['description']) ? (string) $properties['description'] : 'undefined';
-        $this->has_list    = isset($properties['has_list']) ? (bool) $properties['has_list'] : false;
-        $this->ignore      = isset($properties['ignore']) && is_array($properties['ignore']) ? $properties['ignore'] : [];
-        $this->class       = isset($properties['class'])  && is_array($properties['class']) ? $properties['class'] : [];
-        $this->replace     = isset($properties['replace']) ? (string) $properties['replace'] : '';
-        $this->widget      = isset($properties['widget']) ? (string) $properties['widget'] : '';
+        $this->priority    = isset($properties['priority']) && is_numeric($properties['priority']) ? abs((int) $properties['priority']) : 500;
+        $this->name        = isset($properties['name']) && is_string($properties['name']) ? $properties['name'] : 'undefined';
+        $this->description = isset($properties['description']) && is_string($properties['description']) ? $properties['description'] : 'undefined';
+        $this->has_list    = isset($properties['has_list']) ? !!$properties['has_list'] : false;
+        $this->ignore      = isset($properties['ignore']) && is_array($properties['ignore']) ? array_values(array_filter($properties['ignore'], is_string(...))) : [];
+        $this->class       = isset($properties['class'])  && is_array($properties['class']) ? array_values(array_filter($properties['class'], is_string(...))) : [];
+        $this->replace     = isset($properties['replace']) && is_string($properties['replace']) ? $properties['replace'] : '';
+        $this->widget      = isset($properties['widget']) && is_string($properties['widget']) ? $properties['widget'] : '';
 
         // from filter defautl settings
-        $nocase   = isset($settings['nocase']) ? (bool) $settings['nocase'] : false;
-        $plural   = isset($settings['plural']) ? (bool) $settings['plural'] : false;
-        $limit    = isset($settings['limit']) ? abs((int) $settings['limit']) : 0;
-        $style    = isset($settings['style'])    && is_array($settings['style']) ? $settings['style'] : [];
-        $notag    = isset($settings['notag'])    && is_array($settings['notag']) ? $settings['notag'] : [];
+        $nocase   = isset($settings['nocase']) ? !!$settings['nocase'] : false;
+        $plural   = isset($settings['plural']) ? !!$settings['plural'] : false;
+        $limit    = isset($settings['limit']) && is_numeric($settings['limit']) ? abs((int) $settings['limit']) : 0;
+        $style    = isset($settings['style']) && is_array($settings['style']) ? $settings['style'] : [];
+        $notag    = isset($settings['notag']) && is_array($settings['notag']) ? $settings['notag'] : [];
         $template = isset($settings['template']) && is_array($settings['template']) ? $settings['template'] : [];
-        $page     = isset($settings['page'])     && is_array($settings['page']) ? $settings['page'] : [];
+        $page     = isset($settings['page']) && is_array($settings['page']) ? $settings['page'] : [];
 
         // from blog settings
-        $this->nocase   = isset($s['nocase']) ? (bool) $s['nocase'] : $nocase;
-        $this->plural   = isset($s['plural']) ? (bool) $s['plural'] : $plural;
-        $this->limit    = isset($s['limit']) ? abs((int) $s['limit']) : $limit;
-        $this->style    = isset($s['style'])    && is_array($s['style']) ? $s['style'] : $style;
-        $this->notag    = isset($s['notag'])    && is_array($s['notag']) ? $s['notag'] : $notag;
-        $this->template = isset($s['template']) && is_array($s['template']) ? $s['template'] : $template;
-        $this->page     = isset($s['page'])     && is_array($s['page']) ? $s['page'] : $page;
+        $this->nocase   = isset($s['nocase']) ? !!$s['nocase'] : $nocase;
+        $this->plural   = isset($s['plural']) ? !!$s['plural'] : $plural;
+        $this->limit    = isset($s['limit']) && is_numeric($s['limit']) ? abs((int) $s['limit']) : $limit;
+        $this->style    = array_values(array_filter(isset($s['style']) && is_array($s['style']) ? $s['style'] : $style, is_string(...)));
+        $this->notag    = array_values(array_filter(isset($s['notag']) && is_array($s['notag']) ? $s['notag'] : $notag, is_string(...)));
+        $this->template = array_values(array_filter(isset($s['template']) && is_array($s['template']) ? $s['template'] : $template, is_string(...)));
+        $this->page     = array_values(array_filter(isset($s['page']) && is_array($s['page']) ? $s['page'] : $page, is_string(...)));
     }
 
     /**

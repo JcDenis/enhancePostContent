@@ -47,7 +47,7 @@ class EpcFilterTag extends EpcFilter
 
     public function publicContent(string $tag, array $args): void
     {
-        if (!App::plugins()->moduleExists('tags')) {
+        if (!App::plugins()->moduleExists('tags') || !is_string($args[0])) {
             return;
         }
 
