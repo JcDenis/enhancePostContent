@@ -21,10 +21,10 @@ $this->registerModule(
     'Enhance post content',
     'Add features to words in post content',
     'Jean-Christian Denis and Contributors',
-    '2025.09.13',
+    '2026.08.12',
     [
         'type'        => 'plugin',
-        'requires'    => [['core', '2.36']],
+        'requires'    => [['core', '2.39']],
         'permissions' => 'My',
         'settings'    => ['blog' => '#params.' . $this->id . '_params'],
         'support'     => 'https://github.com/JcDenis/' . $this->id . '/issues',
