@@ -1,3 +1,7 @@
+enhancePostContent 2026.11.05
+===========================================================
+* Fix records list on SQLite
+
 enhancePostContent 2026.08.12
 ===========================================================
 * Bump Dotclear from 2.36 to 2.39
