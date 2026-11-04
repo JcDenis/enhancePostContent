@@ -84,14 +84,14 @@ class BackendList extends Listing
     private function line(bool $checked): void
     {
         $cols = [
-            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value($this->rs->strField('epc_id'))->render() . '</td>',
+            'check' => '<td class="nowrap">' . (new Checkbox(['epc_id[]'], $checked))->value((string) $this->rs->intField('epc_id'))->render() . '</td>',
             'key'   => '<td class="nowrap">' . Html::escapeHTML($this->rs->strField('epc_key')) . '</td>',
             'value' => '<td class="maximal">' . Html::escapeHTML($this->rs->strField('epc_value')) . '</td>',
             'date'  => '<td class="nowrap count">' . Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->strField('epc_upddt')) . '</td>',
         ];
 
         echo
-        '<tr class="line" id="p' . $this->rs->strField('epc_id') . '">' .
+        '<tr class="line" id="p' . (string) $this->rs->intField('epc_id') . '">' .
         implode($cols) .
         '</tr>';
     }

@@ -368,7 +368,7 @@ class Manage
 
             $pager->display(
                 $sorts,
-                My::manageUrl(array_merge($sorts->values(true), ['page' => '%s']), '#record'),
+                My::manageUrl(array_merge(array_filter($sorts->values(true), fn ($v): bool => is_string($v) || is_int($v)), ['page' => '%s']), '#record'),
                 '<form action="' . App::backend()->getPageURL() . '#record" method="post" id="form-records">' .
                 '%s' .
 
