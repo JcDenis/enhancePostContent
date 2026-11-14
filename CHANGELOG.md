@@ -1,6 +1,5 @@
 enhancePostContent 2026.11.14
 ===========================================================
-* Add Claude to contributors
 * [fix] Blog settings save erased the lists of template values and public pages
 * [fix] Ignored tag "a" also matched tags like "abbr" or "acronym"
 * [fix] Search filter default template values
