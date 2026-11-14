@@ -1,3 +1,13 @@
+enhancePostContent 2026.11.14
+===========================================================
+* Add Claude to contributors
+* [fix] Blog settings save erased the lists of template values and public pages
+* [fix] Ignored tag "a" also matched tags like "abbr" or "acronym"
+* [fix] Search filter default template values
+* [lang] Translate and fix ignored tags message
+* [docs] Add a user guide in French, with screenshots
+* [docs] Rewrite the admin help in English and French
+
 enhancePostContent 2026.11.05
 ===========================================================
 * Fix records list on SQLite
