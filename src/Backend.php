@@ -122,8 +122,8 @@ class Backend
             // backend user preference save
             'adminBeforeBlogSettingsUpdate' => function (BlogSettingsInterface $blog_settings): void {
                 $active = !empty($_POST['epc_active']);
-                $values = isset($_POST['epc_allowedtplvalues']) && is_array($_POST['epc_allowedtplvalues']) ? array_filter($_POST['epc_allowedtplvalues'], fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : [];
-                $pages  = isset($_POST['epc_allowedpubpages']) && is_array($_POST['epc_allowedpubpages']) ? array_filter($_POST['epc_allowedpubpages'], fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : [];
+                $values = isset($_POST['epc_allowedtplvalues']) && is_string($_POST['epc_allowedtplvalues']) ? $_POST['epc_allowedtplvalues'] : '';
+                $pages  = isset($_POST['epc_allowedpubpages']) && is_string($_POST['epc_allowedpubpages']) ? $_POST['epc_allowedpubpages'] : '';
 
                 $blog_settings->get(My::id())->put('active', $active);
                 $blog_settings->get(My::id())->put('allowedtplvalues', json_encode(Epc::decodeMulti($values)));
