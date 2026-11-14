@@ -61,7 +61,7 @@ class Epc
      *
      * @var     string  FLAGGER
      */
-    public const FLAGGER = 'ççççç%sççççç';
+    public const FLAGGER = "\xe7\xe7\xe7\xe7\xe7%s\xe7\xe7\xe7\xe7\xe7";
 
     /**
      * The filters stack.
@@ -167,7 +167,7 @@ class Epc
     {
         $list = json_decode(My::settings()->getStr('allowedpubpages', false), true);
 
-        return is_array($list) ? array_filter($list, fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : self::defaultAllowedTemplatePage();
+        return is_array($list) && !empty($list) ? array_filter($list, fn ($k, $v): bool => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH) : self::defaultAllowedTemplatePage();
     }
 
     /**
@@ -244,7 +244,7 @@ class Epc
         // Remove words that are into unwanted html tags
         $ignore = array_merge(self::decodeSingle($filter->ignore), self::decodeSingle($filter->notag));
         if (!empty($ignore)) {
-            $ret = preg_replace_callback('#(<(' . implode('|', array_unique($ignore)) . ')[^>]*?>)(.*?)(</\\2>)#s', function (array $m): string {
+            $ret = preg_replace_callback('#(<(' . implode('|', array_unique($ignore)) . ')(?=[\s/>])[^>]*?>)(.*?)(</\\2>)#s', function (array $m): string {
                 return $m[1] . preg_replace('#' . sprintf(self::FLAGGER, '(?!') . ')#s', '$1', $m[3]) . $m[4];
             }, $content);
             if (is_string($ret)) {
