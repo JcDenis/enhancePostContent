@@ -39,8 +39,8 @@ class EpcFilterSearch extends EpcFilter
             'plural'    => true,
             'style'     => ['color: #FFCC66;'],
             'notag'     => ['h1','h2','h3'],
-            'tplValues' => ['EntryContent'],
-            'page'      => ['search.html'],
+            'template' => ['EntryContent'],
+            'page'     => ['search.html'],
         ];
     }
 
