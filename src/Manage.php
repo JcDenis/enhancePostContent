@@ -342,7 +342,7 @@ class Manage
                                             ]),
                                         (new Note())
                                             ->class('form-note')
-                                            ->text(__('This is the list of HTML tags where content will be ignored.') . '<br />' . (empty($filter->ignore) ? '' : sprintf(__('Tags "%s" will allways be ignored.'), Epc::encodeSingle($filter->ignore)))),
+                                            ->text(__('This is the list of HTML tags where content will be ignored.') . '<br />' . (empty($filter->ignore) ? '' : sprintf(__('Tags "%s" will always be ignored.'), Epc::encodeSingle($filter->ignore)))),
 
                                     ]),
                                 (new Div())

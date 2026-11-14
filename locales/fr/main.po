@@ -205,8 +205,9 @@ msgstr "Ignorer les balises HTML :"
 msgid "This is the list of HTML tags where content will be ignored."
 msgstr "Ceci est la liste des balises HTML dont le contenu sera ignoré."
 
-msgid "Tag \"%s\" always be ignored."
-msgstr "Les balises \"%s\" seront toujours ignorées."
+msgid "Tags \"%s\" will always be ignored."
+msgstr "Les balises « %s » seront toujours ignorées."
+
 
 msgid "Records"
 msgstr "Enregistrements"
