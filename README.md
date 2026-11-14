@@ -12,6 +12,8 @@ _enhancePostContent_ is a plugin for the open-source web publishing software cal
 
 > It help to filter post content and extract or show inline more info about words and expressions such as tags, acronyms, abbreviations, definition, citation, link, etc...
 
+A [user guide in French](https://github.com/JcDenis/enhancePostContent/blob/master/docs/fr/utilisation.md) is available.
+
 ## REQUIREMENTS
 
 * Dotclear 2.39
@@ -32,6 +34,7 @@ you should also add widgets.
 
 ## LINKS
 
+* [User guide (in French)](https://github.com/JcDenis/enhancePostContent/blob/master/docs/fr/utilisation.md)
 * [License](https://github.com/JcDenis/enhancePostContent/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/enhancePostContent/releases) (or on [Repository](https://dotclear.org/plugin/detail/enhancePostContent))
 * [Sources & contributions](https://github.com/JcDenis/enhancePostContent)
