@@ -435,7 +435,7 @@ class Manage
         # --BEHAVIOR-- enhancePostContentAdminPage
         App::behavior()->callBehavior('enhancePostContentAdminPage');
 
-        Page::helpBlock('enhancePostContent');
+        Page::helpBlock(My::id() . '-index');
         Page::closeModule();
     }
 }
