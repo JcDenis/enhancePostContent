@@ -7,6 +7,7 @@ namespace Dotclear\Plugin\enhancePostContent;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
+use Dotclear\Core\Backend\UserPrefFilter;
 use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Form\Div;
@@ -130,8 +131,9 @@ class Backend
                 $blog_settings->get(My::id())->put('allowedpubpages', json_encode(Epc::decodeMulti($pages)));
             },
             // backend epc list filter
-            'adminFiltersListsV2' => function (ArrayObject $sorts): void {
-                $sorts['epc'] = [
+            'adminFiltersListsV3' => function (ArrayObject $filters): void {
+                $filters->append(new UserPrefFilter(
+                    'epc',
                     My::name(),
                     [
                         __('Date')  => 'epc_upddt',
@@ -141,8 +143,9 @@ class Backend
                     ],
                     'epc_upddt',
                     'desc',
-                    [__('records per page'), 20],
-                ];
+                    __('records per page'),
+                    20
+                ));
             },
             // widgets registration
             'initWidgets' => Widgets::initWidgets(...),

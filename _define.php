@@ -24,7 +24,7 @@ $this->registerModule(
     '2026.11.14',
     [
         'type'        => 'plugin',
-        'requires'    => [['core', '2.39']],
+        'requires'    => [['core', '2.40']],
         'permissions' => 'My',
         'settings'    => ['blog' => '#params.' . $this->id . '_params'],
         'support'     => 'https://github.com/JcDenis/' . $this->id . '/issues',

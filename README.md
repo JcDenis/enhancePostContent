@@ -16,7 +16,7 @@ A [user guide in French](https://github.com/JcDenis/enhancePostContent/blob/mast
 
 ## REQUIREMENTS
 
-* Dotclear 2.39
+* Dotclear 2.40
 * PHP 8.1+
 * Dotclear admin permissions to set up plugin
 * Dotclear content admin permissions to manage fitlers
