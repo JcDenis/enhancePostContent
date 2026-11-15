@@ -44,7 +44,7 @@ Required Dotclear and PHP versions: see `_define.php`.
 * Database table `epc`.
 * URL handlers: `epccss`.
 * Widgets: `epclist`.
-* Behaviors used: `enhancePostContentFilters`, `adminDashboardFavoritesV2`, `adminBlogPreferencesFormV2`, `adminBeforeBlogSettingsUpdate`, `adminFiltersListsV2`, `initWidgets`, `publicHeadContent`, `publicBeforeContentFilterV2`, `tplValues`.
+* Behaviors used: `enhancePostContentFilters`, `adminDashboardFavoritesV2`, `adminBlogPreferencesFormV2`, `adminBeforeBlogSettingsUpdate`, `adminFiltersListsV3`, `initWidgets`, `publicHeadContent`, `publicBeforeContentFilterV2`, `tplValues`.
 
 ## Pitfalls
 
