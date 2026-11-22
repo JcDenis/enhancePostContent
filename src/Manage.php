@@ -95,8 +95,8 @@ class Manage
             }
 
             // Add new filter record
-            $new_key = is_string($_POST['new_key']) ? Html::escapeHTML($_POST['new_key']) : '';
-            $new_val = is_string($_POST['new_value']) ? Html::escapeHTML($_POST['new_value']) : '';
+            $new_key = isset($_POST['new_key']) && is_string($_POST['new_key']) ? Html::escapeHTML($_POST['new_key']) : '';
+            $new_val = isset($_POST['new_value']) && is_string($_POST['new_value']) ? Html::escapeHTML($_POST['new_value']) : '';
             if ($action === 'savenewrecord'
                 && !empty($new_key) 
                 && !empty($new_val) 
@@ -106,7 +106,7 @@ class Manage
                 $cur->setField('epc_key', $new_key);
                 $cur->setField('epc_value', $new_val);
 
-                if (EpcRecord::isRecord($new_key, $new_val)) {
+                if (EpcRecord::isRecord($filter->id(), $new_key)) {
                     Notices::addErrorNotice(__('Key already exists for this filter'));
                 } else {
                     EpcRecord::addRecord($cur);
