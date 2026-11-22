@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\enhancePostContent;
 
+use ArrayObject;
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
 
@@ -28,6 +29,12 @@ class Frontend
         if (!self::status() || !My::settings()->get('active')) {
             return false;
         }
+
+        // Tools for AI assistants connected to the blog with the plugin ClaudetteMcp (never required)
+        App::behavior()->addBehavior('ClaudetteMcpAddTool', function (ArrayObject $tools): void {
+            $tools->append(new ClaudetteMcp\ListEnhancedTerms());
+            $tools->append(new ClaudetteMcp\SetEnhancedTerm());
+        });
 
         App::behavior()->addBehaviors([
             // Add CSS URL to frontend header

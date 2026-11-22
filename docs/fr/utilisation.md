@@ -12,6 +12,7 @@ Le texte que vous avez écrit n'est pas modifié : tout se fait au moment où le
 * [Régler un filtre](#régler-un-filtre)
 * [Le résultat sur le blog](#le-résultat-sur-le-blog)
 * [Le widget](#le-widget)
+* [Avec un assistant IA](#avec-un-assistant-ia)
 
 ## Activer le plugin
 
@@ -116,3 +117,14 @@ Les réglages du widget :
 Le widget n'apparaît que sur la page d'un billet ou d'une page, et seulement s'il y trouve des mots.
 
 ![Le widget sur le blog](img/widget-public.png)
+
+## Avec un assistant IA
+
+Avec le plugin [ClaudetteMcp](https://github.com/JcDenis/ClaudetteMcp), un assistant IA connecté au blog peut gérer les mots des filtres
+qui ont une liste (acronymes, abréviations, définitions, liens, remplacements…), si le plugin est activé et si vous êtes administrateur de contenu :
+
+* `list_enhanced_terms` : lister les mots, filtre par filtre ;
+* `set_enhanced_term` : ajouter un mot à un filtre, ou modifier un mot.
+
+Par exemple : « ajoute l'acronyme MCP, Model Context Protocol ». L'assistant ne supprime jamais de mot
+et ne change pas les réglages des filtres. _ClaudetteMcp_ n'est pas nécessaire au fonctionnement d'_enhancePostContent_.
