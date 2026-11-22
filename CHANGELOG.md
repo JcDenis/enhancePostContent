@@ -1,3 +1,9 @@
+enhancePostContent 2026.11.23
+===========================================================
+* [new] Filters terms for an AI assistant connected with ClaudetteMcp (list_enhanced_terms, set_enhanced_term)
+* [new] Family of the ClaudetteMcp tools, for the keys limited to some families
+* [fix] Check duplicates in the right filter when adding a term, and no PHP warning on the filter page
+
 enhancePostContent 2026.11.22
 ===========================================================
 * [compat] Use adminFiltersListsV3 behavior, require Dotclear 2.40
