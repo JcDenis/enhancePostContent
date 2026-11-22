@@ -17,7 +17,7 @@ Required Dotclear and PHP versions: see `_define.php`.
 
 ## Structure
 
-* `src/ClaudetteMcp/`: tools for the plugin ClaudetteMcp (`list_enhanced_terms`, `set_enhanced_term`, never required),
+* `src/ClaudetteMcp/`: tools for the plugin ClaudetteMcp (`list_enhanced_terms`, `set_enhanced_term`, optional dependency `ClaudetteMcp?` in `requires`),
   registered in `src/Frontend.php` with the behavior `ClaudetteMcpAddTool`.
 * `src/Backend.php`: admin side: menu entry, favorites, behaviors registration.
 * `src/BackendList.php`: filters list class.

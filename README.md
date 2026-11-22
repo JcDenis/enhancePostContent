@@ -34,7 +34,7 @@ you should also add widgets.
 
 With the plugin [ClaudetteMcp](https://github.com/JcDenis/ClaudetteMcp), an AI assistant connected to the blog
 can list the terms of the filters (`list_enhanced_terms`) and add or update one (`set_enhanced_term`),
-with the permissions of a content administrator, never deleting one. ClaudetteMcp is not required by _enhancePostContent_.
+with the permissions of a content administrator, never deleting one. ClaudetteMcp is optional for _enhancePostContent_ (version 0.5 or later).
 
 ## LINKS
 
