@@ -1,3 +1,7 @@
+enhancePostContent 2026.11.22
+===========================================================
+* [compat] Use adminFiltersListsV3 behavior, require Dotclear 2.40
+
 enhancePostContent 2026.11.14
 ===========================================================
 * [fix] Blog settings save erased the lists of template values and public pages
